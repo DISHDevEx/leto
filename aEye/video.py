@@ -23,6 +23,8 @@ class Video:
             print("Error opening video stream or file")
 
 
+
+
     def resize(self, x_ratio, y_ratio):
         """
         this method will resize the current video by multiplying 
@@ -56,3 +58,4 @@ class Video:
         self.getSize()
         print("Encoding Format:", self.codec, "Duration (s):", self.duration, "with a total of", self.frames,
               "frames! (" + str(self.fps) + " FPS)")
+
