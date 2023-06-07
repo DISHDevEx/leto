@@ -57,4 +57,5 @@ class Video:
         print("Metadata for video: " + self.name)
         self.getSize()
         print("Encoding Format:", self.codec, "Duration (s):", self.duration, "with a total of", self.frames,
-              "frames! (" + str(self.fps) + " FPS)")   
+              "frames! (" + str(self.fps) + " FPS)")
+
