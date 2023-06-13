@@ -78,3 +78,6 @@ class Video:
         """
         self.capture.release()
 
+        fourcc = cv2.VideoWriter.fourcc(*'mp4v')
+        out = cv2.VideoWriter(path, fourcc, self.fps, (self.width,self.height))
+
