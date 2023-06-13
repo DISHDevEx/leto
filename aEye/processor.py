@@ -80,7 +80,6 @@ class Processor:
             #In order to convert video file from S3 to cv2 video class, we need its url.
             url = self._s3.generate_presigned_url( ClientMethod='get_object', Params={ 'Bucket': bucket, 'Key': i["Key"] } ,ExpiresIn=5)
             self.video_list.append(Video(url, title))
-            print("///")
 
         logging.info(f"Successfully loaded video data from {bucket}")
         logging.info(f"There are total of {len(self.video_list)} video files")

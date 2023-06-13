@@ -81,3 +81,8 @@ class Video:
         fourcc = cv2.VideoWriter.fourcc(*'mp4v')
         out = cv2.VideoWriter(path, fourcc, self.fps, (self.width,self.height))
 
+    def cleanup(self):
+        """
+        This method will release the current view of video object from RAM
+        """
+        self.cap.release()
