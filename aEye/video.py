@@ -86,3 +86,8 @@ class Video:
         This method will release the current view of video object from RAM
         """
         self.cap.release()
+
+    def update(self,file, title):
+        self.file = file
+        self.cap = cv2.VideoCapture(file)
+        self.title = title
