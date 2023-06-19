@@ -164,7 +164,7 @@ class Processor:
 
         for video in self.video_list:
 
-            path = video.get_output()
+            path = video.get_output_title()
             response = s3.upload_file( path, bucket,  path)
 
             #This will delete all file from RAM and local machine.
