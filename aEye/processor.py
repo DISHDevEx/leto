@@ -83,9 +83,10 @@ class Processor:
                 continue
 
             title = i["Key"].split(prefix)[1]
-            #In order to convert video file from S3 to cv2 video class, we need its url.
-            url = self._s3.generate_presigned_url( ClientMethod='get_object', Params={ 'Bucket': bucket, 'Key': i["Key"] } ,ExpiresIn=5)
-            self.video_list.append(Video(url, title))
+
+            self.video_list.append(Video(bucket, i["Key"], title))
+
+
 
         logging.info(f"Successfully loaded video data from {bucket}")
         logging.info(f"There are total of {len(self.video_list)} video files")
@@ -112,8 +113,8 @@ class Processor:
         for video in self.video_list:
 
             video.get_metadada()
-            new_width = int(video.meta_data[0] * x_ratio )
-            new_height = int(video.meta_data[1] * y_ratio )
+            new_width = int(video.meta_data['width'] * x_ratio )
+            new_height = int(video.meta_data['height'] * y_ratio )
 
             video.add_mod(f"-r 'scale={new_width}:{new_height},setsar=1:1'")
 
@@ -169,7 +170,6 @@ class Processor:
     def execute(self):
         
         for video in self.video_list:
-            
             command = f"{ffmpeg} -i '{video.get_presigned_url()}'" + video.get_modification() + video.get_output_title()
             subprocess.run(command, shell=True)
 
