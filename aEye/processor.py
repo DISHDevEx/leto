@@ -8,6 +8,10 @@ import os
 import cv2
 import logging
 from aEye.video import Video
+from static_ffmpeg import run
+import subprocess
+
+ffmpeg, ffprobe = run.get_or_fetch_platform_executables_else_raise()
 
 class Processor:
 
@@ -41,7 +45,8 @@ class Processor:
     """
     def __init__(self) -> None:
         self.video_list = []
-        self.pipeline = ['ffmpeg']
+
+        self._s3 = boto3.client('s3')
 
     def __init__(self) -> None:
         self.video_list = []
@@ -106,25 +111,11 @@ class Processor:
         #This will loop to the list of videos to apply the resizing feature. 
         for video in self.video_list:
 
-            new_width = int(video.width * x_ratio )
-            new_height = int(video.height * y_ratio )
-            dim = (new_width, new_height)
-            
-            fourcc = cv2.VideoWriter.fourcc(*'mp4v')
-            out = cv2.VideoWriter('modified/output_' +video.title, fourcc, 30.0, dim)
-            
-            #This loops to each frame of a video and resizes the current dimension to the new dimension.
-            while True:
-                _ ,image = video.capture.read()
+            video.get_metadada()
+            new_width = int(video.meta_data[0] * x_ratio )
+            new_height = int(video.meta_data[1] * y_ratio )
 
-                if image is None:
-                    break
-
-                resized = cv2.resize(image , dim, interpolation = cv2.INTER_AREA)
-                out.write(resized)
-
-            out.release()
-            video.cleanup()
+            video.add_mod(f"-r 'scale={new_width}:{new_height},setsar=1:1'")
 
         logging.info(f"successfully resized all video by ratio of {x_ratio} and {y_ratio}" )
 
@@ -175,6 +166,12 @@ class Processor:
         print("successfully upload the output files S3 bucket: s3://aeye-data-bucket/modified/")
         print("successfully remove the output file from local machine")
 
+    def execute(self):
+        
+        for video in self.video_list:
+            
+            command = f"{ffmpeg} -i '{video.get_presigned_url()}'" + video.get_modification() + video.get_output_title()
+            subprocess.run(command, shell=True)
 
 
 
