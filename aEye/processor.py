@@ -165,7 +165,7 @@ class Processor:
         """
 
 
-        self.load(bucket,prefix)
+        self.load(bucket = bucket,prefix = prefix)
         self.resize_by_ratio(x_ratio,y_ratio)
 
     def upload(self, bucket=  'aeye-data-bucket') -> None:
