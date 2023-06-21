@@ -111,7 +111,7 @@ class Video:
         return self.modification
     
     def get_output_title(self):
-        result = 'modified/'
+        result = ''
         if 'scale' in self.modification:
             result += "resized_"
         if '-ss' in self.modification:
