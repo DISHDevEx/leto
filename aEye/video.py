@@ -81,8 +81,6 @@ class Video:
         """
         self.cap.release()
 
-    
-    
     def get_meta_data(self):
 
         if self.meta_data is None:
