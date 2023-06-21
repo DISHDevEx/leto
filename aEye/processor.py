@@ -95,7 +95,7 @@ class Processor:
         return self.video_list
 
 
-    def resize_by_ratio(self, x_ratio = .8, y_ratio = .8) -> None:
+    def resize_by_ratio(self, x_ratio = .8, y_ratio = .8, target = "all"):
         """
         This method will resize the video by multiplying the width by x_ratio and height by y_ratio.
         Both values have to be non negative and non zero value.
@@ -109,6 +109,7 @@ class Processor:
 
         
         """
+        target_list = self.target_list(target)
 
         #This will loop to the list of videos to apply the resizing feature. 
         for video in self.video_list:
@@ -117,15 +118,17 @@ class Processor:
             new_width = int(video.meta_data['width'] * x_ratio )
             new_height = int(video.meta_data['height'] * y_ratio )
 
-            video.add_mod(f"-vf scale={math.ceil(new_width/2)*2}:{math.ceil(new_height/2)*2},setsar=1:1 ")
+            video.add_modification(f"-vf scale={math.ceil(new_width/2)*2}:{math.ceil(new_height/2)*2},setsar=1:1 ")
 
         logging.info(f"successfully resized all video by ratio of {x_ratio} and {y_ratio}" )
-        print(f"successfully resized all video by ratio of {x_ratio} and {y_ratio}" )
-    
-    def trimmed_from_for(self,start, duration):
-        for video in self.video_list:
+        
+    def trimmed_from_for(self,start, duration, target = "all"):
 
-            video.add_mod(f"-ss {start} -t {duration} ")
+        target_list = self.target_list(target)
+
+        for video in target_list:
+
+            video.add_modification(f"-ss {start} -t {duration} ")
         print(f"Trimming from {start} for {duration} seconds" )
 
 
@@ -175,6 +178,13 @@ class Processor:
 
         print("successfully upload the output files S3 bucket: s3://aeye-data-bucket/modified/")
         print("successfully remove the output file from local machine")
+
+    def target_list(self, target):
+        
+        if target != 'all':
+            result = [ i for i in self.video_list if i in target]
+            return result
+        return self.video_list
 
     def execute(self):
         
