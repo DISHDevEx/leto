@@ -65,11 +65,10 @@ class Processor:
         self._s3 = boto3.client('s3')
 
     def __init__(self) -> None:
-        self.video_list = []
         self._s3 = boto3.client('s3')
         self._temp_fold = tempfile.mkdtemp(dir= "")
 
-    
+    '''
     def load(self, local_path = None, bucket=  'aeye-data-bucket', prefix='input_video/') -> list:
         """
         This method will load the video files from S3 and save them 
@@ -119,17 +118,12 @@ class Processor:
             title = dummy.split(' ')[-1]
             self.video_list.append(Video(file = local_path, title = title))
 
-        return self.video_list
+    '''
 
-
-    def resize_by_ratio(self, x_ratio = .8, y_ratio = .8, target = ["*"]):
+    def resize_by_ratio(self,video_list, x_ratio = .8, y_ratio = .8):
         """
-<<<<<<< HEAD
-        This method will resize the video by multiplying the width by x_ratio and height by y_ratio.
-=======
         This method will add resizing modification to all target the video that will be multiplying the 
         width by x_ratio and height by y_ratio.
->>>>>>> c48b381 (stashing temp dosstring)
         Both values have to be non negative and non zero value.
 
         Parameters
@@ -138,25 +132,17 @@ class Processor:
                 The ratio for x/width value.
             y_ratio: float
                 The ratio for y/height value.
-<<<<<<< HEAD
-=======
             target: list
                 The list of desired videos that the users want to process.
->>>>>>> c48b381 (stashing temp dosstring)
 
         
         """
 
-        #generate the desired target list of videos to add modification
-        target_list = self.target_list(target)
 
-<<<<<<< HEAD
-        #This will loop to the list of videos to apply the resizing feature. 
-        for video in self.video_list:
-=======
-        #go to each video and add the resizing ffmpeg modification
-        for video in target_list:
->>>>>>> c48b381 (stashing temp dosstring)
+
+
+        for video in video_list:
+
 
             video.get_meta_data()
             new_width = int(video.meta_data['width'] * x_ratio )
@@ -165,6 +151,8 @@ class Processor:
             video.add_modification(f"-vf scale={math.ceil(new_width/2)*2}:{math.ceil(new_height/2)*2},setsar=1:1 ")
 
         logging.info(f"successfully added resizing mod to all video by ratio of {x_ratio} and {y_ratio}")
+    
+        return video_list
         
     def trimmed_from_for(self,start, duration, target = ["*"]):
         """
