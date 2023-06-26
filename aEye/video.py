@@ -201,10 +201,6 @@ class Video:
     def set_output_location(self, path):
         """
         This method is a setter for where the output video will be located.
-        Returns
-        ---------
-            result: string
-                The output title of video.
         """
         self.output_location = path
 
