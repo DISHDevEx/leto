@@ -1,6 +1,5 @@
-# aEye
+# leto
 
-Extensible Video Processing Framework with Additional Features Continuously Deployed
 
 ### **Project Structure**
 
