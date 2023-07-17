@@ -6,18 +6,31 @@ Extensible Video Processing Framework with Additional Features Continuously Depl
 
 ```
 ├──  leto				contains video class and processor class that manage from loading, processing and uploading
-│   ├── mediapipe
-│      ├── object_detection.py
-│      ├── visualize.py
+│   ├── downstream_model
+│       ├── mediapipe
+│           ├── object_detection.py
+│           ├── visualize.py
+│           ├── docker_mp
+│       ├── yolo
+│           ├── object_detection.py
+│           ├── visualize.py
+│           ├── docker_yolo
+│   ├── reduction
+│       ├── method_1
+│           ├── source_code
+│           ├── requirement  
+│           ├── docker_method_1
+│   ├── reconstruction
+│ 
 ├──  runner_notebooks
 │   ├── leto-demo.ipynb
+│
 ├──  tests				contains unit tests
 │   ├── test_get_meta_data.py
 │   ├── conftest.py
 │   ├── test_data
 │      ├── test_video.mp4
-├── lambda_function.py
-├── setup.py
+
 ```
 
 ### **Inital project setup**
