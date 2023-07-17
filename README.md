@@ -10,11 +10,9 @@ Extensible Video Processing Framework with Additional Features Continuously Depl
 │       ├── mediapipe
 │           ├── object_detection.py
 │           ├── visualize.py
-│           ├── docker_mp
-│       ├── yolo
-│           ├── object_detection.py
-│           ├── visualize.py
-│           ├── docker_yolo
+│           ├── Dockerfile_mp
+│           ├── requirements.txt
+│
 │   ├── reduction
 │       ├── method_1
 │           ├── source_code
