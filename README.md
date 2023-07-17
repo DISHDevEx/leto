@@ -1,6 +1,5 @@
 # leto
 
-
 ### **Project Structure**
 
 ```
@@ -10,15 +9,15 @@
 │           ├── object_detection.py
 │           ├── visualize.py
 │           ├── Dockerfile_mp
-│           ├── requirements.txt
+│           ├── requirements_mp.txt
 │
 │   ├── reduction
 │       ├── method_1
-│           ├── source_code
-│           ├── requirement  
-│           ├── docker_method_1
+│           ├── source_code.py
+│           ├── requirement_method_1.txt
+│           ├── Dockerfile_method_1
 │   ├── reconstruction
-│ 
+│
 ├──  runner_notebooks
 │   ├── leto-demo.ipynb
 │
@@ -31,7 +30,6 @@
 ```
 
 ### **Inital project setup**
-
 
 ### **Docker Image Setup**
 
