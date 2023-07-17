@@ -27,7 +27,6 @@ def handler(event, context):
 
         mp_output_video = os.path.join("/tmp", os.path.basename('mp_' + video.get_title()))
 
-
         object_detection(mp_model, video.get_file(), mp_output_video)
 
         s3_client.upload_file(mp_output_video, "leto-dish", f"object_detection/mp_{video.get_title()}")
