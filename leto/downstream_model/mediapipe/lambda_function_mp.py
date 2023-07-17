@@ -15,9 +15,7 @@ def handler(event, context):
 
     s3_client = boto3.client('s3')
 
-
     mp_model = os.path.basename("efficientdet_lite0.tflite")
-
 
     bucket = event['Records'][0]['s3']['bucket']['name']
     key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
