@@ -2,6 +2,8 @@ from leto import object_detection
 import sys
 import boto3
 import os
+from aEye import Video
+import urllib.parse
 
 # input_video_path = os.environ.get('input_video_path')
 # output_video_path = os.environ.get('output_video_path')
@@ -12,13 +14,25 @@ def handler(event, context):
     print('Loading function')
 
     s3_client = boto3.client('s3')
-    input_video = os.path.join("/tmp", os.path.basename("Untitled.mp4"))
-    output_video = os.path.join("/tmp", os.path.basename("output_video.mp4"))
 
-    s3_client.download_file("leto-dish", "original-videos/random-videos/Untitled.mp4", input_video)
 
-    object_detection(os.path.basename("efficientdet_lite0.tflite"), input_video, output_video)
+    mp_model = os.path.basename("efficientdet_lite0.tflite")
 
-    s3_client.upload_file(output_video, "leto-dish", "object_detection/sample.mp4")
 
-    return 'Hello from AWS Lambda using Python' + sys.version + '!'
+    bucket = event['Records'][0]['s3']['bucket']['name']
+    key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
+    
+    try:
+        video = Video(bucket=bucket, key=key)
+
+        mp_output_video = os.path.join("/tmp", os.path.basename('mp_' + video.get_title()))
+
+
+        object_detection(mp_model, video.get_file(), mp_output_video)
+
+        s3_client.upload_file(mp_output_video, "leto-dish", f"object_detection/mp_{video.get_title()}")
+
+    except Exception as e:
+        print(e)
+        print('Error getting object {} from bucket {}. Make sure they exist and your bucket is in the same region as this function.'.format(key, bucket))
+        raise e
