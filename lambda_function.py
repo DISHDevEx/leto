@@ -1,4 +1,4 @@
-from aEye import object_detection
+from leto import object_detection
 import sys
 import boto3
 import os
