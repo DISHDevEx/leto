@@ -10,9 +10,6 @@ COPY lambda_function.py ${LAMBDA_TASK_ROOT}
 RUN pip install -r requirements.txt
 RUN yum install -y mesa-libGLw
 
-COPY dist/aEye-0.0.1-py3-none-any.whl .
-RUN pip3 install aEye-0.0.1-py3-none-any.whl --target "${LAMBDA_TASK_ROOT}"
-RUN static_ffmpeg_paths
 ADD https://storage.googleapis.com/mediapipe-models/object_detector/efficientdet_lite0/int8/latest/efficientdet_lite0.tflite /var/task/efficientdet_lite0.tflite
 
 RUN chmod a+rx /var/task/*.tflite
