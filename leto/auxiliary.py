@@ -3,7 +3,7 @@ Module contains the Aux class that handles the loading and uploading of videos. 
 
 """
 
-from aEye.video import Video
+from leto.video import Video
 import boto3
 import tempfile
 import os
