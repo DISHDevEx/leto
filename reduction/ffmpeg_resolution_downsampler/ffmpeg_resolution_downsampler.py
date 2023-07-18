@@ -5,14 +5,22 @@ from aEye import Video
 from aEye import Labeler
 from aEye import Aux
 
+<<<<<<< HEAD
 import os
+=======
+>>>>>>> 967408a (Adding recon and reduce modules)
 
 
 
 def parse_args():
     """
+<<<<<<< HEAD
     Parses the arguments needed for ffmpeg based reduction module.
     Catalogues: input s3 bucket, input s3 prefix, output s3 bucket and output s3 prefix.
+=======
+    Parses the arguments needed for RealBasicVSR reconstruction module.
+    Catalogues: config, checkpoint, input dir, output dir, maximum sequence length, and fps
+>>>>>>> 967408a (Adding recon and reduce modules)
 
 
     Returns
@@ -29,7 +37,11 @@ def parse_args():
     
     parser.add_argument("--input_prefix_s3", 
                         type=str,
+<<<<<<< HEAD
                         default = "original-videos/benchmark/car/",
+=======
+                        default = "original-videos/benchmark/",
+>>>>>>> 967408a (Adding recon and reduce modules)
                         help= "s3 prefix of the input video")
     
     parser.add_argument("--output_bucket_s3", 
@@ -39,7 +51,11 @@ def parse_args():
     
     parser.add_argument("--output_prefix_s3", 
                         type = str,
+<<<<<<< HEAD
                         default = "reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/",
+=======
+                        default = "reduced-videos/benchmark/ffmpeg-resolution-downsampler/",
+>>>>>>> 967408a (Adding recon and reduce modules)
                         help="s3 prefix of the output video")
     
     args = parser.parse_args()
@@ -49,7 +65,10 @@ def parse_args():
 def main():
     logging.info("running reduction module")
     
+<<<<<<< HEAD
     
+=======
+>>>>>>> 967408a (Adding recon and reduce modules)
     args = parse_args()
     
     aux = Aux()

@@ -22,10 +22,10 @@ class Builder:
                 Default arguments. Defaults to None.
         """
         if isinstance(cfg, list):
-            modules = [self.build_from_cfg(cfg_, registry, default_args) for cfg_ in cfg]
+            modules = [build_from_cfg(cfg_, registry, default_args) for cfg_ in cfg]
             return nn.Sequential(*modules)
 
-        return self.build_from_cfg(cfg, registry, default_args)
+        return build_from_cfg(cfg, registry, default_args)
 
 
     def build_backbone(self,cfg):
