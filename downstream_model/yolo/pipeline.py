@@ -5,6 +5,7 @@ This pipeline will call visualize_yolo to visualize the result from the predicti
 
 from .visualize import visualize_yolo
 import cv2
+import json
 
 def pipeline(input_video,  model, output_video ):
 
@@ -32,8 +33,8 @@ def pipeline(input_video,  model, output_video ):
     frame_height = int(cap.get(4))
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     out = cv2.VideoWriter(output_video, fourcc, fps, (frame_width, frame_height))
-    
-    output_data = []
+    frame_index = 0
+    output_data = {}
 
     while (cap.isOpened()):
 
@@ -51,8 +52,8 @@ def pipeline(input_video,  model, output_video ):
 
             out.write(annotated_image)
 
-            output_data.append(bounding_box_data)
-
+            output_data[frame_index] = bounding_box_data
+            frame_index += 1
         # Break the loop
         else:
             break
@@ -60,5 +61,5 @@ def pipeline(input_video,  model, output_video ):
     # the video capture object
     cap.release()
     out.release()
-
-    return bounding_box_data
+    output_json = json.dumps(output_data)
+    return output_json
