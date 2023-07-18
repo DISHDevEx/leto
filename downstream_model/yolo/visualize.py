@@ -27,6 +27,7 @@ def visualize_yolo(image,detection_result) -> np.ndarray:
     """
 
     shape = detection_result[0].orig_shape
+    bounding_box_data = []
     for i, _ in enumerate(detection_result[0].boxes.cls):
         # Draw bounding_box
         x,y,w,h = detection_result[0].boxes.xyxyn[i]
@@ -44,5 +45,6 @@ def visualize_yolo(image,detection_result) -> np.ndarray:
                         MARGIN + ROW_SIZE + int(y.item()*shape[1]))
         cv2.putText(image, result_text, text_location, cv2.FONT_HERSHEY_PLAIN,
                     FONT_SIZE, TEXT_COLOR, FONT_THICKNESS)
+        bounding_box_data.append([start_point[0], start_point[1], end_point[0], end_point[1], probability, category_name ])
 
-    return image
+    return image, bounding_box_data

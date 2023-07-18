@@ -19,6 +19,7 @@ def visualize(
   Returns:
     Image with bounding boxes.
   """
+  bounding_box_data = []
   for detection in detection_result.detections:
     # Draw bounding_box
     bbox = detection.bounding_box
@@ -35,5 +36,5 @@ def visualize(
                      MARGIN + ROW_SIZE + bbox.origin_y)
     cv2.putText(image, result_text, text_location, cv2.FONT_HERSHEY_PLAIN,
                 FONT_SIZE, TEXT_COLOR, FONT_THICKNESS)
-
-  return image, [start_point[0],start_point[1],end_point[0] , end_point[1], probability, category_name ]
+    bounding_box_data.append([start_point[0],start_point[1],end_point[0] , end_point[1], probability, category_name ]) 
+  return image, bounding_box_data
