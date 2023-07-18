@@ -12,7 +12,7 @@ import torch
 from mmcv.runner import load_checkpoint
 from mmedit.core import tensor2img
 
-from RealBasicVSR.builder import Builder
+from builder import Builder
 
 VIDEO_EXTENSIONS = (".mp4", ".mov")
 
@@ -35,13 +35,13 @@ def parse_args():
     parser.add_argument(
         "--config",
         type=str,
-        default="aEye/RealBasicVSR_reconstruction_module/realbasicvsr_x4.py",
+        default="./realbasicvsr_x4.py",
         help="test config file path",
     )
     parser.add_argument(
         "--checkpoint",
         type=str,
-        default="aEye/RealBasicVSR_reconstruction_module/RealBasicVSR_x4.pth",
+        default="./RealBasicVSR_x4.pth",
         help="checkpoint file",
     )
     parser.add_argument(
