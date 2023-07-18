@@ -2,6 +2,7 @@ import mediapipe as mp
 import cv2
 import numpy as np
 from .visulize import visualize
+import json
 
 def object_detection(model_path, input_video, output_video):
     """
@@ -51,7 +52,7 @@ def object_detection(model_path, input_video, output_video):
         frame_index = 0
         # While the video still has frames, apply the model to get the bounding box
 
-        output_data = []
+        output_data = {}
         while (cap.isOpened()):
 
             # Capture frame-by-frame
@@ -61,14 +62,15 @@ def object_detection(model_path, input_video, output_video):
                 mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
                 # Calculate the timestamp of the current frame
                 frame_timestamp_ms = int(1000 * frame_index / x)
-                frame_index += 1
+                
                 # Perform object detection on the video frame.
                 detection_result = detector.detect_for_video(mp_image, frame_timestamp_ms)
                 image_copy = np.copy(mp_image.numpy_view())
                 annotated_image, bounding_box_data = visualize(image_copy, detection_result)  #Adds Bounding box to img
                 
                 out.write(annotated_image)
-                output_data.append(bounding_box_data)
+                output_data[frame_index] = bounding_box_data
+                frame_index += 1
 
             # Break the loop
             else:
@@ -77,4 +79,5 @@ def object_detection(model_path, input_video, output_video):
     # the video capture object
     cap.release()
     out.release()
-    return output_data
+    output_json = json.dumps(output_data)
+    return output_json
