@@ -4,8 +4,4 @@ opencv-python-headless>=4.8.0.00
 opencv-contrib-python>= 4.8.0.74
 numpy>=1.21.6
 mediapipe>=0.9.0
-<<<<<<< HEAD:downstream_model/mediapipe/requirements_mp.txt
 aEye
-=======
-ultralytics>= 8.0.126
->>>>>>> b7d6c92 (trigger):requirements.txt
