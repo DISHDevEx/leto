@@ -36,4 +36,4 @@ def visualize(
     cv2.putText(image, result_text, text_location, cv2.FONT_HERSHEY_PLAIN,
                 FONT_SIZE, TEXT_COLOR, FONT_THICKNESS)
 
-  return image
+  return image, [start_point[0],start_point[1],end_point[0] , end_point[1], probability, category_name ]
