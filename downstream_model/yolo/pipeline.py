@@ -56,5 +56,3 @@ def pipeline(input_video,  model, output_video ):
     # the video capture object
     cap.release()
     out.release()
-
-
