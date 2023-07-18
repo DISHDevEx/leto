@@ -33,6 +33,8 @@ def pipeline(input_video,  model, output_video ):
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     out = cv2.VideoWriter(output_video, fourcc, fps, (frame_width, frame_height))
     
+    output_data = []
+
     while (cap.isOpened()):
 
         # Capture frame-by-frame
@@ -45,9 +47,11 @@ def pipeline(input_video,  model, output_video ):
             detection_result = model.predict_(im2, verbose = False, device = None)
 
             copy_image = frame.copy()
-            annotated_image = visualize_yolo(copy_image, detection_result)
+            annotated_image, bounding_box_data = visualize_yolo(copy_image, detection_result)
 
             out.write(annotated_image)
+
+            output_data.append(bounding_box_data)
 
         # Break the loop
         else:
@@ -56,3 +60,5 @@ def pipeline(input_video,  model, output_video ):
     # the video capture object
     cap.release()
     out.release()
+
+    return bounding_box_data
