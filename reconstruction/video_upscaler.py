@@ -9,14 +9,14 @@ import boto3
 import static_ffmpeg
 def parse_args():
     """
-    Parses the arguments needed for RealBasicVSR reconstruction module.
-    Catalogues: config, checkpoint, input dir, output dir, maximum sequence length, and fps
+    Parses the arguments needed for OpenCV reconstruction module.
+    Catalogues: input bucket, input s3 prefix, output bucket, output s3 prefix and scaling resolution
 
 
     Returns
     -------
         args: argparse.Namespace object
-            Returns an object with the relevent config, checkpoint, input dir, output dir, maximum sequence length, and fps.
+            Returns an object with the relevent input bucket, input s3 prefix, output bucket, output s3 prefix and scaling resolution.
     """
 
     parser = argparse.ArgumentParser(description="Inference script of opencv video upscaler")
@@ -54,19 +54,6 @@ def upscale_video():
     '''
     Method that upscales video using opencv and merges audio with the scaled video
     if original video has an audio stream.
-
-    Inputs
-    -------
-        input_video_path: str
-            Input video uri in s3. 
-        upscaled_video_path: str
-            Upscaled video uri in s3. 
-        scaling_resolution: tuple
-            Desired resolution in the form of (width, height).
-
-    Returns
-    -------
-
     '''
     
     args = parse_args()
