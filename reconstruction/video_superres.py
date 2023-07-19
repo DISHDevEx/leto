@@ -11,14 +11,14 @@ from cv2 import dnn_superres
 def parse_args():
     """
     Parses the arguments needed for Super Resolution reconstruction module.
-    Catalogues: input bucket, input prefix, output bucket, output prefix, codec, resolution, model bucket,
-    model prefix and algorithm.
+    Catalogues: input s3 bucket, input s3 prefix, output s3 bucket, output s3 prefix,
+            codec, resolution, model bucket, model prefix and algorithm.
     
     Returns
     -------
         args: argparse.Namespace object
-            Returns an object with the relevent input bucket, input prefix, output bucket, output prefix, codec,
-            resolution, model bucket, model prefix and algorithm.
+            Returns an object with the relevent input s3 bucket, input s3 prefix, output s3 bucket, 
+            output s3 prefix, codec, resolution, model bucket, model prefix and algorithm.
     """
 
     parser = argparse.ArgumentParser(description="Inference script of opencv video upscaler")
