@@ -41,7 +41,11 @@ def parse_args():
     parser.add_argument(
         "--checkpoint",
         type=str,
+<<<<<<< HEAD
         default="./realbasicvsr_x4.pth",
+=======
+        default="./RealBasicVSR_x4.pth",
+>>>>>>> ba24465 (renaming, changing paths, updating readme)
         help="checkpoint file",
     )
     parser.add_argument(
