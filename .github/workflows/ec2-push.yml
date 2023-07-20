@@ -27,4 +27,5 @@ jobs:
 
     - name: create wheel file from source code
       run: |
-        aws ec2 describe-instances
+        aws ssm start-session --target i-01a666faf143b4c76
+        ls
