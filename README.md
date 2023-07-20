@@ -55,9 +55,9 @@ python ffmpeg_resolution_downsampler.py
   apt-get update && apt-get install libgl1
 ```
 
-Default input: s3://leto-dish/original-videos/benchmark/
+Default input: s3://leto-dish/original-videos/benchmark/car/
 
-Default output: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/
+Default output: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/
 
 
 ----------------------------------
@@ -81,7 +81,7 @@ bash reconstruction_setup.sh
 ```console
 python realbasicvsr_preprocessing.py
 ```
-- Default cloud input: s3://leto-dish/reduced-videos/benchmark/downsampler
+- Default cloud input: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/
 
 - Note Pre Processing will save local video and a 200mb pretrained model
 
@@ -91,7 +91,7 @@ python reconstruction_realbasicvsr.py {input_dir} {output_dir}
 ```
 Example:
 ```console
-python reconstruction_realbasicvsr.py  ./reduced_videos/resized_480x360_Video_Benchmark_Car.mp4 ./reconstructed_videos/recon_resized_480x360_Video_Benchmark_Car.mp4
+python reconstruction_realbasicvsr.py  ./reduced_videos/resized_480x360_video_benchmark_car.mp4 ./reconstructed_videos/reconstructed_4x_video_benchmark_car.mp4
 ```
 
 -  Necessary arguments: input_dir, output_dir
@@ -100,7 +100,7 @@ python reconstruction_realbasicvsr.py  ./reduced_videos/resized_480x360_Video_Be
 ```console
 python realbasicvsr_postprocessing.py
 ```
-- Default cloud output: s3://leto-dish/reconstructed-videos/benchmark/downsampler
+- Default cloud output: s3://leto-dish/reconstructed-videos/benchmark/realbasicvsr/car/
 
 - Optional argument to delete locally saved pretrained model (from preprocessing).
 - Note Postprocessor will delete any locally saved video**

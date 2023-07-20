@@ -88,7 +88,7 @@ def init_model(config, checkpoint=None):
     if checkpoint is not None:
         checkpoint = load_checkpoint(model, checkpoint)
 
-    model.cfg = config  # save the config in the model for convenience
+    model.cfg = config  # Save the config in the model for convenience.
     model.eval()
 
     return model
