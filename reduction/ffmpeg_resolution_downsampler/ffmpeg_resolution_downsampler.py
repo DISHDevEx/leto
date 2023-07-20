@@ -46,20 +46,29 @@ def parse_args():
     return args
 
 def main():
-    print("hello sri")
     logging.info("running reduction module")
     
+    
     args = parse_args()
+    print("parsed args")
     
     aux = Aux()
     
     labeler = Labeler()
     
+    print("classes setup")
+    
     video_list_s3 = aux.load_s3(bucket = args.input_bucket_s3, prefix = args.input_prefix_s3)
+    
+    print("loaded video object from s3")
     
     downsampled_video = labeler.change_resolution(video_list_s3,"360p")
     
+    print("adding ffmpeg labels")
+    
     aux.execute_label_and_write_local(downsampled_video)
+    
+    print("saved video locally")
     
     aux.upload_s3(downsampled_video, bucket = args.output_bucket_s3, prefix =args.output_prefix_s3 )
     
