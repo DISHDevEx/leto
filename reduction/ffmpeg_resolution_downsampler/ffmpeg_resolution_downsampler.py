@@ -38,10 +38,14 @@ def parse_args():
     parser.add_argument("--input_prefix_s3", 
                         type=str,
 <<<<<<< HEAD
+<<<<<<< HEAD
                         default = "original-videos/benchmark/car/",
 =======
                         default = "original-videos/benchmark/",
 >>>>>>> 967408a (Adding recon and reduce modules)
+=======
+                        default = "original-videos/benchmark/car/",
+>>>>>>> fe720de (fixing path issues)
                         help= "s3 prefix of the input video")
     
     parser.add_argument("--output_bucket_s3", 
@@ -52,10 +56,14 @@ def parse_args():
     parser.add_argument("--output_prefix_s3", 
                         type = str,
 <<<<<<< HEAD
+<<<<<<< HEAD
                         default = "reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/",
 =======
                         default = "reduced-videos/benchmark/ffmpeg-resolution-downsampler/",
 >>>>>>> 967408a (Adding recon and reduce modules)
+=======
+                        default = "reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/",
+>>>>>>> fe720de (fixing path issues)
                         help="s3 prefix of the output video")
     
     args = parser.parse_args()
