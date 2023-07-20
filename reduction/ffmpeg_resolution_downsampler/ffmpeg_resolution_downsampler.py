@@ -46,6 +46,7 @@ def parse_args():
     return args
 
 def main():
+    print("hello sri")
     logging.info("running reduction module")
     
     args = parse_args()
