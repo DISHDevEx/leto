@@ -1,9 +1,7 @@
 name: publish-to-ecr
 on:
   push:
-    tags:
-    - '*'
-    - '**'
+
 
 env:
   AWS_REGION : ${{ secrets.AWS_REGION }}
