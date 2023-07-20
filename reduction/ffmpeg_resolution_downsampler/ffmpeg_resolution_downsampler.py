@@ -5,6 +5,7 @@ from aEye import Video
 from aEye import Labeler
 from aEye import Aux
 
+import os
 
 
 
@@ -50,25 +51,19 @@ def main():
     
     
     args = parse_args()
-    print("parsed args")
     
     aux = Aux()
     
     labeler = Labeler()
     
-    print("classes setup")
-    
     video_list_s3 = aux.load_s3(bucket = args.input_bucket_s3, prefix = args.input_prefix_s3)
-    
-    print("loaded video object from s3")
     
     downsampled_video = labeler.change_resolution(video_list_s3,"360p")
     
-    print("adding ffmpeg labels")
+    if not os.path.exists("./reduced_videos"):
+        os.mkdir("./reduced_videos")
     
-    aux.execute_label_and_write_local(downsampled_video)
-    
-    print("saved video locally")
+    aux.execute_label_and_write_local(downsampled_video, "./reduced_videos")
     
     aux.upload_s3(downsampled_video, bucket = args.output_bucket_s3, prefix =args.output_prefix_s3 )
     
