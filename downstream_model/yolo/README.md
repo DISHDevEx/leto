@@ -7,7 +7,7 @@
 1. Install the necessary requirements
 
 ```console
-!pip install -r requirements_yolo.txt.txt
+!pip install -r requirements_yolo.txt
 ```
 
 2. Import all utlity
