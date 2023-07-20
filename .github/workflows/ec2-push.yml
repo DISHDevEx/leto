@@ -10,28 +10,21 @@ permissions:
       id-token: write   # This is required for requesting the JWT
       contents: read    # This is required for actions/checkout
 jobs:
-  start:
+  deploy:
+    name: Deploy
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+    - name: configure aws credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+        role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
+        role-session-name: samplerolesession
+        aws-region: ${{ env.AWS_REGION }}
 
-      - name: AWS SSM Send-Command
-        uses: peterkimzz/aws-ssm-send-command@master
-        id: ssm
-        with:
-          instance-ids: ${{ secrets.INSTANCE_ID }}
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          python-version: ${{ matrix.python-version }}
-          role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
-          role-session-name: samplerolesession
-          aws-region: ${{ env.AWS_REGION }}
-          working-directory: /home/ubuntu/application
-          command: ls -al
-          comment: Hello world!
-
-      # Catch SSM outputs
-      - name: Get the outputs
-        run: echo "The Command id is ${{ steps.ssm.outputs.command-id }}"
+    - name: create wheel file from source code
+      run: |
+        aws ec2 ls
