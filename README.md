@@ -10,7 +10,18 @@
 │           ├── visualize.py
 │           ├── Dockerfile_mp
 │           ├── requirements_mp.txt
-│
+│           ├── Dockerfile_mp
+│           ├──lambda_function_mp.py
+│       ├── yolo
+│           ├── yolo.py
+│           ├── pipeline.py
+│           ├── training_parameter_input.py
+│           ├── prediction_parameter_input.py
+│           ├── pipeline.py
+│           ├── visualize.py
+│           ├── Dockerfile_yolo
+│           ├──lambda_function_yolo.py
+│           ├── requirements_yolo.txt
 │   ├── reduction
 │       ├── method_1
 │           ├── source_code.py
@@ -29,15 +40,13 @@
 
 ```
 
-### **Inital project setup**
-
-
-
-
 ### Yolo Model
 
-Please read the Yolo model readme below for more informations.
- 
+Please read the Yolo model readme for more instructions.
+
+### Mediapipe Model
+
+Please read the Mediapipe model readme for more instructions.
 
 ### **Docker Image Setup**
 
