@@ -1,7 +1,7 @@
 FROM public.ecr.aws/lambda/python:3.10
 #COPY --from=make-pthread-nameshim /pthread-nameshim/pthread_shim.so /opt/pthread_shim.so
 
-RUN ls
+RUN dir -s
 WORKDIR "leto/downstream_model"
 
 COPY downstream_model/mediapipe/requirements_mp.txt ${LAMBDA_TASK_ROOT}
