@@ -12,6 +12,10 @@
 │           ├── requirements_mp.txt
 │
 │   ├── reduction
+│       ├── ffmpeg_resolution_downsampler
+│           ├── requirements_ffmpeg_resolution_downsampler.txt
+│           ├── ffmpeg_resolution_downsampler.py
+│  
 │       ├── fps_bitrate
 │           ├── fps_bitrate.py
 │           ├── app_fps_bitrate.py
