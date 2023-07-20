@@ -36,7 +36,7 @@ jobs:
       run: |
         # Build a docker container and push it to ECR
         echo "building version v0.0.42 ..."
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:v0.0.42 /Users/James.Fagan/Desktop/git/leto/downstream_model/mediapipe/Dockerfile_mp
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:v0.0.42 -f downstream_model/mediapipe/Dockerfile_mp
         echo "pushing image to ECR ..."
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:v0.0.42
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:v0.0.42"
