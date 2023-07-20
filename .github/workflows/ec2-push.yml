@@ -27,4 +27,4 @@ jobs:
 
     - name: create wheel file from source code
       run: |
-        aws ec2 ls
+        aws ec2 describe-instances
