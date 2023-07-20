@@ -98,7 +98,7 @@ def main():
     if not os.path.exists("./reduced_videos"):
         os.mkdir("./reduced_videos")
     
-    aux.execute_label_and_write_local(downsampled_video, "./reduced_videos/")
+    aux.execute_label_and_write_local(downsampled_video, "./reduced_videos")
     
     aux.upload_s3(downsampled_video, bucket = args.output_bucket_s3, prefix =args.output_prefix_s3 )
     
