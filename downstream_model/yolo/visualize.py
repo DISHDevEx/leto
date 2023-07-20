@@ -55,8 +55,8 @@ def visualize_yolo(image,detection_result) -> np.ndarray:
         category_name = detection_result[0].names[detection_result[0].boxes.cls[i].item()]
         probability = round(detection_result[0].boxes.conf[i].item(), 2)
         result_text = category_name + ' (' + str(probability) + ')'
-        text_location = (MARGIN + int(x.item()*shape[0]),
-                        MARGIN + ROW_SIZE + int(y.item()*shape[1]))
+        text_location = (MARGIN + start_point[0] ,
+                        MARGIN + ROW_SIZE + start_point[1])
         cv2.putText(image, result_text, text_location, cv2.FONT_HERSHEY_PLAIN,
                     FONT_SIZE, TEXT_COLOR, FONT_THICKNESS)
         bounding_box_data.append([start_point[0], start_point[1], end_point[0], end_point[1], probability, category_name ])
