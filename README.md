@@ -31,6 +31,14 @@
 
 ### **Inital project setup**
 
+
+
+
+### Yolo Model
+
+Please read the Yolo model readme below for more informations.
+ 
+
 ### **Docker Image Setup**
 
 The docker image is built automatically via github workflow action on every tag push.
