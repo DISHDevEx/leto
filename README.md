@@ -3,7 +3,7 @@
 ### **Project Structure**
 
 ```
-├──  leto				contains video class and processor class that manage from loading, processing and uploading
+├──  leto				contains all modules that facilites all functionality to achieve leto's goal
 │   ├── downstream_model
 │       ├── mediapipe
 │           ├── object_detection.py
