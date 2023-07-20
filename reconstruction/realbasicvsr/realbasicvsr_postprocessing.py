@@ -29,13 +29,13 @@ def parse_args():
     
     parser.add_argument("--ouput_prefix_s3", 
                         type=str,
-                        default = "reconstructed-videos/benchmark/ffmpeg-resolution-downsampler/",
+                        default = "reconstructed-videos/benchmark/realbasicvsr/car/",
                         help= "s3 prefix of the input video")
     
     
     parser.add_argument("--clean_model", 
                         type=str,
-                        default = "False",
+                        default = "True",
                         help= "s3 prefix of the input video")
     
     args = parser.parse_args()
@@ -63,7 +63,7 @@ def main():
     
     
     #After cleaning videos, delete the pretrained model as well.
-    if(args.clean_model == "True"):
+    if(args.clean_model.lower() == "true"):
         os.remove("./RealBasicVSR_x4.pth")
     
 
