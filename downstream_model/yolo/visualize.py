@@ -15,15 +15,29 @@ def visualize_yolo(image,detection_result) -> np.ndarray:
     """Draws bounding boxes on the input image and return it.
     Parameters
     ----------
-      image: cv2 image 
-          The input RGB image.
-      detection_result: 
-          The list of all bounding boxes entities to be visualize from yolo.
+        Image: cv2 image 
+            The input RGB image.
+        detection_result: List 
+            The list of all bounding boxes entities to be visualize from yolo.
 
     Returns
     ---------
-      image: cv2 image
-          Image with bounding boxes.
+        image: cv2 image
+            The orginal cv2 Image with bounding boxes draw in along with the corresponding probability and name.
+
+        
+        bounding_box_data: List
+            This is a list of all the bounding box in a single frame.
+            This could have any amount of bounding box.
+            The format is below.
+            bounding_box_data = [  b1, b2, etc      ]
+            
+            Each b_ value represent a list of all the neccessariy elements to make a bounding box.
+            Its format is below.
+            b1 = [ start_point_x, start_point_y, end_point_x, end_point_y, probability, category_name ]
+
+
+    
     """
 
     shape = detection_result[0].orig_shape

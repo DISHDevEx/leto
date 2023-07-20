@@ -112,12 +112,17 @@ class Yolo:
         This method will predict the model based on the parameter and the given data.
         
         The data can be inputted with many format; it can be a video, an image and even a list of images.
-        It can also take in an entire directory path
+        It can also take in an entire directory path.
+        
         Please refer to https://docs.ultralytics.com/modes/predict/#inference-sources 
         for the full list of valid sources, videos, and images format.
 
         Please also refer to prediction_parameter_input.py for the entire list of all possible **parameter can take in
         and how to use this method properly!
+
+
+        Natively, if a video and 'save=True' is passed in as a parameter, then yolo will save the video as avi.
+        Therefore, the pipeline.py will only pass in each frame in this method, so we can customize and save the result for our own use cases.
 
         Parameters
         ----------
@@ -130,7 +135,8 @@ class Yolo:
 
         Returns
         ----------
-            A list of Result object
+            result: list
+                A list of Detection objects
         """
 
         result = self.model.predict(data, **parameter)
