@@ -27,7 +27,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
           role-session-name: samplerolesession
-        aws-region: ${{ env.AWS_REGION }}
+          aws-region: ${{ env.AWS_REGION }}
           working-directory: /home/ubuntu/application
           command: ls -al
           comment: Hello world!
