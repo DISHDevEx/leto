@@ -27,5 +27,7 @@ jobs:
 
     - name: create wheel file from source code
       run: |
-        aws ssm start-session --target i-01a666faf143b4c76
+        aws ssm start-session --target ${{ secrets.INSTANCE_ID }}
+        git clone https://github.com/DISHDevEx/leto.git
+        cd leto
         ls
