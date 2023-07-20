@@ -1,0 +1,37 @@
+name: AWS SSM Send-Command Example
+
+on:
+  push:
+    branches: [master]
+env:
+  AWS_REGION : ${{ secrets.AWS_REGION }}
+# permission can be added at job level or workflow level
+permissions:
+      id-token: write   # This is required for requesting the JWT
+      contents: read    # This is required for actions/checkout
+jobs:
+  start:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: AWS SSM Send-Command
+        uses: peterkimzz/aws-ssm-send-command@master
+        id: ssm
+        with:
+          instance-ids: ${{ secrets.INSTANCE_ID }}
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+          role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
+          role-session-name: samplerolesession
+        aws-region: ${{ env.AWS_REGION }}
+          working-directory: /home/ubuntu/application
+          command: ls -al
+          comment: Hello world!
+
+      # Catch SSM outputs
+      - name: Get the outputs
+        run: echo "The Command id is ${{ steps.ssm.outputs.command-id }}"
