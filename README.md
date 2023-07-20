@@ -12,10 +12,11 @@
 │           ├── requirements_mp.txt
 │
 │   ├── reduction
-│       ├── method_1
-│           ├── source_code.py
-│           ├── requirement_method_1.txt
-│           ├── Dockerfile_method_1
+│       ├── fps_bitrate
+│           ├── fps_bitrate.py
+│           ├── app_fps_bitrate.py
+│           ├── requirements.txt
+│           ├── README.md
 │   ├── reconstruction
 │
 ├──  runner_notebooks
