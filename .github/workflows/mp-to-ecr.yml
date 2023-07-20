@@ -28,9 +28,6 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: determine tag
-      run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-
     - name: build, tag, and push the image to Amazon ECR
       id: build-image
       env:
@@ -38,8 +35,8 @@ jobs:
         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
       run: |
         # Build a docker container and push it to ECR
-        echo "building version $RELEASE_VERSION ..."
-        docker build -t $ECR_REGISTRY/$RELEASE_VERSION .
+        echo "building version v0.0.42 ..."
+        docker build downstream_model/mediapipe/Dockerfile_mp -t $ECR_REGISTRY/$ECR_REPOSITORY:v0.0.42 .
         echo "pushing image to ECR ..."
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$RELEASE_VERSION
-        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$RELEASE_VERSION"
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:v0.0.42
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:v0.0.42"
