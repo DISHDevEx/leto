@@ -20,7 +20,7 @@ RUN pip3 install mediapipe_model-0.0.1-py3-none-any.whl --target "${LAMBDA_TASK_
 
 
 # Install the specified packages
-RUN pip install -r requirements_mp.txt #{LAMBDA_TASK_ROOT}
+RUN pip install -r requirements_mp.txt ${LAMBDA_TASK_ROOT}
 RUN yum install -y mesa-libGLw
 
 ADD https://storage.googleapis.com/mediapipe-models/object_detector/efficientdet_lite0/int8/latest/efficientdet_lite0.tflite /var/task/efficientdet_lite0.tflite
