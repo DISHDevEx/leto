@@ -7,7 +7,7 @@
 import os
 import sys
 
-from .object_detection import object_detection2
+from object_detection import object_detection2
 import sys
 import boto3
 import os
