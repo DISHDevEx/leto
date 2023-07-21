@@ -64,9 +64,8 @@ setup(
     author_email='devex@dish.com',
     license='Dish Wireless',
     packages=find_packages(
-        include=['mediapipe_model.downstream_model',
-                 'mediapipe_model.visulize',
-                 'mediapipe_model'
+        include=['downstream_model',
+                 'visulize'
         ]
     ),
     include_package_data=True,
