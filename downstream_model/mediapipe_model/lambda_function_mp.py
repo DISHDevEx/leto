@@ -1,14 +1,13 @@
-try:
-    from mediapipe_model import object_detection
-    print('1')
-except:
-    pass
+# try:
+#     from mediapipe_model import object_detection
+#     print('1')
+# except:
+#     pass
 
-try:
-    from object_detection import object_detection
-    print('2')
-except:
-    pass
+
+from object_detection import object_detection
+print('2')
+
 
 import sys
 import boto3
