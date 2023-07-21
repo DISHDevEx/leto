@@ -36,7 +36,7 @@ jobs:
       run: |
         # Build a docker container and push it to ECR
         echo "building version v0.0.13-mp ..."
-        cd downstream_mdoel
+        cd downstream_model
         cd mediapipe
         docker build -t $ECR_REGISTRY/v0.0.13-mp .
         echo "pushing image to ECR ..."
