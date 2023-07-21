@@ -1,6 +1,5 @@
 FROM public.ecr.aws/lambda/python:3.10
 #COPY --from=make-pthread-nameshim /pthread-nameshim/pthread_shim.so /opt/pthread_shim.so
-RUN pwd
 COPY requirements_mp.txt ${LAMBDA_TASK_ROOT}
 
 
@@ -8,10 +7,12 @@ COPY requirements_mp.txt ${LAMBDA_TASK_ROOT}
 COPY lambda_function_mp.py ${LAMBDA_TASK_ROOT}
 
 # Copy wheel file
-# COPY setup.py ${LAMBDA_TASK_ROOT}
-#
-# COPY dist/mediapipe-0.0.1-py3-none-any.whl .
-# RUN pip3 install mediapipe-0.0.1-py3-none-any.whl --target "${LAMBDA_TASK_ROOT}"
+COPY setup.py ${LAMBDA_TASK_ROOT}
+
+COPY dist/mediapipe-0.0.1-py3-none-any.whl .
+RUN pip3 install mediapipe-0.0.1-py3-none-any.whl --target "${LAMBDA_TASK_ROOT}"
+
+WORKDIR /app
 
 # Install the specified packages
 RUN pip install -r requirements_mp.txt
