@@ -30,7 +30,7 @@ jobs:
       run: |
         ls
         cd downstream_model
-        cd mediapipe
+        cd mediapipe_model
         pip install wheel
         python setup.py bdist_wheel --version v0.0.1
     - name: build, tag, and push the image to Amazon ECR
@@ -43,7 +43,7 @@ jobs:
         echo "building version v0.0.13 ..."
         ls
         cd downstream_model
-        cd mediapipe
+        cd mediapipe_model
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:v0.0.13 .
         echo "pushing image to ECR ..."
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:v0.0.13
