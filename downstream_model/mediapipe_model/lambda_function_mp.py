@@ -4,8 +4,7 @@
 # except:
 #     pass
 
-
-from object_detection import object_detection
+import object_detection
 print('2')
 
 
