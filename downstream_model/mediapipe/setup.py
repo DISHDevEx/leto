@@ -64,7 +64,7 @@ setup(
     author_email='devex@dish.com',
     license='Dish Wireless',
     packages=find_packages(
-        include=[
+        include=['mediapipe',
                  'mediapipe.object_detection',
                  'mediapipe.visulize'
         ]
