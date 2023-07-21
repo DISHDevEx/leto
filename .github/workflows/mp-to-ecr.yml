@@ -26,6 +26,9 @@ jobs:
     - name: login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
+      
+    - name: determine tag
+      run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
 
     - name: build, tag, and push the image to Amazon ECR
