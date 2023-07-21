@@ -7,7 +7,7 @@
 import os
 import sys
 
-import object_detection.object_detection2
+from mediapipe_model import object_detection import *
 import sys
 import boto3
 import os
