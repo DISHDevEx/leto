@@ -41,7 +41,7 @@ def parse_args():
     parser.add_argument(
         "--checkpoint",
         type=str,
-        default="./RealBasicVSR_x4.pth",
+        default="./realbasicvsr_x4.pth",
         help="checkpoint file",
     )
     parser.add_argument(
