@@ -1,7 +1,11 @@
 FROM public.ecr.aws/lambda/python:3.10
 
-WORKDIR /
-COPY . .
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy your Lambda function code and requirements file
+COPY lambda_function_mp.py /app/
+COPY requirements_mp.txt /app/
 #COPY --from=make-pthread-nameshim /pthread-nameshim/pthread_shim.so /opt/pthread_shim.so
 COPY requirements_mp.txt ${LAMBDA_TASK_ROOT}
 
