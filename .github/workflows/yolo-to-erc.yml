@@ -37,7 +37,7 @@ jobs:
         # Build a docker container and push it to ECR
         echo "building version v0.0.13-mp ..."
         cd downstream_mdoel
-        cd mediapipe
+        cd yolo
         docker build -t $ECR_REGISTRY/v0.0.13-mp .
         echo "pushing image to ECR ..."
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:v0.0.13-mp
