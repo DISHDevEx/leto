@@ -10,6 +10,10 @@ COPY lambda_function_yolo.py ${LAMBDA_TASK_ROOT}
 RUN pip install -r requirements_yolo.txt
 RUN yum install -y mesa-libGLw
 
+# Setup Wheel
+COPY dist/yolo-0.0.1-py3-none-any.whl .
+RUN pip3 install yolo-0.0.1-py3-none-any.whl --target "${LAMBDA_TASK_ROOT}"
+
 ADD https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8s.pt /var/task/yolov8s.pt
 
 RUN chmod a+rx /var/task/*.pt

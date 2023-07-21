@@ -5,7 +5,13 @@ COPY requirements_mp.txt ${LAMBDA_TASK_ROOT}
 
 # Copy function code
 COPY lambda_function_mp.py ${LAMBDA_TASK_ROOT}
- 
+
+# Copy wheel file
+COPY setup.py ${LAMBDA_TASK_ROOT}
+
+COPY dist/mediapipe-0.0.1-py3-none-any.whl .
+RUN pip3 install mediapipe-0.0.1-py3-none-any.whl --target "${LAMBDA_TASK_ROOT}"
+
 # Install the specified packages
 RUN pip install -r requirements_mp.txt
 RUN yum install -y mesa-libGLw
