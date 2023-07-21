@@ -38,10 +38,10 @@ jobs:
         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
       run: |
         # Build a docker container and push it to ECR
-        echo "building version v0.0.13-mp ..."
+        echo "building version v0.0.13 ..."
         cd downstream_model
         cd mediapipe
-        docker build -t $ECR_REGISTRY/v0.0.13-mp .
+        docker build -t $ECR_REGISTRY/v0.0.13 .
         echo "pushing image to ECR ..."
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:v0.0.13-mp
-        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:v0.0.13-mp"
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:v0.0.13
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:v0.0.13"
