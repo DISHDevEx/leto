@@ -64,12 +64,12 @@ setup(
     author_email='devex@dish.com',
     license='Dish Wireless',
     packages=find_packages(
-        include=['yolo',
-                 'yolo.object_detection',
-                 'yolo.pipeline.py',
-                 'yolo.prediction_parameter_input.py',
-                 'yolo.training_parameter_input.py',
-                 'yolo.visualize'
+        include=[
+                 'object_detection',
+                 'pipeline.py',
+                 'prediction_parameter_input.py',
+                 'training_parameter_input.py',
+                 'visualize'
         ]
     ),
     include_package_data=True,

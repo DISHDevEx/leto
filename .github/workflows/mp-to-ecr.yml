@@ -26,12 +26,13 @@ jobs:
     - name: login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
-#    - name: create wheel file from source code
-#      run: |
-#        cd downstream_model
-#        cd mediapipe
-#        pip install wheel
-#        python setup.py bdist_wheel --version v0.0.1
+    - name: create wheel file from source code
+      run: |
+        ls
+        cd downstream_model
+        cd mediapipe
+        pip install wheel
+        python setup.py bdist_wheel --version v0.0.1
     - name: build, tag, and push the image to Amazon ECR
       id: build-image
       env:
@@ -40,6 +41,7 @@ jobs:
       run: |
         # Build a docker container and push it to ECR
         echo "building version v0.0.13 ..."
+        ls
         cd downstream_model
         cd mediapipe
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:v0.0.13 .

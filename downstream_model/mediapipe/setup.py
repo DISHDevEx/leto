@@ -65,7 +65,7 @@ setup(
     license='Dish Wireless',
     packages=find_packages(
         include=['downstream_model',
-                 'mediapipe'
+                 'visulize.py'
         ]
     ),
     include_package_data=True,
