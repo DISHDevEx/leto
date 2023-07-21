@@ -4,7 +4,7 @@ COPY requirements_mp.txt ${LAMBDA_TASK_ROOT}
 
 
 # Copy function code
-COPY lambda_function_mp.py ${LAMBDA_TASK_ROOT}
+COPY mp_model/lambda_function_mp.py ${LAMBDA_TASK_ROOT}
 
 # Copy wheel file
 COPY setup.py ${LAMBDA_TASK_ROOT}
