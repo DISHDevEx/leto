@@ -1,7 +1,7 @@
 import mediapipe as mp
 import cv2
 import numpy as np
-from leto.downstream_model.mediapipe_model.mp_model.visulize import visualize
+from leto.downstream_model.mediapipe_model.visulize import visualize
 import json
 
 def object_detection2(model_path, input_video, output_video):
