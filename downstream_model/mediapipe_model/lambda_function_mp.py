@@ -3,11 +3,8 @@
 #     print('1')
 # except:
 #     pass
-
-from .object_detection import object_detection
-print('2')
-
-
+from object_detection import *
+#from object_detection import object_detection
 import sys
 import boto3
 import os
