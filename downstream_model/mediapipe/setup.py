@@ -65,9 +65,7 @@ setup(
     license='Dish Wireless',
     packages=find_packages(
         include=['downstream_model',
-                 'mediapipe',
-                 'mediapipe.object_detection',
-                 'mediapipe.visulize'
+                 'mediapipe'
         ]
     ),
     include_package_data=True,
@@ -76,7 +74,8 @@ setup(
         'pandas',
         'boto3',
         'opencv-python',
-        'static-ffmpeg'
+        'static-ffmpeg',
+        'aEye'
         ],
     long_description=long_description,
     long_description_content_type='text/markdown'
