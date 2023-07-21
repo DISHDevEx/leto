@@ -21,4 +21,5 @@ ADD https://storage.googleapis.com/mediapipe-models/object_detector/efficientdet
 RUN chmod a+rx /var/task/*.tflite
 
 # Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
+RUN pwd
 CMD [ "lambda_function_mp.handler" ]
