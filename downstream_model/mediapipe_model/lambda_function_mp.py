@@ -1,5 +1,15 @@
-from mediapipe_model import object_detection
-from object_detection import object_detection
+try:
+    from mediapipe_model import object_detection
+    print('1')
+except:
+    pass
+
+try:
+    from object_detection import object_detection
+    print('2')
+except:
+    pass
+
 import sys
 import boto3
 import os
