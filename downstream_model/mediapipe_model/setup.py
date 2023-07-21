@@ -57,15 +57,16 @@ version_var = str(get_version())
 
 
 setup(
-    name='mediapipe',
+    name='mediapipe_model',
     version=version_var,
     description='Mediapipe ML Model',
     url='https://github.com/DISHDevEx/leto',
     author_email='devex@dish.com',
     license='Dish Wireless',
     packages=find_packages(
-        include=['downstream_model',
-                 'visulize.py'
+        include=['mediapipe_model.downstream_model',
+                 'mediapipe_model.visulize',
+                 'mediapipe_model'
         ]
     ),
     include_package_data=True,
