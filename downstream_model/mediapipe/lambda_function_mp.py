@@ -1,4 +1,4 @@
-from mediapipe import object_detection
+import object_detection
 import sys
 import boto3
 import os
