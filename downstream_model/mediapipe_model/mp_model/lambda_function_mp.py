@@ -7,7 +7,7 @@
 import os
 import sys
 
-from object_detection import object_detection
+from leto.downstream_model.mediapipe_model.mp_model.object_detection import object_detection2
 import sys
 import boto3
 import os
@@ -39,7 +39,7 @@ def handler(event, context):
 
         mp_output_video = os.path.join("/tmp", os.path.basename('mp_' + video.get_title()))
 
-        object_detection(mp_model, video.get_file(), mp_output_video)
+        object_detection2(mp_model, video.get_file(), mp_output_video)
 
         s3_client.upload_file(mp_output_video, "leto-dish", f"object_detection/mp_{video.get_title()}")
 
