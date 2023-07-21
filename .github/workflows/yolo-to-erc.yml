@@ -34,12 +34,12 @@ jobs:
         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
       run: |
         # Build a docker container and push it to ECR
-        echo "building version v0.0.13 ..."
+        echo "building version v0.0.11 ..."
         cd downstream_model
-        cd mediapipe
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:v0.0.13 .
+        cd yolo
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:v0.0.11 .
         echo "pushing image to ECR ..."
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:v0.0.13
-        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:v0.0.13"
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:v0.0.11
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:v0.0.11"
 #    - name: create wheel file from source code
 #      run: python setup.py bdist_wheel
