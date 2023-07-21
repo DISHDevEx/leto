@@ -6,6 +6,7 @@ FROM public.ecr.aws/lambda/python:3.10
 #COPY --from=make-pthread-nameshim /pthread-nameshim/pthread_shim.so /opt/pthread_shim.so
 COPY requirements_mp.txt ${LAMBDA_TASK_ROOT}
 
+COPY object_detection.py ${LAMBDA_TASK_ROOT}
 
 # Copy function code
 COPY lambda_function_mp.py ${LAMBDA_TASK_ROOT}
