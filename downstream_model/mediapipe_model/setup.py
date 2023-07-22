@@ -76,7 +76,8 @@ setup(
         'boto3',
         'opencv-python',
         'static-ffmpeg',
-        'aEye'
+        'aEye',
+        'mediapipe'
         ],
     long_description=long_description,
     long_description_content_type='text/markdown'
