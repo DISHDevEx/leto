@@ -26,12 +26,7 @@ jobs:
     - name: login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
-    - name: create wheel file from source code
-      run: |
-        cd downstream_model
-        cd yolo
-        pip install wheel
-        python setup.py bdist_wheel --version v0.0.1
+
     - name: build, tag, and push the image to Amazon ECR
       id: build-image
       env:

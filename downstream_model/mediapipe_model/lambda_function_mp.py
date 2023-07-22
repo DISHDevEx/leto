@@ -6,7 +6,7 @@
 
 import os
 import sys
-
+print(os.system('ls'))
 from object_detection import object_detection2
 import sys
 import boto3

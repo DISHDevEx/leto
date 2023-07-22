@@ -6,17 +6,16 @@ FROM public.ecr.aws/lambda/python:3.10
 #COPY --from=make-pthread-nameshim /pthread-nameshim/pthread_shim.so /opt/pthread_shim.so
 COPY requirements_mp.txt ${LAMBDA_TASK_ROOT}
 
-COPY object_detection.py ${LAMBDA_TASK_ROOT}
+
 
 # Copy function code
 COPY lambda_function_mp.py ${LAMBDA_TASK_ROOT}
 
 # Copy wheel file
-COPY setup.py ${LAMBDA_TASK_ROOT}
 
-COPY dist/mediapipe_model-0.0.1-py3-none-any.whl ${LAMBDA_TASK_ROOT}
-RUN pip3 install mediapipe_model-0.0.1-py3-none-any.whl --target "${LAMBDA_TASK_ROOT}"
 
+COPY object_detection.py ${LAMBDA_TASK_ROOT}
+COPY visualize.py ${LAMBDA_TASK_ROOT}
 
 
 # Install the specified packages
