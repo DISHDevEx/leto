@@ -64,7 +64,9 @@ setup(
     author_email='devex@dish.com',
     license='Dish Wireless',
     packages=find_packages(
-        include=['mp_model'
+        include=['visualize',
+                 'object_detection2'
+                 
         ]
     ),
     include_package_data=True,
