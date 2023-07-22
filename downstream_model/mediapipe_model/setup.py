@@ -64,8 +64,8 @@ setup(
     author_email='devex@dish.com',
     license='Dish Wireless',
     packages=find_packages(
-        include=['visualize',
-                 'object_detection2'
+        include=['visulize',
+                 'object_detection'
                  
         ]
     ),
