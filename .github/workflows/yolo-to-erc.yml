@@ -1,5 +1,5 @@
 name: publish-to-ecr
-on: []
+on: [push]
 env:
   BUCKET_NAME : ${{ secrets.EKS_BUCKET_NAME }}
   AWS_REGION : ${{ secrets.AWS_REGION }}
@@ -34,6 +34,12 @@ jobs:
         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
       run: |
         # Build a docker container and push it to ECR
-        echo "building version v0.0.11 ..."
+        echo "building version v0.0.14 ..."
+        cd downstream_model
+        cd yolo
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:v0.0.14 .
+        echo "pushing image to ECR ..."
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:v0.0.14
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:v0.0.14"
 #    - name: create wheel file from source code
 #      run: python setup.py bdist_wheel

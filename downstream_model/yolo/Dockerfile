@@ -10,8 +10,9 @@ COPY lambda_function_yolo.py ${LAMBDA_TASK_ROOT}
 RUN pip install -r requirements_yolo.txt
 RUN yum install -y mesa-libGLw
 
-# Setup Wheel
-
+COPY pipeline.py "${LAMBDA_TASK_ROOT}"
+COPY visualize.py "${LAMBDA_TASK_ROOT}"
+COPY yolo.py "${LAMBDA_TASK_ROOT}"
 
 ADD https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8s.pt /var/task/yolov8s.pt
 
