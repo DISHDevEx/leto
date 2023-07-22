@@ -15,7 +15,7 @@ COPY lambda_function_mp.py ${LAMBDA_TASK_ROOT}
 
 
 COPY object_detection.py ${LAMBDA_TASK_ROOT}
-COPY visualize.py ${LAMBDA_TASK_ROOT}
+COPY visulize.py ${LAMBDA_TASK_ROOT}
 
 
 # Install the specified packages
