@@ -40,7 +40,7 @@ def parse_args():
 
     parser.add_argument("--output_prefix_s3",
                         type = str,
-                        default = "reconstructed-videos/benchmark/super_res/car/benchmark_superres_fsrcnn.mp4",
+                        default = "reconstructed-videos/benchmark/superres/car/benchmark_superres_fsrcnn.mp4",
                         help ="s3 prefix of the output video")
 
     parser.add_argument("--codec",
