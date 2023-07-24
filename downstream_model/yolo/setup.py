@@ -65,11 +65,11 @@ setup(
     license='Dish Wireless',
     packages=find_packages(
         include=[
-                 'object_detection',
-                 'pipeline.py',
-                 'prediction_parameter_input.py',
-                 'training_parameter_input.py',
-                 'visualize'
+                 'pipeline',
+                 'prediction_parameter_input',
+                 'training_parameter_input',
+                 'visualize',
+                 'yolo'
         ]
     ),
     include_package_data=True,
