@@ -41,7 +41,13 @@
 │           ├── realbasicvsr_preprocessing.py
 │           ├── reconstruction_realbasicvsr.py
 │           ├── realbasicvsr_postprocessing.py
-|
+│       ├── opencv_resoltion_upscaler
+│           ├── requirements_opencv_resoltion_upscaler.txt
+│           ├── opencv_resoltion_upscaler.py
+│       ├── superres
+│           ├── requirements_superres.txt
+│           ├── reconstruction_superres.py
+│
 ├──  tests				contains unit tests
 │   ├── test_get_meta_data.py
 │   ├── conftest.py
@@ -135,3 +141,52 @@ Please read the Yolo model readme for more instructions.
 ### Mediapipe Model
 
 Please read the Mediapipe model readme for more instructions.
+- OpenCV Resolution Upscaler
+
+### Running opencv resolution upscaler
+
+1. Move to working directory
+```console
+cd reconstruction/opencv_resolution_upscaler
+```
+
+2. Pip install requirements
+```console
+pip install -r requirements_opencv_resolution_upscaler.txt
+```
+
+3. Run the python file
+```console
+python opencv_resolution_upscaler.py
+```
+
+* debugging note: if you get a ImportError: libGL.so.1, run the following
+```console
+  apt-get update && apt-get install libgl1
+```
+
+Default cloud input: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/resized_480x360_video_benchmark_car.mp4
+
+Default cloud output: s3://leto-dish/reconstructed-videos/benchmark/opencv/car/video_benchmark_car_upscaled.mp4
+
+- SuperResolution
+
+### Running SuperResolution
+
+1. Move to working directory
+```console
+cd reconstruction/superres
+```
+
+2. Run requirements_superres_setup.sh to install dependencies
+```console
+pip install -r requirements_superres_setup.sh
+```
+
+3. Run the python file
+```console
+python reconstruction_superres.py
+```
+- Default cloud input: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/resized_480x360_video_benchmark_car.mp4
+- Default cloud outout: s3://leto-dish/reconstructed-videos/benchmark/super_res/car/benchmark_superres_fsrcnn.mp4
+- This file will delete locally saved video file and pre-trained model
