@@ -11,8 +11,8 @@ import os
 
 def parse_args():
     """
-    Parses the arguments needed for RealBasicVSR reconstruction module.
-    Catalogues: config, checkpoint, input dir, output dir, maximum sequence length, and fps
+    Parses the arguments needed for ffmpeg based reduction module.
+    Catalogues: input s3 bucket, input s3 prefix, output s3 bucket and output s3 prefix.
 
 
     Returns
