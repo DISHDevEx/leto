@@ -50,12 +50,12 @@ Please refer to lambda_function.py for the logic of the lambda function.
 
 1. run pip install  --    pip install -r requirements.txt
 2. Run the following command to import Evaluator class and Get PSNR and SSIM
-    a. from utils import Evaluator
-    b. video_eval = Evaluator() - Run this command
-    c. input_file = 'path/to/input/file'
-    d. output_file = 'path/to/output/file' ( Add your orginal and recontructed file)
-    e. psnr = video_eval.calculate_psnr(input_file, output_file)
-    f. print(f"Video PSNR: {psnr} dB")
-    g. ssim = video_eval.calculate_video_ssim(input_file, output_file)
-    h. print(f"SSIM: {ssim}")
+   1.  from utils import Evaluator
+   2.  video_eval = Evaluator()
+   3. input_file = 'path/to/input/file'
+   4. output_file = 'path/to/output/file' ( Add your orginal and recontructed file)
+   5. psnr = video_eval.calculate_psnr(input_file, output_file)
+   6. print(f"Video PSNR: {psnr} dB")
+   7. ssim = video_eval.calculate_video_ssim(input_file, output_file)
+   8. print(f"SSIM: {ssim}")
 
