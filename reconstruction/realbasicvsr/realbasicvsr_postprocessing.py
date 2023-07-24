@@ -65,10 +65,14 @@ def main():
     #After cleaning videos, delete the pretrained model as well.
     if(args.clean_model.lower() == "true"):
 <<<<<<< HEAD
+<<<<<<< HEAD
         os.remove("./realbasicvsr_x4.pth")
 =======
         os.remove("./RealBasicVSR_x4.pth")
 >>>>>>> ba24465 (renaming, changing paths, updating readme)
+=======
+        os.remove("./realbasicvsr_x4.pth")
+>>>>>>> 9c9abaa (corrected deletion of .pth file)
     
 
 if __name__ == "__main__":
