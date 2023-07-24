@@ -180,7 +180,7 @@ cd reconstruction/superres
 
 2. Run requirements_superres_setup.sh to install dependencies
 ```console
-pip install -r requirements_superres_setup.sh
+bash requirements_superres_setup.sh
 ```
 
 3. Run the python file
