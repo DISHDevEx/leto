@@ -1,5 +1,5 @@
 #!/bin/sh
-activate base
+pip install --upgrade pip
 pip install torch torchvision torchaudio 
 pip install openmim
 mim install mmcv-full
