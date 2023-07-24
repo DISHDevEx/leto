@@ -67,5 +67,5 @@ def main():
     aux.clean()
     
 
-if __name__ == "__main__":exit()
+if __name__ == "__main__":
     main()
