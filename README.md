@@ -70,13 +70,14 @@ Default output: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsa
 
 1. Move to working directory
 ```console
-cd leto/reconstruction/RealBasicVSR
+cd ~/leto/reconstruction/realbasicvsr
 ```
 
 2. Run reconstruction_setup.sh to setup environment
 ```console
-bash reconstruction_setup.sh
+bash reconstruction_realbasicvsr_setup.sh
 ```
+- Ensure base is activated for packages to install in path {sagemaker}.
 
 3. Run preprocessing function
 ```console
