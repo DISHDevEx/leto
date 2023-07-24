@@ -19,12 +19,17 @@ import os
 def parse_args():
     """
 <<<<<<< HEAD
+<<<<<<< HEAD
     Parses the arguments needed for ffmpeg based reduction module.
     Catalogues: input s3 bucket, input s3 prefix, output s3 bucket and output s3 prefix.
 =======
     Parses the arguments needed for RealBasicVSR reconstruction module.
     Catalogues: config, checkpoint, input dir, output dir, maximum sequence length, and fps
 >>>>>>> 967408a (Adding recon and reduce modules)
+=======
+    Parses the arguments needed for ffmpeg based reduction module.
+    Catalogues: input s3 bucket, input s3 prefix, output s3 bucket and output s3 prefix.
+>>>>>>> 4f4fb8c (pushing final changes)
 
 
     Returns
