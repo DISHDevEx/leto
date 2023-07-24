@@ -2,7 +2,7 @@ import boto3
 import os
 from yolo import Yolo
 from aEye import Video
-import pipeline
+from .pipeline import pipeline
 import urllib.parse
 
 # input_video_path = os.environ.get('input_video_path')
