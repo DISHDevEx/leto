@@ -4,7 +4,7 @@ import numpy as np
 from visulize import visualize
 import json
 
-def object_detection2(model_path, input_video, output_video):
+def object_detection(model_path, input_video, output_video):
     """
     Given a specific model and video, it will initiate the model and will
     scan through the video frame by frame adding the bounding boxes to the output video.

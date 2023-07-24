@@ -64,7 +64,9 @@ setup(
     author_email='devex@dish.com',
     license='Dish Wireless',
     packages=find_packages(
-        include=['mp_model'
+        include=['visulize',
+                 'object_detection'
+                 
         ]
     ),
     include_package_data=True,
@@ -74,7 +76,8 @@ setup(
         'boto3',
         'opencv-python',
         'static-ffmpeg',
-        'aEye'
+        'aEye',
+        'mediapipe'
         ],
     long_description=long_description,
     long_description_content_type='text/markdown'
