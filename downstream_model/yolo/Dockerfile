@@ -18,10 +18,10 @@ ADD https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8s.pt /v
 
 RUN chmod a+rx /var/task/*.pt
 RUN ls
-COPY visualize.py
-COPY pipeline.py
-COPY prediction_parameter_input.py
-COPY training_parameter_input.py
-COPY yolo.py
+COPY visualize.py "${LAMBDA_TASK_ROOT}"
+COPY pipeline.py "${LAMBDA_TASK_ROOT}"
+COPY prediction_parameter_input.py "${LAMBDA_TASK_ROOT}"
+COPY training_parameter_input.py "${LAMBDA_TASK_ROOT}"
+COPY yolo.py "${LAMBDA_TASK_ROOT}"
 # Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
 CMD [ "lambda_function_yolo.handler" ]
