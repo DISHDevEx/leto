@@ -13,70 +13,70 @@ def parse_args():
     Parses the arguments needed for Super Resolution reconstruction module.
     Catalogues: input s3 bucket, input s3 prefix, output s3 bucket, output s3 prefix,
             codec, resolution, model bucket, model prefix and algorithm.
-    
+
     Returns
     -------
         args: argparse.Namespace object
-            Returns an object with the relevent input s3 bucket, input s3 prefix, output s3 bucket, 
+            Returns an object with the relevent input s3 bucket, input s3 prefix, output s3 bucket,
             output s3 prefix, codec, resolution, model bucket, model prefix and algorithm.
     """
 
     parser = argparse.ArgumentParser(description="Inference script of opencv video upscaler")
-    
-    parser.add_argument('--input_bucket_s3', 
+
+    parser.add_argument('--input_bucket_s3',
                         type =str,
-                        help ='s3 bucket of the input video', 
+                        help ='s3 bucket of the input video',
                         default = "leto-dish")
-    
-    parser.add_argument("--input_prefix_s3", 
+
+    parser.add_argument("--input_prefix_s3",
                         type = str,
                         help = "s3 prefix of the input video",
-                        default = 'reduced-videos/benchmark/ffmpeg-resolution-downsampler/resized_480x360_video_benchmark_car.mp4')
-    
-    parser.add_argument("--output_bucket_s3", 
+                        default = 'reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/resized_480x360_video_benchmark_car.mp4')
+
+    parser.add_argument("--output_bucket_s3",
                         type=str,
                         default = "leto-dish",
                         help = "s3 bucket of the output video")
-    
-    parser.add_argument("--output_prefix_s3", 
+
+    parser.add_argument("--output_prefix_s3",
                         type = str,
-                        default = "reconstructed-videos/super_res/benchmark_superres_fsrcnn.mp4",
+                        default = "reconstructed-videos/benchmark/super_res/car/benchmark_superres_fsrcnn.mp4",
                         help ="s3 prefix of the output video")
-    
-    parser.add_argument("--codec", 
+
+    parser.add_argument("--codec",
                         type = str,
                         default = 'mp4v',
                         help ="video codec")
-    
-    parser.add_argument("--resolution", 
+
+    parser.add_argument("--resolution",
                         type = tuple,
                         default = (1920, 1080),
                         help ="desired video resolution")
-    
+
     parser.add_argument("--model_bucket_s3",
-                        type = str, 
+                        type = str,
                         default = "leto-dish",
                         help = "s3 bucekt of the pre-trained model")
-    
+
     parser.add_argument("--model_prefix_s3",
-                        type = str, 
+                        type = str,
                         default = "pretrained-models/fsrcnn_x4.pb",
                         help = "s3 prefix of the pre-trained model")
-        
-    parser.add_argument("--algorithm", 
+
+    parser.add_argument("--algorithm",
                         type = str,
                         default = "fsrcnn",
                         help="algorithm of the pre-trained model")
-    
+
     args = parser.parse_args()
-    
+
     return args
 
 def video_superres():
     '''
     Function that enhances video resolution using Deep Neural Networks.
     '''
-    
+
     args = parse_args()
     s3_client = boto3.client('s3')
     enhanced_video_path = 'output.mp4'
@@ -85,7 +85,7 @@ def video_superres():
     fourcc = cv2.VideoWriter_fourcc(*args.codec)
     fps = input_video.get(cv2.CAP_PROP_FPS)
     enhanced_video = cv2.VideoWriter(enhanced_video_path, fourcc, fps, args.resolution)
-    
+
     # Download model
     model_path = 'model.pb'
     model = s3_client.download_file(Bucket = args.model_bucket_s3, Key = args.model_prefix_s3, Filename = model_path)
@@ -110,14 +110,14 @@ def video_superres():
         # Closing the video by Escape button
         if cv2.waitKey(10) == 27:
             break
-    
+
     with open(enhanced_video_path, 'rb') as file:
         s3_client.put_object(Body=file, Bucket=args.output_bucket_s3, Key=args.output_prefix_s3)
 
     # Release the video capture and writer objects
     input_video.release()
     enhanced_video.release()
-    
+
     os.remove(enhanced_video_path)
     os.remove(model_path)
 

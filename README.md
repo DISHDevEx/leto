@@ -31,7 +31,7 @@
 │           ├── app-fps_bitrate.py
 │           ├── requirements.txt
 │           ├── README.md
-│  
+│
 │   ├── reconstruction
 │       ├── realbasicvser
 │           ├── builder.py
@@ -86,7 +86,7 @@ Default output: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsa
 
 - RealBasicVSR
 
-### Running RealBasicVSR 
+### Running RealBasicVSR
 
 1. Move to working directory
 ```console
