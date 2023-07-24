@@ -62,7 +62,7 @@ def parse_args():
                         type = str,
                         default = "pretrained-models/fsrcnn_x4.pb",
                         help = "s3 prefix of the pre-trained model")
-
+    
     parser.add_argument("--algorithm",
                         type = str,
                         default = "fsrcnn",

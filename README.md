@@ -93,7 +93,7 @@ Default output: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsa
 cd ~/leto/reconstruction/realbasicvsr
 ```
 
-2. Pip install requirements
+2. Run requirements_superres_setup.sh to install dependencies
 ```console
 bash reconstruction_realbasicvsr_setup.sh
 ```
