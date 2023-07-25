@@ -19,13 +19,13 @@ else
     echo " Failed to install mesa-libGL"
 fi
 #Download requirements and python script files into the working directory
-if curl -o requirements_ffmpeg_resolution_downsampler.txt https://raw.githubusercontent.com/DISHDevEx/leto/main/reduction/ffmpeg_resolution_downsampler/requirements_ffmpeg_resolution_downsampler.txt; then
+if curl -o requirements_ffmpeg_resolution_downsampler.txt https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/reduction-ffmpeg-shell-scripts/reduction/ffmpeg_resolution_downsampler/requirements_ffmpeg_resolution_downsampler.txt; then
     echo "Successfully downloaded requirements_ffmpeg_resolution_downsampler.txt file"
 else
     echo "Failed to download requirements_ffmpeg_resolution_downsampler.txt file"
 fi
 #
-if curl -o ffmpeg_resolution_downsampler.py https://raw.githubusercontent.com/DISHDevEx/leto/main/reduction/ffmpeg_resolution_downsampler/ffmpeg_resolution_downsampler.py; then
+if curl -o ffmpeg_resolution_downsampler.py https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/reduction-ffmpeg-shell-scripts/reduction/ffmpeg_resolution_downsampler/ffmpeg_resolution_downsampler.py; then
     echo "Successfully downloaded ffmpeg_resolution_downsampler.py file"
 else
     echo "Failed to download ffmpeg_resolution_downsampler.py file"
