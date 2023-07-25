@@ -31,4 +31,4 @@ jobs:
         --instance-ids "${{ secrets.INSTANCE_ID }}" \
         --max-concurrency "1" --max-errors "1" \
         --parameters '{"commands": ["#!/bin/bash","echo $HOME >> /home/ssm-user/sample.txt","curl -o /home/ssm-user/setup_and_run_ffmpeg_resolution_downsampler.sh https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/reduction-ffmpeg-shell-scripts/reduction/ffmpeg_resolution_downsampler/setup_and_run_ffmpeg_resolution_downsampler.sh",
-        "chmod +x /home/ssm-user/setup_and_run_ffmpeg_resolution_downsampler.sh","./home/ssm-user/setup_and_run_ffmpeg_resolution_downsampler.sh"]}'
+        "chmod +x /home/ssm-user/setup_and_run_ffmpeg_resolution_downsampler.sh","bash /home/ssm-user/setup_and_run_ffmpeg_resolution_downsampler.sh"]}'
