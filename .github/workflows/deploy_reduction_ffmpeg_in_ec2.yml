@@ -24,14 +24,9 @@ jobs:
        role-session-name: ${{ secrets.SAMPLE_ROLE_SESSION }}
        aws-region: ${{ env.AWS_REGION }}
   
-    - name: read secrets from AWS Secrets Manager into environment variables 
-      uses: aws-actions/aws-secretsmanager-get-secrets@v1
-      with:
-        secret-ids: EC2_INSTANCE_ID
-
     - name: deploy ffmpeg_resolution_downsampler
       run: |
-        aws ssm start-session --target $EC2_INSTANCE_ID
+        aws ssm start-session --target ${{ secrets.INSTANCE_ID }}
         cd $HOME
         curl -o setup_and_run_ffmpeg_resolution_downsampler.sh https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/reduction-ffmpeg-shell-scripts/reduction/ffmpeg_resolution_downsampler/setup_and_run_ffmpeg_resolution_downsampler.sh
         chmod +x ./setup_and_run_ffmpeg_resolution_downsampler.sh
