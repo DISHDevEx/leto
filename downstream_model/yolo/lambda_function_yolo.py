@@ -26,7 +26,8 @@ def handler(event, context):
 
         yolo_output_video = os.path.join("/tmp", os.path.basename('yolo_' + video.get_title()))
 
-        pipeline(video.get_file().strip("'"), yolo_model, yolo_output_video)
+        pipeline(video.get_file().strip("'"
+                                        ), yolo_model, yolo_output_video)
 
         s3_client.upload_file(yolo_output_video, "leto-dish", f"object_detection/yolo_{video.get_title()}")
 
