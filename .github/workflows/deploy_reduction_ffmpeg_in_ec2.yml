@@ -13,7 +13,7 @@ jobs:
     - name: read secrets from AWS Secrets Manager into environment variables 
       uses: aws-actions/aws-secretsmanager-get-secrets@v1
       with:
-        secrets: EC2_INSTANCE_ID
+        secret-ids: EC2_INSTANCE_ID
 
     - name: configure aws credentials
       uses: aws-actions/configure-aws-credentials@v2
