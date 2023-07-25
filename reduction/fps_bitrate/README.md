@@ -18,7 +18,7 @@ As a user, you will need access to READ/WRITE to S3 in the E1-Dev DISH AWS envir
 pip install -r requirements.txt
 ```
 
-4. execute the runner method, ***app_fps_bitrate.py***
+4. Execute the runner method, ***app_fps_bitrate.py***
 
 ```console
 python app_fps_bitrate.py
