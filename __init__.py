@@ -1,2 +1,0 @@
-from downstream_model import Yolo
-from downstream_model import mediapipe_model
