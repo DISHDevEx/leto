@@ -12,16 +12,16 @@ As a user, you will need access to READ/WRITE to S3 in the E1-Dev DISH AWS envir
 
 2. Ensure you are in the ***fps_bitrate*** directory:
 
-2. Install requierments:
+3. Install requirements:
 
 ```console
 pip install -r requirements.txt
 ```
 
-3. execute the runner method, ***app_fps_bitrate.py***
+4. execute the runner method, ***app_fps_bitrate.py***
 
 ```console
 python app_fps_bitrate.py
 ```
 
-Processed videos will now be saved to the set output S3 path.  Dynamic allocation of S3 paths can be added in future versions.
+***Note***: Processed videos will now be saved to the set output S3 path.  Dynamic allocation of S3 paths can be added in future versions.
