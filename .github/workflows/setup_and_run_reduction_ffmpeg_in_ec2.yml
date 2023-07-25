@@ -1,0 +1,22 @@
+name: setup_and_run_reduction_ffmpeg_in_ec2
+
+on:
+    workflow_dispatch:
+        inputs:
+            ec2:
+                description: EC2 Instance Id
+jobs:
+    setup_and_run:
+        runs-on: ubuntu-latest
+        steps:
+        - name: setup and run ffmpeg_resolution_downsampler
+            run: |
+              aws ssm start-session --target ${{ github.event.inputs.ec2}}
+              cd $HOME
+              curl -o setup_and_run_ffmpeg_resolution_downsampler.sh https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/reduction-ffmpeg-shell-scripts/reduction/ffmpeg_resolution_downsampler/setup_and_run_ffmpeg_resolution_downsampler.sh
+              chmod +x ./setup_and_run_ffmpeg_resolution_downsampler.sh
+              ls
+
+
+        
+
