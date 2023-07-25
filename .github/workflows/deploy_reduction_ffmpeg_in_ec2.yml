@@ -1,4 +1,4 @@
-name: push-to-ec2
+name: deploy_reduction_ffmpeg_in_ec2
 
 on:
   workflow_dispatch:
