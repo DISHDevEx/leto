@@ -1,4 +1,13 @@
-from leto import object_detection
+# try:
+#     from mediapipe_model import object_detection
+#     print('1')
+# except:
+#     pass
+
+import os
+import sys
+print(os.system('ls'))
+from object_detection import object_detection
 import sys
 import boto3
 import os
@@ -12,7 +21,7 @@ import urllib.parse
 def handler(event, context):
 
     print('Loading function')
-
+    print(os.system('ls'))
     s3_client = boto3.client('s3')
 
     mp_model = os.path.basename("efficientdet_lite0.tflite")
@@ -25,7 +34,7 @@ def handler(event, context):
 
         mp_output_video = os.path.join("/tmp", os.path.basename('mp_' + video.get_title()))
 
-        object_detection(mp_model, video.get_file(), mp_output_video)
+        object_detection(mp_model, video.get_file().strip("'"), mp_output_video)
 
         s3_client.upload_file(mp_output_video, "leto-dish", f"object_detection/mp_{video.get_title()}")
 
