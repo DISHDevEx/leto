@@ -22,7 +22,8 @@ jobs:
       uses: aws-actions/aws-secretsmanager-get-secrets@v1
       with:
         secret-ids: EC2_INSTANCE_ID
-        
+        aws-region: ${{ env.AWS_REGION }}
+
     - name: deploy ffmpeg_resolution_downsampler
       run: |
         aws ssm start-session --target ${{ env.EC2_INSTANCE_ID }}
