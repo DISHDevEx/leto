@@ -1,4 +1,4 @@
-name: AWS SSM Send-Command Example
+name: push-to-ec2
 
 on:
   pull_request:
