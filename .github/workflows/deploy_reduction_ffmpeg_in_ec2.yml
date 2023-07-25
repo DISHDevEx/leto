@@ -5,6 +5,7 @@ on:
     inputs:
       ec2:
         description: Enter EC2 instance id
+  push:
 
 jobs:
   deploy:
