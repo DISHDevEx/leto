@@ -28,7 +28,7 @@ def app_fps_bitrate():
                 output video S3 path.
     """
 
-    logging.info('succesfully loaded function')
+    logging.info('successfully loaded function')
 
     aux=Aux()
     
