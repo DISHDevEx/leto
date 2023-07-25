@@ -6,10 +6,10 @@ def fps_bitrate(video_list, fps=30, bitrate=0):
     """
     Wrapper method for the change_fps and set_bitrate methods in aEye.Labeler.
 
-    This method addes labels to the input videos for fps and bitrate rectuion.
-    The lables are then exectured in the runner method to process the videos.
+    This method adds labels to the input videos for fps and file bitrate reduction.
+    The labels are then executed in the runner method to process the videos.
     Default settings of fps=30 and bitrate=0 result in the output videos having
-    30 frames per second and a 10x reduction in bitrate.
+    30 frames per second and a 10x reduction from original file bitrate.
 
     Parameters
     ----------
@@ -20,7 +20,7 @@ def fps_bitrate(video_list, fps=30, bitrate=0):
             desired Frames per Second (fps) for output videos to be clocked to
         
         bitrate: int | default --> 0
-            desired bitrate for the videos. This is given in Kb, so setting it to 1.5 Mb for exmaple should be
+            desired bitrate for the videos. This is given in Kb, so setting it to 1.5 Mb for example should be
             1500, not 1.5. 
             
             Default Setting: Setting to 0 will do a 10x bitrate reduction
