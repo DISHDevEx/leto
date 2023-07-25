@@ -15,7 +15,6 @@ jobs:
       uses: aws-actions/configure-aws-credentials@v2
       with:
         role-to-assume: arn:aws:iam::064047601590:role/GitHub_Action_Role
-        aws-secret-access-key: 6nfVHE1OBeh9WQu4z4V0eeskjNfbBY7IfVtcnfGv
         role-session-name: samplerolesession
         aws-region: us-east-1
   
