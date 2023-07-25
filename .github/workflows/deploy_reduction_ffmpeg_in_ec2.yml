@@ -12,11 +12,11 @@ jobs:
     steps:
 
     - name: configure aws credentials
-      uses: aws-actions/configure-aws-credentials@v2
+      uses: aws-actions/configure-aws-credentials@v1
       with:
-        role-to-assume: arn:aws:iam::064047601590:role/GitHub_Action_Role
-        role-session-name: samplerolesession
-        aws-region: us-east-1
+       role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
+       role-session-name: ${{ secrets.SAMPLE_ROLE_SESSION }}
+       aws-region: ${{ env.AWS_REGION }}
   
     - name: read secrets from AWS Secrets Manager into environment variables 
       uses: aws-actions/aws-secretsmanager-get-secrets@v1
