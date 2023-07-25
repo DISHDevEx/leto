@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - 'sriharsha/reduction-ffmpeg-shell-scripts'
+env:
+  AWS_REGION : ${{ secrets.AWS_REGION }}
+# permission can be added at job level or workflow level
+permissions:
+    id-token: write   # This is required for requesting the JWT
+    contents: read    # This is required for actions/checkout
 
 jobs:
   deploy:
@@ -16,7 +22,7 @@ jobs:
       with:
        role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
        role-session-name: ${{ secrets.SAMPLE_ROLE_SESSION }}
-       aws-region: us-east-1
+       aws-region: ${{ env.AWS_REGION }}
   
     - name: read secrets from AWS Secrets Manager into environment variables 
       uses: aws-actions/aws-secretsmanager-get-secrets@v1
