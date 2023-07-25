@@ -30,21 +30,28 @@ if curl -o ffmpeg_resolution_downsampler.py https://raw.githubusercontent.com/DI
 else
     echo "Failed to download ffmpeg_resolution_downsampler.py file"
 fi
-#Installing requirements
+#Install requirements
 if python3 -m pip install -r requirements_ffmpeg_resolution_downsampler.txt; then
     echo "Successfully installed requirements"
 else
-    echo "requirements installation failed"
+    echo "Requirements installation failed"
 fi
-#Make sure all installed libraries are in path
-if export PATH=/home/ssm-user/.local/bin:$PATH; then
-    echo "Libraries are in path."
+#Add libraries path to the environment variable PATH temporarily
+if export PATH=$HOME/.local/bin:$PATH; then
+    echo "Libraries are temporarily added to the PATH temporarily."
 else
-    echo "Libraries failed to move to path."
+    echo "Failed to add the Libraries to the PATH temporarily."
 fi
 #Run ffmpeg_resolution_downsampler.py script
 if python3 ffmpeg_resolution_downsampler.py; then
     echo "Downsampling of the source video files is completed and respective downsampled video files are uploaded to the destination path."
     echo "Video file source path: https://s3.console.aws.amazon.com/s3/buckets/leto-dish?region=us-east-1&prefix=original-videos/benchmark/car/&showversions=false"
     echo "Video file destination path: https://s3.console.aws.amazon.com/s3/buckets/leto-dish?region=us-east-1&prefix=reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/&showversions=false"
+fi
+#Add libraries path to the environment variable 'PATH' permanently
+if echo "export PATH=$HOME/.local/bin:$PATH;" >> ~/.bashrc; then
+    echo "Libraries path is permanently added to the environment variable PATH to support recurring execution of downsampler script."
+    source ~/.bashrc
+else
+    echo "Failed to permanently add Libraries path to the environment variable PATH to support recurring execution of downsampler script."
 fi
