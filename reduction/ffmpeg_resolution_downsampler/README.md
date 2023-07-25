@@ -31,7 +31,7 @@ i)IAM Role: SessionManager-064047601590-us-east-1-EC2Role
 
 4.Post script execution, validate the changes by checking if the processed video files are uploaded to the respective destination S3 path.
   You can cross-check the file list in that target path by comparing the file names in the source S3 path.
----------------------------------------------------------------------------------------------
+
  Recurring execution of ffmpeg_resolution_downsampler.py script in the same AWS EC2 instance:
 ---------------------------------------------------------------------------------------------
 After the initial setup and execution, for recurring execution of 'ffmpeg_resolution_downsampler.py' script in the same AWS EC2 instance,
