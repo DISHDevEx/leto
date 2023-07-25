@@ -37,4 +37,5 @@ i)IAM Role: SessionManager-064047601590-us-east-1-EC2Role
 After the initial setup and execution, for recurring execution of 'ffmpeg_resolution_downsampler.py' script in the same AWS EC2 instance,
 please execute following commands in the user home directory.
 a)source ~/.bashrc
+
 b)python3 ffmpeg_resolution_downsampler.py
