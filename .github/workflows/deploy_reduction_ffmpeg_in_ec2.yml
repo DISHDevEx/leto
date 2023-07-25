@@ -29,5 +29,5 @@ jobs:
         sudo apt-get -y install expect-dev
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
-        --parameters '{"command": ["cd $HOME;curl -o setup_and_run_ffmpeg_resolution_downsampler.sh https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/reduction-ffmpeg-shell-scripts/reduction/ffmpeg_resolution_downsampler/setup_and_run_ffmpeg_resolution_downsampler.sh;ls"]}' \
+        --parameters '{"command": ["pwd"]}' \
         --target ${{ secrets.INSTANCE_ID }}
