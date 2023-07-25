@@ -16,7 +16,7 @@ jobs:
       with:
        role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
        role-session-name: ${{ secrets.SAMPLE_ROLE_SESSION }}
-       aws-region: ${{ env.AWS_REGION }}
+       aws-region: us-east-1
   
     - name: read secrets from AWS Secrets Manager into environment variables 
       uses: aws-actions/aws-secretsmanager-get-secrets@v1
