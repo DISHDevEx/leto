@@ -83,6 +83,18 @@ def upscale_video():
                 upscaled_video.write(resized_frame)
             else:
                 break
+        P = subprocess.Popen(["static_ffmpeg", "-show_streams", "-print_format", "json", input_video_path],
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        streams = P.communicate()[0]
+        streams = streams.decode('utf-8')
+        if 'audio' in streams.lower():
+            # Extract audio from source video
+            subprocess.call(["static_ffmpeg", "-i", input_video_path, "sourceaudio.mp3"], shell=True)
+            # Merge source audio and upscaled video
+            subprocess.call(["static_ffmpeg", "-i", upscaled_video_path, "-i",  "sourceaudio.mp3", "-map",
+                            "0:0", "-map", "1:0", upscaled_video_path], shell=True)
+        else:
+            pass
 
         input_video.release()
         upscaled_video.release()
