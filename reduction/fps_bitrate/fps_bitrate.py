@@ -36,7 +36,7 @@ def fps_bitrate(video_list, fps=30, bitrate=0):
     labeler = Labeler()
 
     try:
-        if fps <= 0:
+        if fps < 1:
             raise Exception
         labeler.change_fps(video_list, fps)
     except Exception:
