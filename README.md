@@ -16,11 +16,6 @@
 │           ├── requirements_ffmpeg_resolution_downsampler.txt
 │           ├── ffmpeg_resolution_downsampler.py
 │  
-│       ├── fps_bitrate
-│           ├── fps_bitrate.py
-│           ├── app_fps_bitrate.py
-│           ├── requirements.txt
-│           ├── README.md
 │   ├── reconstruction
 │       ├── realbasicvser
 │           ├── builder.py
