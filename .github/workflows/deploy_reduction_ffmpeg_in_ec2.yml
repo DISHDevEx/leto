@@ -10,17 +10,19 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-    - name: read secrets from AWS Secrets Manager into environment variables 
-      uses: aws-actions/aws-secretsmanager-get-secrets@v1
-      with:
-        secret-ids: EC2_INSTANCE_ID
 
     - name: configure aws credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
         role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
         role-session-name: samplerolesession
-
+        aws-region: ${{ env.AWS_REGION }}
+  
+    - name: read secrets from AWS Secrets Manager into environment variables 
+      uses: aws-actions/aws-secretsmanager-get-secrets@v1
+      with:
+        secret-ids: EC2_INSTANCE_ID
+        
     - name: deploy ffmpeg_resolution_downsampler
       run: |
         aws ssm start-session --target ${{ env.EC2_INSTANCE_ID }}
