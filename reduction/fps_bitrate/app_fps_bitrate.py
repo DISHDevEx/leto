@@ -43,7 +43,7 @@ def app_fps_bitrate():
     aux.upload_s3(video_list, "leto-dish", "reduction/fps_bitrate/")
     aux.clean()
 
-    return 'video reduction completed on ' + sys.version + '!'
+    return logging.info('video reduction completed on ' + sys.version + '.')
 
 if __name__ == '__main__':
     app_fps_bitrate()
