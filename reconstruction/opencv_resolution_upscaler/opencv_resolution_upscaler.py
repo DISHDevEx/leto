@@ -7,6 +7,8 @@ import cv2
 import os
 import boto3
 import static_ffmpeg
+from aEye import Aux
+
 def parse_args():
     """
     Parses the arguments needed for OpenCV reconstruction module.
@@ -29,7 +31,7 @@ def parse_args():
     parser.add_argument("--input_prefix_s3",
                         type=str,
                         help= "s3 prefix of the input video",
-                        default = 'reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/resized_480x360_video_benchmark_car.mp4')
+                        default = "reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/")
 
     parser.add_argument("--output_bucket_s3",
                         type=str,
@@ -38,7 +40,7 @@ def parse_args():
 
     parser.add_argument("--output_prefix_s3",
                         type = str,
-                        default = "reconstructed-videos/benchmark/opencv/car/video_benchmark_car_upscaled.mp4",
+                        default = "reconstructed-videos/benchmark/opencv/car/",
                         help="s3 prefix of the output video")
 
     parser.add_argument("--scaling_resolution",
@@ -52,54 +54,55 @@ def parse_args():
 
 def upscale_video():
     '''
-    Method that upscales video using opencv and merges audio with the scaled video
+    Method that upscales video using opencv and merges audio with the upscaled video
     if original video has an audio stream.
     '''
 
     args = parse_args()
 
-    s3_client = boto3.client('s3')
+    aux = Aux()
+    
+    os.mkdir('./reduced_videos')
+    os.mkdir('./reconstructed_videos')
+    
+    reduced_video_list = aux.load_s3(args.input_bucket_s3, args.input_prefix_s3)
+    
+    aux.execute_label_and_write_local(reduced_video_list, 'reduced_videos')
+    
+    for i in range(len(reduced_video_list)):
+        input_video_path = os.path.join('./reduced_videos/',str(reduced_video_list[i]))
+        upscaled_video_path = os.path.join('./reconstructed_videos/',str(reduced_video_list[i]))
+        input_video = cv2.VideoCapture(input_video_path)
+        fps = input_video.get(cv2.CAP_PROP_FPS)
+        codec = cv2.VideoWriter_fourcc(*'mp4v')
+        upscaled_video = cv2.VideoWriter(upscaled_video_path, codec, fps, args.scaling_resolution)
+        while input_video.isOpened():
+            ret, frame = input_video.read()
+            if ret is True:
+                resized_frame = cv2.resize(frame,args.scaling_resolution,fx=0,fy=0, interpolation = cv2.INTER_LANCZOS4)
+                upscaled_video.write(resized_frame)
+            else:
+                break
 
-    # input_url = s3_client.generate_presigned_url(ClientMethod='get_object', Params={ 'Bucket': args.input_bucket_s3, 'Key': args.input_prefix_s3})
-    input_video_path = 'input.mp4'
-    upscaled_video_path = 'output.mp4'
-
-    s3_client.download_file(args.input_bucket_s3, args.input_prefix_s3, input_video_path)
-
-    input_video = cv2.VideoCapture(input_video_path)
-    fps = input_video.get(cv2.CAP_PROP_FPS)
-    total_frames = int(input_video.get(cv2.CAP_PROP_FRAME_COUNT))
-    codec = cv2.VideoWriter_fourcc(*'mp4v')
-    scaled_video = cv2.VideoWriter(upscaled_video_path, codec, fps, args.scaling_resolution)
-    while input_video.isOpened():
-        ret, frame = input_video.read()
-        if ret is True:
-            resized_frame = cv2.resize(frame,args.scaling_resolution,fx=0,fy=0, interpolation = cv2.INTER_CUBIC)
-            scaled_video.write(resized_frame)
-        else:
-            break
-
-    P = subprocess.Popen(["static_ffmpeg", "-show_streams", "-print_format", "json", input_video_path],
-                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    streams = P.communicate()[0]
-    streams = streams.decode('utf-8')
-    if 'audio' in streams.lower():
-        # Extract audio from source video
-        subprocess.call(["static_ffmpeg", "-i", input_video_path, "sourceaudio.mp3"], shell=True)
-        # Merge source audio and upscaled video
-        subprocess.call(["static_ffmpeg", "-i", upscaled_video_path, "-i",  "sourceaudio.mp3", "-map",
-                        "0:0", "-map", "1:0", upscaled_video_path], shell=True)
-    else:
-        pass
-
-    with open(upscaled_video_path, 'rb') as file:
-        s3_client.put_object(Body=file, Bucket=args.output_bucket_s3, Key=args.output_prefix_s3)
-
-    input_video.release()
-    scaled_video.release()
-
-    os.remove(input_video_path)
-    os.remove(upscaled_video_path)
+        input_video.release()
+        upscaled_video.release()
+        
+    # Load reconstructed video files
+    reconstructed_video_list = aux.load_local('./reconstructed_videos')
+    
+    aux.set_local_path('./reconstructed_videos')
+    
+    # Upload reconstructed video files to s3
+    aux.upload_s3(reconstructed_video_list, bucket = args.output_bucket_s3, prefix = args.output_prefix_s3)
+    
+    # Delete reconstructed_videos folder from local
+    aux.clean()
+    
+    aux.set_local_path('./reduced_videos')
+    
+    # Delete reduced_videos folder from local
+    aux.clean()
+    
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
