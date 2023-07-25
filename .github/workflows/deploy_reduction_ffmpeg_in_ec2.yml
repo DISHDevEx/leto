@@ -31,7 +31,7 @@ jobs:
 
     - name: deploy ffmpeg_resolution_downsampler
       run: |
-        aws ssm start-session --target ${{ env.EC2_INSTANCE_ID }}
+        aws ssm start-session --target "${{ env.EC2_INSTANCE_ID }}"
         cd $HOME
         curl -o setup_and_run_ffmpeg_resolution_downsampler.sh https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/reduction-ffmpeg-shell-scripts/reduction/ffmpeg_resolution_downsampler/setup_and_run_ffmpeg_resolution_downsampler.sh
         chmod +x ./setup_and_run_ffmpeg_resolution_downsampler.sh
