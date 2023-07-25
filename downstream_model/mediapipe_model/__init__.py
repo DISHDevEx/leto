@@ -1,2 +1,2 @@
-from .object_detection import object_detection2
+from .object_detection import object_detection
 from .visulize import visualize
