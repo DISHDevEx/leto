@@ -5,7 +5,7 @@
 ### **Demo**
 
 
-1. CLone the repo
+1. Clone the repo
 
 ```console
 !git clone git@github.com:DISHDevEx/leto.git
@@ -46,5 +46,6 @@ store this file path into a variable.
 
 ```console
 object_detection( model_path, video_list_s3[0].get_file().strip("'"), video_list_s3[0].title)
-#this will apply, draw the bounding box and write a single video the loaded.
+#This will apply, draw the bounding box, and return the result in a dictionary.
+#This will also make and save a new video with the name of video_list_s3[0].title.
 ```
