@@ -3,14 +3,25 @@
 # Project Structure
 
 ```
-├──  leto				contains video class and processor class that manage from loading, processing and uploading
+├──  leto				contains all modules that facilites all functionality to achieve leto's goal
 │   ├── downstream_model
 │       ├── mediapipe
 │           ├── object_detection.py
 │           ├── visualize.py
 │           ├── Dockerfile_mp
 │           ├── requirements_mp.txt
-│
+│           ├── Dockerfile_mp
+│           ├──lambda_function_mp.py
+│       ├── yolo
+│           ├── yolo.py
+│           ├── pipeline.py
+│           ├── training_parameter_input.py
+│           ├── prediction_parameter_input.py
+│           ├── pipeline.py
+│           ├── visualize.py
+│           ├── Dockerfile_yolo
+│           ├──lambda_function_yolo.py
+│           ├── requirements_yolo.txt
 │   ├── reduction
 │       ├── ffmpeg_resolution_downsampler
 │           ├── requirements_ffmpeg_resolution_downsampler.txt
@@ -67,7 +78,6 @@ python ffmpeg_resolution_downsampler.py
 ```
 
 Default input: s3://leto-dish/original-videos/benchmark/car/
-
 Default output: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/
 
 
@@ -116,3 +126,12 @@ python realbasicvsr_postprocessing.py
 
 - Optional argument to delete locally saved pretrained model (from preprocessing).
 - Note Postprocessor will delete any locally saved video**
+
+
+### Yolo Model
+
+Please read the Yolo model readme for more instructions.
+
+### Mediapipe Model
+
+Please read the Mediapipe model readme for more instructions.

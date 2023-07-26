@@ -1,13 +1,9 @@
-from leto import object_detection
-import sys
 import boto3
 import os
+from yolo import Yolo
 from aEye import Video
+from pipeline import pipeline
 import urllib.parse
-
-# input_video_path = os.environ.get('input_video_path')
-# output_video_path = os.environ.get('output_video_path')
-
 
 def handler(event, context):
 
@@ -15,7 +11,8 @@ def handler(event, context):
 
     s3_client = boto3.client('s3')
 
-    mp_model = os.path.basename("efficientdet_lite0.tflite")
+    yolo_model = Yolo()
+    yolo_model.load_model_weight('yolov8s.pt')
 
     bucket = event['Records'][0]['s3']['bucket']['name']
     key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
@@ -23,11 +20,12 @@ def handler(event, context):
     try:
         video = Video(bucket=bucket, key=key)
 
-        mp_output_video = os.path.join("/tmp", os.path.basename('mp_' + video.get_title()))
+        yolo_output_video = os.path.join("/tmp", os.path.basename('yolo_' + video.get_title()))
 
-        object_detection(mp_model, video.get_file(), mp_output_video)
+        pipeline(video.get_file().strip("'"
+                                        ), yolo_model, yolo_output_video)
 
-        s3_client.upload_file(mp_output_video, "leto-dish", f"object_detection/mp_{video.get_title()}")
+        s3_client.upload_file(yolo_output_video, "leto-dish", f"object_detection/yolo_{video.get_title()}")
 
     except Exception as e:
         print(e)
