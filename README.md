@@ -133,14 +133,6 @@ python realbasicvsr_postprocessing.py
 - Optional argument to delete locally saved pretrained model (from preprocessing).
 - Note Postprocessor will delete any locally saved video**
 
-
-### Yolo Model
-
-Please read the Yolo model readme for more instructions.
-
-### Mediapipe Model
-
-Please read the Mediapipe model readme for more instructions.
 - OpenCV Resolution Upscaler
 
 ### Running opencv resolution upscaler
@@ -190,3 +182,11 @@ python reconstruction_superres.py
 - Default cloud input: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/resized_480x360_video_benchmark_car.mp4
 - Default cloud outout: s3://leto-dish/reconstructed-videos/benchmark/super_res/car/benchmark_superres_fsrcnn.mp4
 - This file will delete locally saved video file and pre-trained model
+
+### Yolo Model
+
+Please read the Yolo model readme for more instructions.
+
+### Mediapipe Model
+
+Please read the Mediapipe model readme for more instructions.
