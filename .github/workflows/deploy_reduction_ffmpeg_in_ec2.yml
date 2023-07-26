@@ -24,18 +24,25 @@ jobs:
        role-session-name: ${{ secrets.SAMPLE_ROLE_SESSION }}
        aws-region: ${{ env.AWS_REGION }}
   
-    - name: copy shell script from GitHub to '/home/ssm-user' path in target AWS EC2 instance
-      run: |
-        aws ssm send-command \
-        --document-name "AWS-RunShellScript" \
-        --instance-ids "${{ secrets.INSTANCE_ID }}" \
-        --max-concurrency "1" --max-errors "1" \
-        --parameters '{"commands": ["#!/bin/bash","curl -o /home/ssm-user/setup_and_run_ffmpeg_resolution_downsampler.sh https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/reduction-ffmpeg-shell-scripts/reduction/ffmpeg_resolution_downsampler/setup_and_run_ffmpeg_resolution_downsampler.sh",
-        "chmod +x /home/ssm-user/setup_and_run_ffmpeg_resolution_downsampler.sh"]}'
+#    - name: copy shell script from GitHub to '/home/ssm-user' path in target AWS EC2 instance
+#      run: |
+#        aws ssm send-command \
+#        --document-name "AWS-RunShellScript" \
+#        --instance-ids "${{ secrets.INSTANCE_ID }}" \
+#        --max-concurrency "1" --max-errors "1" \
+#        --parameters '{"commands": ["#!/bin/bash","curl -o /home/ssm-user/setup_and_run_ffmpeg_resolution_downsampler.sh https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/reduction-ffmpeg-shell-scripts/reduction/ffmpeg_resolution_downsampler/setup_and_run_ffmpeg_resolution_downsampler.sh",
+#        "chmod +x /home/ssm-user/setup_and_run_ffmpeg_resolution_downsampler.sh"]}'
 
-    - name: execute shell script to deploy ffmpeg_resolution_downsampler
+    - name: copy shell script from github to '/home/ssm-user' path in target AWS EC2 instance
       run: |
         sudo apt-get -y install expect-dev
+        unbuffer aws ssm start-session \
+        --document-name 'AWS-StartNonInteractiveCommand' \
+        --parameters '{"command": ["curl -o /home/ssm-user/setup_and_run_ffmpeg_resolution_downsampler.sh https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/reduction-ffmpeg-shell-scripts/reduction/ffmpeg_resolution_downsampler/setup_and_run_ffmpeg_resolution_downsampler.sh"]}' \
+        --target ${{ secrets.INSTANCE_ID }}
+#  
+    - name: execute shell script to deploy ffmpeg_resolution_downsampler
+      run: |
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
         --parameters '{"command": ["bash /home/ssm-user/setup_and_run_ffmpeg_resolution_downsampler.sh"]}' \
