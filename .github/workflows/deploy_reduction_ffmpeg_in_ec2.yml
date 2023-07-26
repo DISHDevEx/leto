@@ -1,3 +1,6 @@
+#GitHub workflow to deploy the Leto_Reduction - ffmpeg_resolution_downsampler module in the target AWS EC2 instance
+#Version: v1.0.0
+#
 name: deploy_reduction_ffmpeg_in_ec2
 
 on:

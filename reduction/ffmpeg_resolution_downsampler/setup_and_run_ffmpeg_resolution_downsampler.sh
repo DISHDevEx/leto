@@ -1,3 +1,6 @@
+#Shell script to deploy the Leto_Reduction - ffmpeg_resolution_downsampler module in the target AWS EC2 instance
+#Version: v1.0.0
+#
 #!/bin/bash
 
 #This script should be executed in Amazon Linux (amzn2-ami-kernel-5.10-hvm-2.0.20230628.0-x86_64-gp2) operating system with python3>=3.7.*
