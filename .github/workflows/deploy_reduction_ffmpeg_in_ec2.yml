@@ -18,7 +18,7 @@ jobs:
     - name: Get Secrets by Name/Id from AWS Secrets Manager
       uses: aws-actions/aws-secretsmanager-get-secrets@v1
       with:
-        arn: arn:aws:secretsmanager:us-east-1:064047601590:secret:LETO_EC2-7io4L2
+        secret-ids: arn:aws:secretsmanager:us-east-1:064047601590:secret:LETO_EC2-7io4L2
         parse-json-secrets: true
 
     - name: Configure aws credentials
