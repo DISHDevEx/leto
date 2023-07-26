@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 from .visulize import visualize
 
-def object_detection(model_path, input_video, output_video):
+def object_detection(model_path, input_video, output_video, save_video = False):
     """
     Given a specific model and video, it will initiate the model and will
     scan through the video frame by frame adding the bounding boxes to the output video.
@@ -18,6 +18,8 @@ def object_detection(model_path, input_video, output_video):
     output_video: string
         The path for video output.
 
+    save_video: boolean
+        The condition to save video.
     Returns
     ----------
     output_data: diction
@@ -79,8 +81,8 @@ def object_detection(model_path, input_video, output_video):
                 detection_result = detector.detect_for_video(mp_image, frame_timestamp_ms)
                 image_copy = np.copy(mp_image.numpy_view())
                 annotated_image, bounding_box_data = visualize(image_copy, detection_result)  #Adds Bounding box to img
-                
-                out.write(annotated_image)
+                if save_video:
+                    out.write(annotated_image)
                 output_data[frame_index] = bounding_box_data
                 frame_index += 1
 

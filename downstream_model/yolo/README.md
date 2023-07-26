@@ -47,6 +47,6 @@ model.load_model_weight('yolov8s.pt')  #this model .pt is a pretrained model fro
 ```console
 result  = pipeline( video_list_s3[0].get_file().strip("'"), model, video_list_s3[0].title)
 #This will apply, draw the bounding box, and return the result in a dictionary.
-#This will also make and save a new video with the name of video_list_s3[0].title.
+#This will also make and save a new video with the name of video_list_s3[0].title if extra parameter of save_video = True is passed in.
 
 ```
