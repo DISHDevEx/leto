@@ -21,8 +21,8 @@ def object_detection(model_path, input_video, output_video):
 
     Returns
     ----------
-    output_json: json
-        The json of the prediction in the format below.
+    output_data: diction
+        The diction of the prediction in the format below.
         {
             0 : [ bounding_box_1, bounding_box_2, etc  ], 
             1 : [ bounding_box_1, bounding_box_2, etc  ],
@@ -92,5 +92,4 @@ def object_detection(model_path, input_video, output_video):
     # the video capture object
     cap.release()
     out.release()
-    output_json = json.dumps(output_data)
-    return output_json
+    return output_data

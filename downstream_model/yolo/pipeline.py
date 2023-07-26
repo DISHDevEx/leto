@@ -5,7 +5,6 @@ This pipeline will call visualize_yolo to visualize the result from the predicti
 
 from .visualize import visualize_yolo
 import cv2
-import json
 
 def pipeline(input_video,  model, output_video ):
 
@@ -24,8 +23,8 @@ def pipeline(input_video,  model, output_video ):
             The path name 
     Returns
     ---------
-        output_json: json
-            The json of the prediction in the format below.
+        output_data: dict
+            The diction of the prediction in the format below.
             {
                 0 : [ bounding_box_1, bounding_box_2, etc  ], 
                 1 : [ bounding_box_1, bounding_box_2, etc  ],
@@ -75,5 +74,4 @@ def pipeline(input_video,  model, output_video ):
     # the video capture object
     cap.release()
     out.release()
-    output_json = json.dumps(output_data)
-    return output_json
+    return output_data
