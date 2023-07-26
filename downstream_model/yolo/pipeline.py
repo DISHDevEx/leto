@@ -6,7 +6,7 @@ This pipeline will call visualize_yolo to visualize the result from the predicti
 from .visualize import visualize_yolo
 import cv2
 
-def pipeline(input_video,  model, output_video ):
+def pipeline(input_video,  model, output_video, save_video = False ):
 
     '''  
     This functions opens the video frame by frame and applies yolo model to each frame.
@@ -21,6 +21,9 @@ def pipeline(input_video,  model, output_video ):
 
         output_video: string
             The path name 
+            
+        save_video: boolean
+            The condition to save video.
     Returns
     ---------
         output_data: dict
@@ -44,6 +47,7 @@ def pipeline(input_video,  model, output_video ):
     fps = cap.get(cv2.CAP_PROP_FPS)
     frame_width = int(cap.get(3))
     frame_height = int(cap.get(4))
+
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     out = cv2.VideoWriter(output_video, fourcc, fps, (frame_width, frame_height))
     frame_index = 0
@@ -62,8 +66,8 @@ def pipeline(input_video,  model, output_video ):
 
             copy_image = frame.copy()
             annotated_image, bounding_box_data = visualize_yolo(copy_image, detection_result)
-
-            out.write(annotated_image)
+            if save_video:
+                out.write(annotated_image)
 
             output_data[frame_index] = bounding_box_data
             frame_index += 1
