@@ -15,34 +15,21 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-    - name: Get Secrets by Name/Id from AWS Secrets Manager
-      uses: aws-actions/aws-secretsmanager-get-secrets@v1
-      with:
-        secret-ids: LETO_EC2
-        parse-json-secrets: true
-
     - name: Configure aws credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
-       role-to-assume: ${{ env.LETO_EC2.ROLE_TO_ASSUME }}
-       role-session-name: ${{ env.LETO_EC2.SAMPLE_ROLE_SESSION }}
-       aws-region: ${{ env.LETO_EC2.AWS_REGION }}   
-
-#    - name: Configure aws credentials
-#      uses: aws-actions/configure-aws-credentials@v2
-#      with:
-#       role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
-#       role-session-name: ${{ secrets.SAMPLE_ROLE_SESSION }}
-#       aws-region: ${{ env.AWS_REGION }}
+       role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
+       role-session-name: ${{ secrets.SAMPLE_ROLE_SESSION }}
+       aws-region: ${{ env.AWS_REGION }}
   
-#Set read,write,execute premission for '/home/ssm-user' folder inorder to download and execute the shell script 
+#Set read,write and execute premission for '/home/ssm-user' folder inorder to download and execute the shell script 
     - name: Set premissions for '/home/ssm-user' folder
       run: |
         sudo apt-get -y install expect-dev
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
         --parameters '{"command": ["sudo chmod 755 /home/ssm-user"]}' \
-        --target ${{ env.LETO_EC2.INSTANCE_ID }}
+        --target ${{ secrets.INSTANCE_ID }}
 
 #Download deployment shell script from github to '/home/ssm-user' path in target AWS EC2 instance
     - name: Download deployment shell script from github to EC2 instance
@@ -51,7 +38,7 @@ jobs:
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
         --parameters '{"command": ["curl -o /home/ssm-user/setup_and_run_ffmpeg_resolution_downsampler.sh https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/reduction-ffmpeg-shell-scripts/reduction/ffmpeg_resolution_downsampler/setup_and_run_ffmpeg_resolution_downsampler.sh"]}' \
-        --target ${{ env.LETO_EC2.INSTANCE_ID }}
+        --target ${{ secrets.INSTANCE_ID }}
 
 #Set execution permission for the shell script in target AWS EC2 instance
 #    - name: Set execution permission for the shell script in EC2 instance
@@ -67,4 +54,4 @@ jobs:
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
         --parameters '{"command": ["bash /home/ssm-user/setup_and_run_ffmpeg_resolution_downsampler.sh"]}' \
-        --target ${{ env.LETO_EC2.INSTANCE_ID }}
+        --target ${{ secrets.INSTANCE_ID }}
