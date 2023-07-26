@@ -20,6 +20,7 @@ jobs:
       with:
         secret-id: LETO_EC2
         parse-json-secrets: true
+        region: ${{ env.AWS_REGION }}
 
     - name: Configure aws credentials
       uses: aws-actions/configure-aws-credentials@v2
