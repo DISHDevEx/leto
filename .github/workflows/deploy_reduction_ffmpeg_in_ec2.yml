@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - 'sriharsha/reduction-ffmpeg-shell-scripts'
-#env:
-#  AWS_REGION : ${{ secrets.AWS_REGION }}
+env:
+  AWS_REGION : ${{ secrets.AWS_REGION }}
 #Permission for fetching an OpenId Connect (OIDC) token
 permissions:
     id-token: write
@@ -15,7 +15,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-    - name: Get Secrets by Name from AWS Secrets Manager
+    - name: Get Secrets by Name/Id from AWS Secrets Manager
       uses: aws-actions/aws-secretsmanager-get-secrets@v1
       with:
         secret-ids: |
