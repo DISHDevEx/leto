@@ -129,3 +129,17 @@ Please read the Yolo model readme for more instructions.
 ### Mediapipe Model
 
 Please read the Mediapipe model readme for more instructions.
+
+
+## Running utils file
+Run the following command to import Evaluator class and Get PSNR and SSIM
+```
+from utils import Evaluator
+video_eval = Evaluator()
+original_file = 'path/to/input/file'
+reconstructed_file = 'path/to/output/file' ( Add your orginal and recontructed file)
+psnr = video_eval.calculate_psnr(original_file, reconstructed_file)
+print(f"Video PSNR: {psnr} dB")
+ssim = video_eval.calculate_video_ssim(original_file, reconstructed_file)
+print(f"SSIM: {ssim}")
+````
