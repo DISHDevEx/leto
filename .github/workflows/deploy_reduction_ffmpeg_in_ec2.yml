@@ -34,6 +34,7 @@ jobs:
 #Download deployment shell script from github to '/home/ssm-user' path in target AWS EC2 instance
     - name: Download deployment shell script from github to EC2 instance
       run: |
+        sudo apt-get -y install expect-dev
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
         --parameters '{"command": ["curl -o $HOME/setup_and_run_ffmpeg_resolution_downsampler.sh https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/reduction-ffmpeg-shell-scripts/reduction/ffmpeg_resolution_downsampler/setup_and_run_ffmpeg_resolution_downsampler.sh"]}' \
