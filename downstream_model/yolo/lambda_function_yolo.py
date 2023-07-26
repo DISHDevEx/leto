@@ -5,10 +5,6 @@ from aEye import Video
 from pipeline import pipeline
 import urllib.parse
 
-# input_video_path = os.environ.get('input_video_path')
-# output_video_path = os.environ.get('output_video_path')
-
-
 def handler(event, context):
 
     print('Loading function')

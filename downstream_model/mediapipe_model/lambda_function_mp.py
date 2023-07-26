@@ -1,21 +1,11 @@
-# try:
-#     from mediapipe_model import object_detection
-#     print('1')
-# except:
-#     pass
 
 import os
-import sys
-print(os.system('ls'))
 from object_detection import object_detection
-import sys
+
 import boto3
 import os
 from aEye import Video
 import urllib.parse
-
-# input_video_path = os.environ.get('input_video_path')
-# output_video_path = os.environ.get('output_video_path')
 
 
 def handler(event, context):
