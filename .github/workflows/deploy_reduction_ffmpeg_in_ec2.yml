@@ -52,5 +52,5 @@ jobs:
       run: |
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
-        --parameters '{"command": ["./home/ssm-user/setup_and_run_ffmpeg_resolution_downsampler.sh"]}' \
+        --parameters '{"command": ["bash /home/ssm-user/setup_and_run_ffmpeg_resolution_downsampler.sh"]}' \
         --target ${{ secrets.INSTANCE_ID }}
