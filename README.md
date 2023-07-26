@@ -26,6 +26,11 @@
 │       ├── ffmpeg_resolution_downsampler
 │           ├── requirements_ffmpeg_resolution_downsampler.txt
 │           ├── ffmpeg_resolution_downsampler.py
+│       ├── fps_bitrate
+│           ├── fps_bitrate.py
+│           ├── app-fps_bitrate.py
+│           ├── requirements.txt
+│           ├── README.md
 │  
 │   ├── reconstruction
 │       ├── realbasicvser
@@ -36,11 +41,6 @@
 │           ├── realbasicvsr_preprocessing.py
 │           ├── reconstruction_realbasicvsr.py
 │           ├── realbasicvsr_postprocessing.py
-│       ├── fps_bitrate
-│           ├── fps_bitrate.py
-│           ├── app-fps_bitrate.py
-│           ├── requirements.txt
-│           ├── README.md
 |
 ├──  tests				contains unit tests
 │   ├── test_get_meta_data.py
@@ -52,7 +52,7 @@
 ----------------------------------
 # Reduction Modules
 - ffmpeg_resolution_downsampler
-- [fps_bitrate](/reduction/fps_bitrate/README.md)
+- View the [fps_bitrate README](/reduction/fps_bitrate/README.md) for run-book
 
 
 ### Running ffmpeg resolution downsampler
