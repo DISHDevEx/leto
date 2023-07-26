@@ -99,7 +99,8 @@ def upscale_video():
                             "0:0", "-map", "1:0", upscaled_video_path], shell=True)
         else:
             pass
-
+        
+        # Release the video capture and writer objects
         input_video.release()
         upscaled_video.release()
         
@@ -128,6 +129,7 @@ def upscale_postprocess():
     # Delete reduced_videos folder from local
     aux.clean()
     
+    # Close all OpenCV windows
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
