@@ -33,10 +33,10 @@ jobs:
         --parameters '{"commands": ["#!/bin/bash","curl -o /home/ssm-user/setup_and_run_ffmpeg_resolution_downsampler.sh https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/reduction-ffmpeg-shell-scripts/reduction/ffmpeg_resolution_downsampler/setup_and_run_ffmpeg_resolution_downsampler.sh",
         "chmod +x /home/ssm-user/setup_and_run_ffmpeg_resolution_downsampler.sh"]}'
 
-    - name: deploy ffmpeg_resolution_downsampler
+    - name: execute shell script to deploy ffmpeg_resolution_downsampler
       run: |
         sudo apt-get -y install expect-dev
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
-        --parameters '{"command": ["echo $HOME"]}' \
+        --parameters '{"command": ["$HOME"]}' \
         --target ${{ secrets.INSTANCE_ID }}
