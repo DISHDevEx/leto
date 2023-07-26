@@ -22,15 +22,6 @@ jobs:
        role-session-name: ${{ secrets.SAMPLE_ROLE_SESSION }}
        aws-region: ${{ env.AWS_REGION }}
   
-#Set read,write and execute premission for '/home/ssm-user' folder inorder to download and execute the shell script 
-#    - name: Set premissions for '/home/ssm-user' folder
-#      run: |
-#        sudo apt-get -y install expect-dev
-#        unbuffer aws ssm start-session \
-#        --document-name 'AWS-StartNonInteractiveCommand' \
-#        --parameters '{"command": ["sudo chmod 777 /home/ssm-user"]}' \
-#        --target ${{ secrets.INSTANCE_ID }}
-
 #Download deployment shell script from github to '/home/ssm-user' path in target AWS EC2 instance
     - name: Download deployment shell script from github to EC2 instance
       run: |
@@ -39,14 +30,6 @@ jobs:
         --document-name 'AWS-StartNonInteractiveCommand' \
         --parameters '{"command": ["curl -o /home/ssm-user/setup_and_run_ffmpeg_resolution_downsampler.sh https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/reduction-ffmpeg-shell-scripts/reduction/ffmpeg_resolution_downsampler/setup_and_run_ffmpeg_resolution_downsampler.sh"]}' \
         --target ${{ secrets.INSTANCE_ID }}
-
-#Set execution permission for the shell script in target AWS EC2 instance
-#    - name: Set execution permission for the shell script in EC2 instance
-#     run: |
-#       unbuffer aws ssm start-session \
-#        --document-name 'AWS-StartNonInteractiveCommand' \
-#       --parameters '{"command": ["chmod 777 /home/ssm-user/setup_and_run_ffmpeg_resolution_downsampler.sh"]}' \
-#       --target ${{ secrets.INSTANCE_ID }}
 
 #Execute shell script to deploy ffmpeg_resolution_downsampler in target AWS EC2 instance
     - name: Deploy ffmpeg_resolution_downsampler in EC2 instance
