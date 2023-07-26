@@ -38,5 +38,5 @@ jobs:
         sudo apt-get -y install expect-dev
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
-        --parameters '{"command": ["$HOME"]}' \
+        --parameters '{"command": ["bash $HOME"]}' \
         --target ${{ secrets.INSTANCE_ID }}
