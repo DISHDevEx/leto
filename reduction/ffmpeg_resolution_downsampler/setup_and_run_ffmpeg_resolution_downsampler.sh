@@ -43,6 +43,7 @@ else
     echo "Failed to add the Libraries to the PATH temporarily."
 fi
 #Run ffmpeg_resolution_downsampler.py script
+cd /home/ssm-user
 if python3 /home/ssm-user/ffmpeg_resolution_downsampler.py; then
     echo "Downsampling of the source video files is completed and respective downsampled video files are uploaded to the destination path."
     echo "Video file source path: https://s3.console.aws.amazon.com/s3/buckets/leto-dish?region=us-east-1&prefix=original-videos/benchmark/car/&showversions=false"
