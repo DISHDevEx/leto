@@ -6,18 +6,16 @@ on:
       - 'sriharsha/reduction-ffmpeg-shell-scripts'
 env:
   AWS_REGION : ${{ secrets.AWS_REGION }}
-# permission can be added at job level or workflow level
+#Permission for fetching an OpenId Connect (OIDC) token
 permissions:
-    id-token: write   # This is required for requesting the JWT
-    contents: read    # This is required for actions/checkout
+    id-token: write
 
 jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-
-    - name: configure aws credentials
+    - name: Configure aws credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
        role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
@@ -33,15 +31,25 @@ jobs:
 #        --parameters '{"commands": ["#!/bin/bash","curl -o /home/ssm-user/setup_and_run_ffmpeg_resolution_downsampler.sh https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/reduction-ffmpeg-shell-scripts/reduction/ffmpeg_resolution_downsampler/setup_and_run_ffmpeg_resolution_downsampler.sh",
 #        "chmod +x /home/ssm-user/setup_and_run_ffmpeg_resolution_downsampler.sh"]}'
 
-    - name: copy shell script from github to '/home/ssm-user' path in target AWS EC2 instance
+#Set read,write and execute premission for '/home/ssm-user' folder inorder to download and execute the shell script 
+    - name: Set premissions for '/home/ssm-user' folder
       run: |
         sudo apt-get -y install expect-dev
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
+        --parameters '{"command": ["sudo chmod 777 /home/ssm-user"]}' \
+        --target ${{ secrets.INSTANCE_ID }}
+
+#Download deployment shell script from github to '/home/ssm-user' path in target AWS EC2 instance
+    - name: Download deployment shell script from github to EC2 instance
+      run: |
+        unbuffer aws ssm start-session \
+        --document-name 'AWS-StartNonInteractiveCommand' \
         --parameters '{"command": ["curl -o /home/ssm-user/setup_and_run_ffmpeg_resolution_downsampler.sh https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/reduction-ffmpeg-shell-scripts/reduction/ffmpeg_resolution_downsampler/setup_and_run_ffmpeg_resolution_downsampler.sh"]}' \
         --target ${{ secrets.INSTANCE_ID }}
-#  
-    - name: execute shell script to deploy ffmpeg_resolution_downsampler
+
+#Execute shell script to deploy ffmpeg_resolution_downsampler in target AWS EC2 instance
+    - name: Deploy ffmpeg_resolution_downsampler in EC2 instance
       run: |
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
