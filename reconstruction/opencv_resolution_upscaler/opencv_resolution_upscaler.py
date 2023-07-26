@@ -52,14 +52,11 @@ def parse_args():
 
     return args
 
-def upscale_video():
+def upscale_preprocess():
     '''
-    Method that upscales video using opencv and merges audio with the upscaled video
-    if original video has an audio stream.
+    Method that downloads videos from s3 onto local environment.
     '''
-
     args = parse_args()
-
     aux = Aux()
     
     os.mkdir('./reduced_videos')
@@ -69,9 +66,16 @@ def upscale_video():
     
     aux.execute_label_and_write_local(reduced_video_list, 'reduced_videos')
     
-    for i in range(len(reduced_video_list)):
-        input_video_path = os.path.join('./reduced_videos/',str(reduced_video_list[i]))
-        upscaled_video_path = os.path.join('./reconstructed_videos/',str(reduced_video_list[i]))
+def upscale_video():
+    '''
+    Method that upscales video using opencv and merges audio with the upscaled video
+    '''
+    
+    args = parse_args()
+    
+    for i in range(len(os.listdir('reduced_videos'))):
+        input_video_path = os.path.join('./reduced_videos/',os.listdir('reduced_videos')[i])
+        upscaled_video_path = os.path.join('./reconstructed_videos/',os.listdir('reduced_videos')[i])
         input_video = cv2.VideoCapture(input_video_path)
         fps = input_video.get(cv2.CAP_PROP_FPS)
         codec = cv2.VideoWriter_fourcc(*'mp4v')
@@ -99,6 +103,15 @@ def upscale_video():
         input_video.release()
         upscaled_video.release()
         
+def upscale_postprocess():
+    '''
+    Method that loads reconstructed video using upscale_video method onto s3 and deletes
+    temporary files and folders.
+    '''
+    
+    aux = Aux()
+    args = parse_args()
+    
     # Load reconstructed video files
     reconstructed_video_list = aux.load_local('./reconstructed_videos')
     
@@ -118,4 +131,6 @@ def upscale_video():
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
+    upscale_preprocess()
     upscale_video()
+    upscale_postprocess()
