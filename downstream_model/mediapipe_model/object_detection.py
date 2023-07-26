@@ -1,8 +1,7 @@
 import mediapipe as mp
 import cv2
 import numpy as np
-from .visulize import visualize
-import json
+from visulize import visualize
 
 def object_detection(model_path, input_video, output_video):
     """
