@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#This script should be executed in Amazon Linux (amzn2-ami-kernel-5.10-hvm-2.0.20230628.0-x86_64-gp2) operating system with python3>=3.9.*
+#This script should be executed in Amazon Linux (amzn2-ami-kernel-5.10-hvm-2.0.20230628.0-x86_64-gp2) operating system with python3>=3.7.*
 
 #This script will install the pre-requisites required to execute the 'leto - reduction module - ffmpeg_resolution_downsampler.py' script and then execute the python script,
 #which will take the input video file from the source S3 path, reduce the resolution, label it, and then upload the downsampled video to the destination S3 path.
