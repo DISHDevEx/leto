@@ -5,8 +5,9 @@ name: deploy_reduction_ffmpeg_in_ec2
 
 on:
   push:
-    branches:
-      - 'sriharsha/reduction-ffmpeg-shell-scripts'
+    tags:
+      - '*'
+      - '**'
 env:
   AWS_REGION : ${{ secrets.AWS_REGION }}
 #Permission for fetching an OpenId Connect (OIDC) token
@@ -31,7 +32,7 @@ jobs:
         sudo apt-get -y install expect-dev
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
-        --parameters '{"command": ["curl -o /home/ssm-user/setup_and_run_ffmpeg_resolution_downsampler.sh https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/reduction-ffmpeg-shell-scripts/reduction/ffmpeg_resolution_downsampler/setup_and_run_ffmpeg_resolution_downsampler.sh"]}' \
+        --parameters '{"command": ["curl -o /home/ssm-user/setup_and_run_ffmpeg_resolution_downsampler.sh https://raw.githubusercontent.com/DISHDevEx/leto/main/reduction/ffmpeg_resolution_downsampler/setup_and_run_ffmpeg_resolution_downsampler.sh"]}' \
         --target ${{ secrets.INSTANCE_ID }}
 
 #Execute shell script to deploy ffmpeg_resolution_downsampler in target AWS EC2 instance
