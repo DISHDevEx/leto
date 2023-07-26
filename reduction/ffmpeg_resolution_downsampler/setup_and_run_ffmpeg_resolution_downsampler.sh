@@ -37,7 +37,7 @@ else
     echo "Requirements installation failed"
 fi
 #Add libraries path to the environment variable PATH temporarily
-if export PATH=/home/ssm-user/.local/bin:$PATH; then
+if export PATH=$HOME/.local/bin:$PATH; then
     echo "Libraries are temporarily added to the PATH temporarily."
 else
     echo "Failed to add the Libraries to the PATH temporarily."
@@ -49,7 +49,7 @@ if python3 ffmpeg_resolution_downsampler.py; then
     echo "Video file destination path: https://s3.console.aws.amazon.com/s3/buckets/leto-dish?region=us-east-1&prefix=reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/&showversions=false"
 fi
 #Add libraries path to the environment variable 'PATH' permanently
-if echo "export PATH=/home/ssm-user/.local/bin:$PATH;" >> ~/.bashrc; then
+if echo "export PATH=$HOME/.local/bin:$PATH;" >> ~/.bashrc; then
     echo "Libraries path is permanently added to the environment variable PATH to support recurring execution of downsampler script."
     source ~/.bashrc
 else
