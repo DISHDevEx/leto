@@ -31,7 +31,7 @@
 │           ├── app-fps_bitrate.py
 │           ├── requirements.txt
 │           ├── README.md
-│  
+│
 │   ├── reconstruction
 │       ├── realbasicvser
 │           ├── builder.py
@@ -41,7 +41,13 @@
 │           ├── realbasicvsr_preprocessing.py
 │           ├── reconstruction_realbasicvsr.py
 │           ├── realbasicvsr_postprocessing.py
-|
+│       ├── opencv_resoltion_upscaler
+│           ├── requirements_opencv_resoltion_upscaler.txt
+│           ├── opencv_resoltion_upscaler.py
+│       ├── superres
+│           ├── requirements_superres.txt
+│           ├── reconstruction_superres.py
+│
 ├──  tests				contains unit tests
 │   ├── test_get_meta_data.py
 │   ├── conftest.py
@@ -86,14 +92,14 @@ Default output: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsa
 
 - RealBasicVSR
 
-### Running RealBasicVSR 
+### Running RealBasicVSR
 
 1. Move to working directory
 ```console
 cd ~/leto/reconstruction/realbasicvsr
 ```
 
-2. Run reconstruction_setup.sh to setup environment
+2. Run requirements_superres_setup.sh to install dependencies
 ```console
 bash reconstruction_realbasicvsr_setup.sh
 ```
@@ -127,6 +133,55 @@ python realbasicvsr_postprocessing.py
 - Optional argument to delete locally saved pretrained model (from preprocessing).
 - Note Postprocessor will delete any locally saved video**
 
+- OpenCV Resolution Upscaler
+
+### Running opencv resolution upscaler
+
+1. Move to working directory
+```console
+cd reconstruction/opencv_resolution_upscaler
+```
+
+2. Pip install requirements
+```console
+pip install -r requirements_opencv_resolution_upscaler.txt
+```
+
+3. Run the python file
+```console
+python opencv_resolution_upscaler.py
+```
+
+* debugging note: if you get a ImportError: libGL.so.1, run the following
+```console
+  apt-get update && apt-get install libgl1
+```
+
+Default cloud input: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/resized_480x360_video_benchmark_car.mp4
+
+Default cloud output: s3://leto-dish/reconstructed-videos/benchmark/opencv/car/video_benchmark_car_upscaled.mp4
+
+- SuperResolution
+
+### Running SuperResolution
+
+1. Move to working directory
+```console
+cd reconstruction/superres
+```
+
+2. Run requirements_superres_setup.sh to install dependencies
+```console
+bash requirements_superres_setup.sh
+```
+
+3. Run the python file
+```console
+python reconstruction_superres.py
+```
+- Default cloud input: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/resized_480x360_video_benchmark_car.mp4
+- Default cloud outout: s3://leto-dish/reconstructed-videos/benchmark/super_res/car/benchmark_superres_fsrcnn.mp4
+- This file will delete locally saved video file and pre-trained model
 
 ### Yolo Model
 
