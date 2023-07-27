@@ -1,4 +1,4 @@
-#Shell script to deploy the Leto_Reduction - ffmpeg_resolution_downsampler module in the target AWS EC2 instance
+#Shell script to deploy the Leto Reduction - ffmpeg_resolution_downsampler module in the target AWS EC2 instance
 #Version: v1.0.0
 #
 #!/bin/bash
@@ -49,8 +49,6 @@ fi
 cd /home/ssm-user
 if python3 /home/ssm-user/ffmpeg_resolution_downsampler.py; then
     echo "Downsampling of the source video files is completed and respective downsampled video files are uploaded to the destination path."
-    echo "Video file source path: https://s3.console.aws.amazon.com/s3/buckets/leto-dish?region=us-east-1&prefix=original-videos/benchmark/car/&showversions=false"
-    echo "Video file destination path: https://s3.console.aws.amazon.com/s3/buckets/leto-dish?region=us-east-1&prefix=reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/&showversions=false"
 fi
 #Add libraries path to the environment variable 'PATH' permanently
 if echo "export PATH=/home/ssm-user/.local/bin:$PATH;" >> ~/.bashrc; then
