@@ -20,8 +20,8 @@ def parse_args():
         args: argparse.Namespace object
             Returns an object with the relevent input bucket, input s3 prefix, output bucket, output s3 prefix and scaling resolution.
     """
-
-    parser = argparse.ArgumentParser(description="Inference script of opencv video upscaler")
+    # Inference script of opencv video upscaler
+    parser = argparse.ArgumentParser()
 
     parser.add_argument('--input_bucket_s3',
                         type=str,
@@ -58,21 +58,21 @@ def upscale_preprocess():
     '''
     args = parse_args()
     aux = Aux()
-    
+
     os.mkdir('./reduced_videos')
     os.mkdir('./reconstructed_videos')
-    
+
     reduced_video_list = aux.load_s3(args.input_bucket_s3, args.input_prefix_s3)
-    
+
     aux.execute_label_and_write_local(reduced_video_list, 'reduced_videos')
-    
+
 def upscale_video():
     '''
-    Method that upscales video using opencv and merges audio with the upscaled video
+    Method that upscales video using opencv and merges audio with the upscaled video.
     '''
-    
+
     args = parse_args()
-    
+
     for i in range(len(os.listdir('reduced_videos'))):
         input_video_path = os.path.join('./reduced_videos/',os.listdir('reduced_videos')[i])
         upscaled_video_path = os.path.join('./reconstructed_videos/',os.listdir('reduced_videos')[i])
@@ -99,36 +99,36 @@ def upscale_video():
                             "0:0", "-map", "1:0", upscaled_video_path], shell=True)
         else:
             pass
-        
+
         # Release the video capture and writer objects
         input_video.release()
         upscaled_video.release()
-        
+
 def upscale_postprocess():
     '''
     Method that loads reconstructed video using upscale_video method onto s3 and deletes
     temporary files and folders.
     '''
-    
+
     aux = Aux()
     args = parse_args()
-    
+
     # Load reconstructed video files
     reconstructed_video_list = aux.load_local('./reconstructed_videos')
-    
+
     aux.set_local_path('./reconstructed_videos')
-    
+
     # Upload reconstructed video files to s3
     aux.upload_s3(reconstructed_video_list, bucket = args.output_bucket_s3, prefix = args.output_prefix_s3)
-    
+
     # Delete reconstructed_videos folder from local
     aux.clean()
-    
+
     aux.set_local_path('./reduced_videos')
-    
+
     # Delete reduced_videos folder from local
     aux.clean()
-    
+
     # Close all OpenCV windows
     cv2.destroyAllWindows()
 
