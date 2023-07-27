@@ -144,7 +144,7 @@ class Evaluator:
 
         return average_ssim
 
-    def read_max_files_s3(self,bucket_name,prefix_orginal_file, prefix_reduced_file):
+    def read_files_from_s3_match(self,bucket_name,prefix_orginal_file, prefix_reduced_file):
         ''' Function to read file from S3 using aEye 
         Parameters:
         bucket_name = S3 bucket name

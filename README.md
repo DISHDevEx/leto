@@ -140,7 +140,7 @@ original_file = 'path/to/input/file'
 reconstructed_file = 'path/to/output/file' ( Add your orginal and recontructed file)
 ### for calculating PSNR and SSIM for videos in S3 bucket
  
-original_file_path, reconstructed_file_path = video_eval.read_max_files_s3(bucket_name, prefix_to_original_file, prefix_reduced_file)
+original_file_path, reconstructed_file_path = video_eval.read_files_from_s3_match(bucket_name, prefix_to_original_file, prefix_reduced_file)
 psnr = video_eval.calculate_psnr(original_file, reconstructed_file)
 print(f"Video PSNR: {psnr} dB")
 ssim = video_eval.calculate_video_ssim(original_file, reconstructed_file)
