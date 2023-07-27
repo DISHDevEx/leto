@@ -4,7 +4,7 @@ from skimage.metrics import structural_similarity as compare_ssim
 
 class Evaluator:
     def __init__(self):
-        print("Start calcuting Video metrics") 
+        print("Start calculating Video metrics") 
 
 
     def calculate_psnr(self,original_path, compressed_path):
