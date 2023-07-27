@@ -1,6 +1,10 @@
 import cv2
 import numpy as np
 from skimage.metrics import structural_similarity as compare_ssim
+from aEye.auxiliary import Aux
+import os
+import re
+
 
 class Evaluator:
     def __init__(self):
@@ -34,6 +38,9 @@ class Evaluator:
     # Read videos
         original_video = cv2.VideoCapture(original_path)
         compressed_video = cv2.VideoCapture(compressed_path)
+
+
+
 
         # Get video properties
         num_frames = min(int(original_video.get(cv2.CAP_PROP_FRAME_COUNT)), int(compressed_video.get(cv2.CAP_PROP_FRAME_COUNT)))
@@ -136,3 +143,41 @@ class Evaluator:
         compressed_video.release()
 
         return average_ssim
+
+    def read_max_files_s3(self,bucket_name,prefix_orginal_file, prefix_reduced_file):
+        ''' Function to read file from S3 using aEye 
+        Parameters:
+        bucket_name = S3 bucket name
+        prefix_orginal_file : path where original buckets are stored
+        prefix_reduced_file : path where reduced buckets are stored
+        
+        Returns:
+        after matching return orginal 
+        video file path and reduced video file path of same video
+        '''
+
+        aux = Aux()
+        # read files from S3 in a list
+        video_list_s3_original_video = aux.load_s3(bucket = bucket_name, prefix = prefix_orginal_file)
+        video_list_s3_reduced_video = aux.load_s3(bucket = bucket_name, prefix = prefix_reduced_file)
+        # make directories to store files locally
+        if not os.path.exists('original_videos'):
+            os.mkdir('./original_videos')
+        if not os.path.exists('reduced_videos'):
+            os.mkdir('./reduced_videos')
+        # load videos to local
+        aux.execute_label_and_write_local(video_list_s3_original_video, 'original_videos')
+        aux.execute_label_and_write_local(video_list_s3_reduced_video, 'reduced_videos')
+         
+         # Match file names 
+        for i in range(len(os.listdir('original_videos'))):
+            original_video_path = os.path.join('./original_videos/',os.listdir('original_videos')[i])
+            original_video_name = os.listdir('original_videos')[i].split(".")[0].lower()
+            for file_name in os.listdir('reduced_videos'):
+                if original_video_name in file_name:
+                    reduced_video_path = os.path.join('./reduced_videos/',file_name)
+                    return original_video_path, reduced_video_path
+                else:
+                        return ("Videos are different")
+
+
