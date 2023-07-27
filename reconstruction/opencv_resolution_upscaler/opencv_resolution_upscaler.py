@@ -68,7 +68,7 @@ def upscale_preprocess():
 
 def upscale_video():
     '''
-    Method that upscales video using opencv and merges audio with the upscaled video
+    Method that upscales video using opencv and merges audio with the upscaled video.
     '''
 
     args = parse_args()
