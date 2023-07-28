@@ -144,7 +144,7 @@ class Evaluator:
 
         return average_ssim
 
-    def read_files_from_s3_match(self,bucket_name,prefix_orginal_file, prefix_reduced_file):
+    def read_files_from_s3_match(self,bucket_name,prefix_orginal_files, prefix_reduced_files):
         ''' Function to read file from S3 using aEye 
         Parameters:
         bucket_name = S3 bucket name
@@ -158,8 +158,8 @@ class Evaluator:
 
         aux = Aux()
         # read files from S3 in a list
-        video_list_s3_original_video = aux.load_s3(bucket = bucket_name, prefix = prefix_orginal_file)
-        video_list_s3_reduced_video = aux.load_s3(bucket = bucket_name, prefix = prefix_reduced_file)
+        video_list_s3_original_video = aux.load_s3(bucket = bucket_name, prefix = prefix_orginal_files)
+        video_list_s3_reduced_video = aux.load_s3(bucket = bucket_name, prefix = prefix_reduced_files)
         # make directories to store files locally
         if not os.path.exists('original_videos'):
             os.mkdir('./original_videos')
@@ -179,11 +179,15 @@ class Evaluator:
                     return original_video_path, reduced_video_path
                 else:
                         return ("Videos are different")
-        
+
+
+    def clean_files(self,path_to_orginal_folder, path_to_modified_folder):
         # delete local files
-        aux.set_local_path('./original_videos')
+        aux = Aux()
+        aux.set_local_path(path_to_orginal_folder)
         aux.clean()
-        aux.set_local_path('./modified_videos')
+        aux.set_local_path(path_to_modified_folder)
         aux.clean()
+        return("print Files clean up")
 
 
