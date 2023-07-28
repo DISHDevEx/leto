@@ -149,27 +149,24 @@ print(f"SSIM: {ssim}")
  
 video_eval.read_files_and_store_locally(bucket_name, prefix_to_original_file, prefix_reduced_file)
 
-## call the function to  list of tuple of  (original_file_path,modified_file_path_
+## call the function to get a  list of tuple of type (original_file_path,modified_file_path)
 
 video_path_list  = video_eval.match_files(orginal_folder, modified_folder)
 
 
 psnr = []
-## iterate over the video_path_list to get individual psnr
+ssim = []
+## iterate over the video_path_list to get individual psnr and ssim 
 for i in range(0,len(video_path_list)):
   original_file_path = video_path_list[i][0]
   reconstructed_file_path = video_path_list[i][1]
   psnr_score = video_eval.calculate_psnr(original_file_path, reconstructed_file_path)
   print(f"Video PSNR: {psnr_score} dB")
-psnr.append(psnr_score)
-
-ssim = []
-for i in range(0,len(video_path_list)):
-  original_file_path = video_path_list[i][0]
-  reconstructed_file_path = video_path_list[i][1]
   ssim_score = video_eval.calculate_video_ssim(original_file_path, reconstructed_file_path)
   print(f"SSIM: {ssim_score}")
-ssim.append(ssim_score)
+  psnr.append(psnr_score)
+  ssim.append(ssim_score)
+
 
 ## cleanup 
 video_eval.clean_files(path_to_orginal_folder,path_to_modified_folder)
