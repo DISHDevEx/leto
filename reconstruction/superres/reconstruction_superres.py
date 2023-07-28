@@ -11,16 +11,16 @@ from cv2 import dnn_superres
 from aEye import Aux
 
 # While working locally, uncomment the following code -
-# # get git repo root level
-# root_path = subprocess.run(['git', 'rev-parse',  '--show-toplevel'],
-#                             capture_output=True, text=True, check=False)\
-#                       .stdout.rstrip('\n')
-# #add git repo path to use all libraries
-# sys.path.append(root_path)
-# from utilities import download_model
+# get git repo root level
+root_path = subprocess.run(['git', 'rev-parse',  '--show-toplevel'],
+                            capture_output=True, text=True, check=False)\
+                      .stdout.rstrip('\n')
+#add git repo path to use all libraries
+sys.path.append(root_path)
+from utilities import download_model
 
 # While working on EC2, use the following code -
-from download_model import download_model
+# from download_model import download_model
 
 def parse_args():
     """
