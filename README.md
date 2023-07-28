@@ -147,12 +147,30 @@ print(f"SSIM: {ssim}")
 
 ### for calculating PSNR and SSIM for videos in S3 bucket. First load the videos from s3
  
-original_file_path, reconstructed_file_path = video_eval.read_files_from_s3_match(bucket_name, prefix_to_original_file, prefix_reduced_file)
+video_eval.read_files_and_store_locally(bucket_name, prefix_to_original_file, prefix_reduced_file)
 
-psnr = video_eval.calculate_psnr(original_file_path, reconstructed_file_path)
-print(f"Video PSNR: {psnr} dB")
-ssim = video_eval.calculate_video_ssim(original_file_path, reconstructed_file_path)
-print(f"SSIM: {ssim}")
+## call the function to  list of tuple of  (original_file_path,modified_file_path_
+
+video_path_list  = video_eval.match_files(orginal_folder, modified_folder)
+
+
+psnr = []
+## iterate over the video_path_list to get individual psnr
+for i in range(0,len(video_path_list)):
+  original_file_path = video_path_list[i][0]
+  reconstructed_file_path = video_path_list[i][1]
+  psnr_score = video_eval.calculate_psnr(original_file_path, reconstructed_file_path)
+  print(f"Video PSNR: {psnr_score} dB")
+psnr.append(psnr_score)
+
+ssim = []
+for i in range(0,len(video_path_list)):
+  original_file_path = video_path_list[i][0]
+  reconstructed_file_path = video_path_list[i][1]
+  ssim_score = video_eval.calculate_video_ssim(original_file_path, reconstructed_file_path)
+  print(f"SSIM: {ssim_score}")
+ssim.append(ssim_score)
+
 ## cleanup 
 video_eval.clean_files(path_to_orginal_folder,path_to_modified_folder)
 ````
