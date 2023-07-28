@@ -65,11 +65,11 @@ def pipeline(input_video,  model, output_video, save_video = False ):
             detection_result = model.predict_(im2, verbose = False, device = None)
 
             copy_image = frame.copy()
-            annotated_image, bounding_box_data = visualize_yolo(copy_image, detection_result)
+            annotated_image, bounding_box_data,average_confidence = visualize_yolo(copy_image, detection_result)
             if save_video:
                 out.write(annotated_image)
 
-            output_data[frame_index] = bounding_box_data
+            output_data[frame_index] = bounding_box_data,average_confidence
             frame_index += 1
         # Break the loop
         else:
