@@ -193,6 +193,6 @@ class Evaluator:
         aux.clean()
         aux.set_local_path(path_to_modified_folder)
         aux.clean()
-        return("print Files clean up")
+        return print("Folders removed")
 
 
