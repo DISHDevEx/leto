@@ -144,7 +144,7 @@ class Evaluator:
 
         return average_ssim
 
-    def read_files_from_s3_match(self,bucket_name,prefix_orginal_files, prefix_reduced_files):
+    def read_files_and_store_locally(self,bucket_name,prefix_orginal_files, prefix_reduced_files):
         ''' Function to read file from S3 using aEye 
         Parameters:
         bucket_name = S3 bucket name
@@ -168,15 +168,20 @@ class Evaluator:
         # load videos to local
         aux.execute_label_and_write_local(video_list_s3_original_video, 'original_videos')
         aux.execute_label_and_write_local(video_list_s3_reduced_video, 'modified_videos')
-         
+        return ("Files have been successfully loaded")
+    def match_files(self,original_folder, modified_folder):
+
          # Match file names 
-        for i in range(len(os.listdir('original_videos'))):
-            original_video_path = os.path.join('./original_videos/',os.listdir('original_videos')[i])
-            original_video_name = os.listdir('original_videos')[i].split(".")[0].lower()
-            for file_name in os.listdir('modified_videos'):
+        video_path_pair_list = []
+        for i in range(len(os.listdir(original_folder))):
+            original_video_path = os.path.join(original_folder,os.listdir(original_folder)[i])
+            original_video_name = os.listdir(original_folder)[i].split(".")[0].lower()
+            for file_name in os.listdir(modified_folder):
                 if original_video_name in file_name:
-                    reduced_video_path = os.path.join('./modified_videos/',file_name)
-                    return original_video_path, reduced_video_path
+                    reduced_video_path = os.path.join(modified_folder ,file_name)
+                    video_tuple = (original_video_path,reduced_video_path)
+                    video_path_pair_list.append(video_tuple)
+                    return video_path_pair_list
                 else:
                         return ("Videos are different")
 
