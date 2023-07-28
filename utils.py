@@ -164,20 +164,26 @@ class Evaluator:
         if not os.path.exists('original_videos'):
             os.mkdir('./original_videos')
         if not os.path.exists('reduced_videos'):
-            os.mkdir('./reduced_videos')
+            os.mkdir('./modified_videos')
         # load videos to local
         aux.execute_label_and_write_local(video_list_s3_original_video, 'original_videos')
-        aux.execute_label_and_write_local(video_list_s3_reduced_video, 'reduced_videos')
+        aux.execute_label_and_write_local(video_list_s3_reduced_video, 'modified_videos')
          
          # Match file names 
         for i in range(len(os.listdir('original_videos'))):
             original_video_path = os.path.join('./original_videos/',os.listdir('original_videos')[i])
             original_video_name = os.listdir('original_videos')[i].split(".")[0].lower()
-            for file_name in os.listdir('reduced_videos'):
+            for file_name in os.listdir('modified_videos'):
                 if original_video_name in file_name:
-                    reduced_video_path = os.path.join('./reduced_videos/',file_name)
+                    reduced_video_path = os.path.join('./modified_videos/',file_name)
                     return original_video_path, reduced_video_path
                 else:
                         return ("Videos are different")
+        
+        # delete local files
+        aux.set_local_path('./original_videos')
+        aux.clean()
+        aux.set_local_path('./modified_videos')
+        aux.clean()
 
 
