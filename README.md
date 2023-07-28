@@ -47,6 +47,10 @@
 │       ├── superres
 │           ├── requirements_superres.txt
 │           ├── reconstruction_superres.py
+│   ├── utilities
+|       ├──download_model.py
+|       ├──metrics.py
+|
 │
 ├──  tests				contains unit tests
 │   ├── test_get_meta_data.py
@@ -190,3 +194,44 @@ Please read the Yolo model readme for more instructions.
 ### Mediapipe Model
 
 Please read the Mediapipe model readme for more instructions.
+
+# Evaluating metrics
+
+## Average Precision
+The average precision is computed as the downstream model detects the objects in the video. 
+Ensure the working directory is the root directory
+
+1. Install the requirements of the downstream model.
+```console
+!pip install -r downstream_model/yolo/requirements_yolo.txt
+```
+
+2. Import the required utility
+```console
+import boto3
+import cv2
+from aEye import Video
+from aEye import Aux
+from downstream_model.yolo import Yolo
+from utilities import calculateAP
+```
+
+3. Import videos using aux object
+```console
+aux = Aux()
+video_list_s3 = aux.load_s3(bucket = 'aeye-data-bucket', prefix = 'input_video/')
+```
+
+4. Load in yolo model
+
+```console
+model = Yolo()
+model.load_model_weight('yolov8s.pt')  #this model .pt is a pretrained model from yolov8 to detect 80 objects . Other models are found in S3
+```
+
+5. Compute Average Confidence
+```
+average_confidence = []
+for video in video_list_s3:
+  average_confidence.append(calculateAP(video,model))
+```
