@@ -5,89 +5,29 @@ import os
 import sys
 import cv2
 import boto3
-import argparse
 import subprocess
+import tensorflow as tf
+from tensorflow import keras
+import numpy as np
 
 
 # get git repo root level
 root_path = subprocess.run(['git', 'rev-parse',  '--show-toplevel'],
                             capture_output=True, text=True, check=False)\
                       .stdout.rstrip('\n')
+
 #add git repo path to use all libraries
 sys.path.append(root_path)
 
-from utilities import download_model
+from utilities import CloudFunctionality
+from utilities import parse_recon_args
 
-def parse_args():
-    """
-    Parses the arguments needed for reconstruction module.
-    Catalogues: input s3 bucket, input s3 prefix, output s3 bucket, output s3 prefix,
-            codec, resolution, model bucket, model prefix and algorithm.
-
-    Returns
-    -------
-        args: argparse.Namespace object
-            Returns an object with the relevent input s3 bucket, input s3 prefix, output s3 bucket,
-            output s3 prefix, codec, resolution, model bucket, model prefix and algorithm.
-    """
-
-    parser = argparse.ArgumentParser(description="Inference script of upscaler")
-
-    parser.add_argument('--input_bucket_s3',
-                        type =str,
-                        help ='s3 bucket of the input video',
-                        default = "leto-dish")
-
-    parser.add_argument("--input_prefix_s3",
-                        type = str,
-                        help = "s3 prefix of the input video",
-                        default = 'reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/')
-
-    parser.add_argument("--output_bucket_s3",
-                        type=str,
-                        default = "leto-dish",
-                        help = "s3 bucket of the output video")
-
-    parser.add_argument("--output_prefix_s3",
-                        type = str,
-                        default = "reconstructed-videos/benchmark/superres/car/",
-                        help ="s3 prefix of the output video")
-
-    parser.add_argument("--model_bucket_s3",
-                        type = str,
-                        default = "leto-dish",
-                        help = "s3 bucket of the pre-trained model")
-
-    parser.add_argument("--model_prefix_s3",
-                        type = str,
-                        default = "pretrained-models/fastsrgan.h5",
-                        help = "s3 prefix of the pre-trained model")
-
-    parser.add_argument("--local_model_path",
-                        type = str,
-                        default = "fastsrgan.h5",
-                        help="local path to save pre-trained model")
-
-    parser.add_argument("--local_model_path",
-                    type = str,
-                    default = "fastsrgan.h5",
-                    help="local path to save pre-trained model")
-
-    parser.add_argument("--clean_model",
-                    type=str,
-                    default = "True",
-                    help= "String to indicate to clean video or not  input video")
-
-    args = parser.parse_args()
-
-    return args
-
-
-
-def superres_video(args):
+def super_resolve_video(args):
     '''
     Function that enhances video resolution using Deep Neural Networks.
     '''
+
+    tf.debugging.set_log_device_placement(True)
 
     for i in range(len(os.listdir('reduced_videos'))):
         input_video_path = os.path.join('./reduced_videos/',os.listdir('reduced_videos')[i])
@@ -95,37 +35,38 @@ def superres_video(args):
         input_video = cv2.VideoCapture(input_video_path)
         fourcc = cv2.VideoWriter_fourcc(*args.codec)
         fps = input_video.get(cv2.CAP_PROP_FPS)
-        superres_video = cv2.VideoWriter(superres_video_path, fourcc, fps, args.resolution)
+        superres_video = cv2.VideoWriter(superres_video_path, -1, fps, args.resolution)
 
-        # Create an instance of DNN Super Resolution implementation class
-        model = dnn_superres.DnnSuperResImpl_create()
-        model.readModel('model.pb')
-        model.setModel(args.algorithm, 4)
+        # Create an instance of fastsrgan model
+        model = keras.models.load_model('fastsrgan.h5')
+
 
         while input_video.isOpened():
             ret, frame = input_video.read()
-            if not ret:
-                break
+            if ret is True:
 
-            result = model.upsample(frame)
+                with tf.device('/GPU:0'):
+                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-            # Resize frame
-            resized = cv2.resize(result, args.resolution, interpolation = cv2.INTER_LANCZOS4)
+                    # Rescale to 0-1.
+                    frame = frame / 255.0
 
-            # Write resized frame to the output video file
-            superres_video.write(resized)
+                    sr_frame = model.predict(np.expand_dims(frame, axis=0))[0]
 
-            # Closing the video by Escape button
-            if cv2.waitKey(10) == 27:
-                break
+                    sr_frame = (((sr_frame + 1) / 2.) * 255).astype(np.uint8)
+
+                    sr_frame = cv2.cvtColor(sr_frame, cv2.COLOR_RGB2BGR)
+
+                    superres_video.write(sr_frame)
 
         # Release video capture and writer objects
         input_video.release()
         superres_video.release()
 
 if __name__ == '__main__':
-    args = parse_args()
+    cloud_functionality = CloudFunctionality()
+    args = parse_recon_args()
 
-    superres_preprocess(args)
-    superres_video(args)
-    superres_postprocess(args)
+    cloud_functionality.preprocess(args)
+    super_resolve_video(args)
+    cloud_functionality.postprocess(args)

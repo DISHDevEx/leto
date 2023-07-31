@@ -1,12 +1,14 @@
+import os
 from aEye import Aux
 import boto3
 
-Class CloudFunctionality:
+class CloudFunctionality:
 
-    def __init__():
+    def __init__(self):
         self.aux = Aux()
+        self.s3 = boto3.client("s3")
 
-    def download_model(self,local_path, bucket_name, key):
+    def download_model(self,args):
         """
         Downloads any model file from s3 to a local path.
 
@@ -20,9 +22,9 @@ Class CloudFunctionality:
         key: string
             The name of the object and any preceeding folders.
         """
-        s3 = boto3.client("s3")
-        with open(local_path, "wb") as file:
-            s3.download_fileobj(bucket_name, key, file)
+
+        with open(args.local_model_path, "wb") as file:
+            self.s3.download_fileobj(args.model_bucket_s3, args.model_prefix_s3, file)
 
     def preprocess(self,args):
         '''
@@ -38,7 +40,7 @@ Class CloudFunctionality:
         self.aux.execute_label_and_write_local(reduced_video_list, 'reduced_videos')
 
         # Download model.
-        self.download_model(args.local_model_path, args.model_bucket_s3, args.model_prefix_s3)
+        self.download_model(args)
 
     def postprocess(self,args):
         '''
