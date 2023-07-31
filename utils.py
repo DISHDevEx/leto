@@ -171,7 +171,6 @@ class Evaluator:
         return ("Files have been successfully loaded")
 
 
-
     def match_files(self,original_folder, modified_folder):
         ''' Function to match original video to reduced/reconstructed video
             Parameters:
