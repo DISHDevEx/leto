@@ -206,7 +206,7 @@ Ensure the working directory is the root directory
 #YOLO
 !pip install -r downstream_model/yolo/requirements_yolo.txt
 #Mediapipe
-!pip install -r downstream_model\mediapipe_model\requirements_mp.txt
+!pip install -r downstream_model/mediapipe_model/requirements_mp.txt
 ```
 
 2. Import the required utility
