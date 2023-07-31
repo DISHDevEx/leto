@@ -172,7 +172,12 @@ cd reconstruction/superres
 
 2. Run requirements_superres_setup.sh to install dependencies
 ```console
-bash requirements_superres_setup.sh
+pip install -r requirements_superres.txt
+```
+
+* debugging note: if you get a ImportError: libGL.so.1, run the following
+```console
+  apt-get update && apt-get install libgl1
 ```
 
 3. Run the python file
