@@ -1,4 +1,4 @@
-#Shell script to deploy the Leto Reconstruction - reconstruction_superres module in the target AWS EC2 instance
+#Shell script to deploy the Leto Reconstruction - reconstruction_superres module in the target AWS EC2 instance.
 #Version: v1.0.0
 #
 #!/bin/bash
