@@ -6,8 +6,8 @@ root_path = subprocess.run(['git', 'rev-parse', '--show-toplevel'],
                            capture_output=True, text=True, check=False).stdout.rstrip('\n')
 #add git repo path to use all libraries
 sys.path.append(root_path)
-from downstream_model import pipeline
-from downstream_model import object_detection
+from downstream_model.yolo import pipeline
+from downstream_model.mediapipe_model import object_detection
 
 def calculateMAC_yolo(video,model):
     """
