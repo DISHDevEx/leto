@@ -201,7 +201,7 @@ Please read the Mediapipe model readme for more instructions.
 The average precision is computed as the downstream model detects the objects in the video. 
 Ensure the working directory is the root directory
 
-1. Install the requirements of the downstream model.
+1. Install the requirements for one of the downstream model.
 ```console
 #YOLO
 !pip install -r downstream_model/yolo/requirements_yolo.txt
@@ -230,12 +230,12 @@ video_list_s3 = aux.load_s3(bucket = 'leto-dish', prefix = 'original-videos/benc
 ```console
 model = Yolo()
 model.load_model_weight('yolov8s.pt')  #this model .pt is a pretrained model from yolov8 to detect 80 objects . Other models are found in S3
+```
 #mediapipe
 Download the pretrained mediapipe model
 https://storage.googleapis.com/mediapipe-models/object_detector/efficientdet_lite0/int8/latest/efficientdet_lite0.tflite
 
-store this file path into a variable model.
-```
+store this file path into a variable 'model'.
 
 5. Compute Average Confidence
 ```
