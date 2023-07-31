@@ -203,7 +203,10 @@ Ensure the working directory is the root directory
 
 1. Install the requirements of the downstream model.
 ```console
+#YOLO
 !pip install -r downstream_model/yolo/requirements_yolo.txt
+#Mediapipe
+!pip install -r downstream_model\mediapipe_model\requirements_mp.txt
 ```
 
 2. Import the required utility
@@ -213,25 +216,33 @@ import cv2
 from aEye import Video
 from aEye import Aux
 from downstream_model.yolo import Yolo
-from utilities import calculateAP
+from utilities import *
 ```
 
 3. Import videos using aux object
 ```console
 aux = Aux()
-video_list_s3 = aux.load_s3(bucket = 'aeye-data-bucket', prefix = 'input_video/')
+video_list_s3 = aux.load_s3(bucket = 'leto-dish', prefix = 'original-videos/benchmark/collisiondetection/')
 ```
 
-4. Load in yolo model
+4. Load in Downstream model
 
 ```console
 model = Yolo()
 model.load_model_weight('yolov8s.pt')  #this model .pt is a pretrained model from yolov8 to detect 80 objects . Other models are found in S3
+#mediapipe
+Download the pretrained mediapipe model
+https://storage.googleapis.com/mediapipe-models/object_detector/efficientdet_lite0/int8/latest/efficientdet_lite0.tflite
+
+store this file path into a variable model.
 ```
 
 5. Compute Average Confidence
 ```
 average_confidence = []
 for video in video_list_s3:
-  average_confidence.append(calculateAP(video,model))
+  #yolo
+  average_confidence.append(calculateMAC_yolo(video,model))
+  #mediapipe
+  average_confidence.append(calculateMAC_mp(video,model))
 ```

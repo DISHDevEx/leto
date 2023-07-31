@@ -22,21 +22,8 @@ def object_detection(model_path, input_video, output_video, save_video = False):
         The condition to save video.
     Returns
     ----------
-    output_data: diction
-        The diction of the prediction in the format below.
-        {
-            0 : [ bounding_box_1, bounding_box_2, etc  ], 
-            1 : [ bounding_box_1, bounding_box_2, etc  ],
-
-        }
-
-        The key value of integer understands the frame index of the video.
-        Each frame index contains a list of bounding box predicted. 
-        Each frame index could contains any amount of predicted box, therefore its value is in a List format.
-        
-        Each bounding box is a List that contains all the neccessariy elements to make a bounding box.
-        The format is below:
-            bounding_box_1 = [ start_point_x, start_point_y, end_point_x, end_point_y, probability, category_name ]
+        output_data: list
+        The average confidence of each frame    
     """
     BaseOptions = mp.tasks.BaseOptions
     ObjectDetector = mp.tasks.vision.ObjectDetector
@@ -80,10 +67,11 @@ def object_detection(model_path, input_video, output_video, save_video = False):
                 # Perform object detection on the video frame.
                 detection_result = detector.detect_for_video(mp_image, frame_timestamp_ms)
                 image_copy = np.copy(mp_image.numpy_view())
-                annotated_image, bounding_box_data = visualize(image_copy, detection_result)  #Adds Bounding box to img
+                annotated_image, average_confidence = visualize(image_copy, detection_result)  #Adds Bounding box to img
                 if save_video:
                     out.write(annotated_image)
-                output_data[frame_index] = bounding_box_data
+                
+                output_data[frame_index] = average_confidence
                 frame_index += 1
 
             # Break the loop
