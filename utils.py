@@ -169,8 +169,18 @@ class Evaluator:
         aux.execute_label_and_write_local(video_list_s3_original_video, 'original_videos')
         aux.execute_label_and_write_local(video_list_s3_reduced_video, 'modified_videos')
         return ("Files have been successfully loaded")
-    def match_files(self,original_folder, modified_folder):
 
+
+
+    def match_files(self,original_folder, modified_folder):
+        ''' Function to match original video to reduced/reconstructed video
+            Parameters:
+            original_folder :str name of original_folder location
+            modified_folder : str original folder location
+
+            Return:
+            video_path_pair_list : list -> consisting of tuple between original_video_path and reduced filepath
+        '''
          # Match file names 
         video_path_pair_list = []
         for i in range(len(os.listdir(original_folder))):
