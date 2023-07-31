@@ -31,8 +31,8 @@ def parse_args():
             Returns an object with the relevent input s3 bucket, input s3 prefix, output s3 bucket,
             output s3 prefix, codec, resolution, model bucket, model prefix and algorithm.
     """
-
-    parser = argparse.ArgumentParser(description="Inference script of opencv video upscaler")
+    # Inference script of opencv video upscaler
+    parser = argparse.ArgumentParser()
 
     parser.add_argument('--input_bucket_s3',
                         type =str,
@@ -73,12 +73,12 @@ def parse_args():
                         type = str,
                         default = "pretrained-models/fsrcnn_x4.pb",
                         help = "s3 prefix of the pre-trained model")
-    
+
     parser.add_argument("--algorithm",
                         type = str,
                         default = "fsrcnn",
                         help="algorithm of the pre-trained model")
-    
+
     parser.add_argument("--model_path",
                         type = str,
                         default = "model.pb",
@@ -97,11 +97,11 @@ def superres_preprocess():
 
     os.mkdir('./reduced_videos')
     os.mkdir('./reconstructed_videos')
-    
+
     reduced_video_list = aux.load_s3(args.input_bucket_s3, args.input_prefix_s3)
-    
+
     aux.execute_label_and_write_local(reduced_video_list, 'reduced_videos')
-    
+
     # Download model
     download_model(args.model_path, args.model_bucket_s3, args.model_prefix_s3)
 
@@ -111,7 +111,7 @@ def superres_video():
     '''
 
     args = parse_args()
- 
+
     for i in range(len(os.listdir('reduced_videos'))):
         input_video_path = os.path.join('./reduced_videos/',os.listdir('reduced_videos')[i])
         superres_video_path = os.path.join('./reconstructed_videos/',os.listdir('reduced_videos')[i])
@@ -151,29 +151,29 @@ def superres_postprocess():
     Method that loads reconstructed video using superres_video method onto s3 and deletes
     temporary video folders and model file.
     '''
-    
+
     aux = Aux()
     args = parse_args()
-    
+
     # Load reconstructed video files
     reconstructed_video_list = aux.load_local('./reconstructed_videos')
-    
+
     aux.set_local_path('./reconstructed_videos')
-    
+
     # Upload reconstructed video files to s3
     aux.upload_s3(reconstructed_video_list, bucket = args.output_bucket_s3, prefix = args.output_prefix_s3)
-    
+
     # Delete reconstructed_videos folder from local
     aux.clean()
-    
+
     aux.set_local_path('./reduced_videos')
-    
+
     # Delete reduced_videos folder from local
     aux.clean()
-    
+
     # Close all OpenCV windows
     cv2.destroyAllWindows()
-    
+
     #After cleaning videos, delete the pretrained model as well.
     os.remove(args.model_path)
 
