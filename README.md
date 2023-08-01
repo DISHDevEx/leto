@@ -90,8 +90,13 @@ Default output: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsa
 ----------------------------------
 # Reconstruction Modules
 
+- Default cloud input: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/resized_480x360_video_benchmark_car.mp4
+
+- Default cloud outout: s3://leto-dish/reconstructed-videos/benchmark/misc/car/resized_480x360_video_benchmark_car.mp4
 
 ### Running RealBasicVSR
+
+- **Very High Quality SR, takes a very LONG time**
 
 1. Move to working directory
 ```console
@@ -166,11 +171,6 @@ python opencv_resolution_upscaler.py \
 --clean_model False \
 ```
 
-Default cloud input: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/resized_480x360_video_benchmark_car.mp4
-
-Default cloud output: s3://leto-dish/reconstructed-videos/benchmark/misc/car/video_benchmark_car_upscaled.mp4
-
-
 ### Running SuperResolution
 
 1. Move to working directory
@@ -185,10 +185,6 @@ pip install -r requirements_superres.txt
 
 3. Run the python file
 ```console
-python reconstruction_superres.py
-```
-
-```console
 python reconstruction_superres.py \
  --input_bucket_s3{} \
  --input_prefix_s3{} \
@@ -197,6 +193,8 @@ python reconstruction_superres.py \
  --resolution{} \
  --download_model {True}{False} \
  --clean_model {True}{False} \
+ --model_prefix_s3 pretrained-models/fsrcnn_x4.pb
+ --local_model_path model.pb
 ```
 ex/
 ```console
@@ -214,13 +212,10 @@ python reconstruction_superres.py \
   - pretrained-models/fsrcnn_x4.pb
   - pretrained-models/lapsrn_x4.pb
 
-- Default cloud input: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/resized_480x360_video_benchmark_car.mp4
-
-- Default cloud outout: s3://leto-dish/reconstructed-videos/benchmark/misc/car/resized_480x360_video_benchmark_car.mp4
 
 ### Running FastSRGAN
 
-- Reccomended EC2 image-id ami-0f598ecd07418eba2
+- **Reccomended EC2 image-id ami-0f598ecd07418eba2**
 
 1. Move to working directory
 ```console
@@ -229,43 +224,30 @@ cd reconstruction/fastsrgan
 
 2. Install dependencies
 ```python
-pip install -r requirements_superres.txt
+pip install -r requirements_fastsrgan.txt
 ```
 
 3. Run the python file
-```console
-python reconstruction_superres.py
-```
 
 ```console
-python reconstruction_superres.py \
+python fastsrgan.py \
  --input_bucket_s3{} \
  --input_prefix_s3{} \
  --output_bucket_s3{} \
  --output_prefix_s3{} \
- --resolution{} \
  --download_model {True}{False} \
  --clean_model {True}{False} \
+ --model_prefix_s3 pretrained-models/fastsrgan.h5
+ --local_model_path fastsrgan.h5
 ```
 ex/
 ```console
-python reconstruction_superres.py \
---output_prefix_s3 reconstructed-videos/benchmark/fsrcnn/car/ \
---resolution 1920 1080 \
---model_prefix_s3 pretrained-models/fsrcnn_x4.pb \
---local_model_path model.pb
+python fastsrgan.py \
+--output_prefix_s3 reconstructed-videos/benchmark/fastsrgan/car/ \
+--model_prefix_s3 pretrained-models/fastsrgan.h5 \
+--local_model_path fastsrgan.h5
 --clean_model True
 ```
-
-- model_prefix_s3 available for this module:
-  - pretrained-models/edsr_x4.pb
-  - pretrained-models/espcn_x4.pb
-  - pretrained-models/fsrcnn_x4.pb
-  - pretrained-models/lapsrn_x4.pb
-
-- Default cloud input: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/resized_480x360_video_benchmark_car.mp4
-
-- Default cloud outout: s3://leto-dish/reconstructed-videos/benchmark/misc/car/resized_480x360_video_benchmark_car.mp4
 
 ### Yolo Model
 
