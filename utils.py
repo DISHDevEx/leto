@@ -186,6 +186,7 @@ class Evaluator:
             original_video_path = os.path.join(original_folder,os.listdir(original_folder)[i])
             original_video_name = os.listdir(original_folder)[i].split(".")[0].lower()
             for file_name in os.listdir(modified_folder):
+                file_name = file_name.lower()
                 if original_video_name in file_name:
                     reduced_video_path = os.path.join(modified_folder ,file_name)
                     video_tuple = (original_video_path,reduced_video_path)
