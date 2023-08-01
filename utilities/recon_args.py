@@ -32,8 +32,13 @@ def parse_recon_args():
 
     parser.add_argument("--output_prefix_s3",
                         type = str,
-                        default = "reconstructed-videos/benchmark/fastsrgan/car/",
+                        default = "reconstructed-videos/benchmark/misc/car/",
                         help ="s3 prefix of the output video")
+
+    parser.add_argument("--download_model",
+                    type = str,
+                    default = "True",
+                    help = "string boolean to indicate if a model needs to be downloaded")
 
     parser.add_argument("--model_bucket_s3",
                         type = str,
@@ -61,8 +66,9 @@ def parse_recon_args():
                     help ="video codec")
 
     parser.add_argument("--resolution",
-                        type = tuple,
-                        default = (1920, 1080),
+                        type = int,
+                        nargs="+",
+                        default = [1920, 1080],
                         help ="desired video resolution")
 
     args = parser.parse_args()

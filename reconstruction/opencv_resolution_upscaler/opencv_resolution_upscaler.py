@@ -7,7 +7,9 @@ import cv2
 import os
 import boto3
 import static_ffmpeg
+import sys
 from aEye import Aux
+
 # get git repo root level
 root_path = subprocess.run(['git', 'rev-parse',  '--show-toplevel'],
                             capture_output=True, text=True, check=False)\
@@ -30,7 +32,8 @@ def upscale_video(args):
         input_video = cv2.VideoCapture(input_video_path)
         fps = input_video.get(cv2.CAP_PROP_FPS)
         codec = cv2.VideoWriter_fourcc(*'mp4v')
-        upscaled_video = cv2.VideoWriter(upscaled_video_path, codec, fps, args.resolution)
+
+        upscaled_video = cv2.VideoWriter(upscaled_video_path, codec, fps, tuple(args.resolution))
         while input_video.isOpened():
             ret, frame = input_video.read()
             if ret is True:

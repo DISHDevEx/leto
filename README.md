@@ -132,7 +132,7 @@ python realbasicvsr_postprocessing.py
 - Optional argument to delete locally saved pretrained model (from preprocessing).
 - Note Postprocessor will delete any locally saved video**
 
-- OpenCV Resolution Upscaler
+
 
 ### Running opencv resolution upscaler
 
@@ -141,8 +141,8 @@ python realbasicvsr_postprocessing.py
 cd reconstruction/opencv_resolution_upscaler
 ```
 
-2. Pip install requirements
-```console
+2. Install dependencies
+```python
 pip install -r requirements_opencv_resolution_upscaler.txt
 ```
 
@@ -150,28 +150,26 @@ pip install -r requirements_opencv_resolution_upscaler.txt
 ```console
 python opencv_resolution_upscaler.py \
  --input_bucket_s3{} \
- --input_prefix_s3{}\
- --output_bucket_s3{}\
- --output_prefix_s3{}\
- --scaling_resolution{}\
+ --input_prefix_s3{} \
+ --output_bucket_s3{} \
+ --output_prefix_s3{} \
+ --resolution{} \
+ --download_model False \
+ --clean_model False \
 ```
 ex/
 ```console
-python opencv_resolution_upscaler.py
---output_prefix_s3 reconstructed-videos/benchmark/opencv/car/
---scaling_resolution (1920, 1080)
-```
-
-* debugging note: if you get a ImportError: libGL.so.1, run the following
-```console
-  apt-get update && apt-get install libgl1
+python opencv_resolution_upscaler.py \
+--output_prefix_s3 reconstructed-videos/benchmark/opencv/car/ \
+--resolution 1920 1080 \
+--download_model False \
+--clean_model False \
 ```
 
 Default cloud input: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/resized_480x360_video_benchmark_car.mp4
 
-Default cloud output: s3://leto-dish/reconstructed-videos/benchmark/opencv/car/video_benchmark_car_upscaled.mp4
+Default cloud output: s3://leto-dish/reconstructed-videos/benchmark/misc/car/video_benchmark_car_upscaled.mp4
 
-- SuperResolution
 
 ### Running SuperResolution
 
@@ -180,18 +178,94 @@ Default cloud output: s3://leto-dish/reconstructed-videos/benchmark/opencv/car/v
 cd reconstruction/superres
 ```
 
-2. Run requirements_superres_setup.sh to install dependencies
-```console
-bash requirements_superres_setup.sh
+2. Install dependencies
+```python
+pip install -r requirements_superres.txt
 ```
 
 3. Run the python file
 ```console
 python reconstruction_superres.py
 ```
+
+```console
+python reconstruction_superres.py \
+ --input_bucket_s3{} \
+ --input_prefix_s3{} \
+ --output_bucket_s3{} \
+ --output_prefix_s3{} \
+ --resolution{} \
+ --download_model {True}{False} \
+ --clean_model {True}{False} \
+```
+ex/
+```console
+python reconstruction_superres.py \
+--output_prefix_s3 reconstructed-videos/benchmark/fsrcnn/car/ \
+--resolution 1920 1080 \
+--model_prefix_s3 pretrained-models/fsrcnn_x4.pb \
+--local_model_path model.pb
+--clean_model True
+```
+
+- model_prefix_s3 available for this module:
+  - pretrained-models/edsr_x4.pb
+  - pretrained-models/espcn_x4.pb
+  - pretrained-models/fsrcnn_x4.pb
+  - pretrained-models/lapsrn_x4.pb
+
 - Default cloud input: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/resized_480x360_video_benchmark_car.mp4
-- Default cloud outout: s3://leto-dish/reconstructed-videos/benchmark/super_res/car/benchmark_superres_fsrcnn.mp4
-- This file will delete locally saved video file and pre-trained model
+
+- Default cloud outout: s3://leto-dish/reconstructed-videos/benchmark/misc/car/resized_480x360_video_benchmark_car.mp4
+
+### Running FastSRGAN
+
+- Reccomended EC2 image-id ami-0f598ecd07418eba2
+
+1. Move to working directory
+```console
+cd reconstruction/fastsrgan
+```
+
+2. Install dependencies
+```python
+pip install -r requirements_superres.txt
+```
+
+3. Run the python file
+```console
+python reconstruction_superres.py
+```
+
+```console
+python reconstruction_superres.py \
+ --input_bucket_s3{} \
+ --input_prefix_s3{} \
+ --output_bucket_s3{} \
+ --output_prefix_s3{} \
+ --resolution{} \
+ --download_model {True}{False} \
+ --clean_model {True}{False} \
+```
+ex/
+```console
+python reconstruction_superres.py \
+--output_prefix_s3 reconstructed-videos/benchmark/fsrcnn/car/ \
+--resolution 1920 1080 \
+--model_prefix_s3 pretrained-models/fsrcnn_x4.pb \
+--local_model_path model.pb
+--clean_model True
+```
+
+- model_prefix_s3 available for this module:
+  - pretrained-models/edsr_x4.pb
+  - pretrained-models/espcn_x4.pb
+  - pretrained-models/fsrcnn_x4.pb
+  - pretrained-models/lapsrn_x4.pb
+
+- Default cloud input: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/resized_480x360_video_benchmark_car.mp4
+
+- Default cloud outout: s3://leto-dish/reconstructed-videos/benchmark/misc/car/resized_480x360_video_benchmark_car.mp4
 
 ### Yolo Model
 

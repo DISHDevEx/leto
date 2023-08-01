@@ -41,7 +41,8 @@ class CloudFunctionality:
         self.aux.execute_label_and_write_local(reduced_video_list, 'reduced_videos')
 
         # Download model.
-        self.download_model(args)
+        if(args.download_model.lower() == "true"):
+            self.download_model(args)
 
     def postprocess(self,args):
         '''
@@ -68,5 +69,5 @@ class CloudFunctionality:
         cv2.destroyAllWindows()
 
         #After cleaning videos, delete the pretrained model as well.
-        if(args.clean_model.lower() == "true")
-        os.remove(args.local_model_path)
+        if(args.clean_model.lower() == "true"):
+            os.remove(args.local_model_path)
