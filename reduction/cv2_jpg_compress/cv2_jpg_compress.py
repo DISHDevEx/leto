@@ -1,5 +1,6 @@
 from aEye import Aux
-import subprocess 
+import subprocess
+import argparse 
 import static_ffmpeg
 import cv2
 
@@ -54,7 +55,6 @@ def parse_args():
 
 
 def cv2_jpg_compress(video, path = "temp" , quality = 15, crf = 28):
-    !mkdir frames
     # Create a VideoCapture object
     cap = cv2.VideoCapture(video.get_presigned_uel().strip("'"))
     
@@ -67,12 +67,9 @@ def cv2_jpg_compress(video, path = "temp" , quality = 15, crf = 28):
     frame_width = int(cap.get(3))
     frame_height = int(cap.get(4))
     fps = cap.get(cv2.CAP_PROP_FPS)
-
     title = video.get_title()
 
 
-    
-    # Define the codec and create VideoWriter object.The output is stored in 'outpy.avi' file.
     out = cv2.VideoWriter(f"{path}/compressed_" + title,cv2.VideoWriter_fourcc(*'mp4v'), fps, (frame_width,frame_height))
     
     index = 0
@@ -94,7 +91,7 @@ def cv2_jpg_compress(video, path = "temp" , quality = 15, crf = 28):
     cap.release()
     out.release()
 
-    cmd = f"!static_ffmpeg -y -i temp/compressed_{title} -c:v libx264  -crf {crf} -preset slow compressed_{title}"
+    cmd = f"!static_ffmpeg -y -i {path}/compressed_{title} -c:v libx264  -crf {crf} -preset slow {path}/compressed_{title}"
     subprocess.run(cmd)
 
 
@@ -103,14 +100,14 @@ def main():
     aux = Aux()
 
 
-    os.mkdir('./temp')
+    os.mkdir(args.temp_path)
 
 
     video_list  = aux.load_s3(args.input_bucket_s3, args.input_prefix_s3)
     for video in video_list:
         cv2_jpg_compress(video)
 
-    result = aux.load_local("temp/", args.output_bucket_s3, args.output_prefix_s3)
+    result = aux.load_local("temp")
 
     aux.upload_s3(result)
 
