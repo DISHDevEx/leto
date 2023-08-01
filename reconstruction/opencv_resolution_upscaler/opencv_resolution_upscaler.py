@@ -23,7 +23,7 @@ from utilities import parse_recon_args
 
 def upscale_video(args):
     '''
-    Method that upscales video using opencv and merges audio with the upscaled video
+    Method that upscales video using opencv and merges audio with the upscaled video.
     '''
 
     for i in range(len(os.listdir('reduced_videos'))):
@@ -53,6 +53,7 @@ def upscale_video(args):
                             "0:0", "-map", "1:0", upscaled_video_path], shell=True)
         else:
             pass
+
 
         # Release the video capture and writer objects
         input_video.release()
