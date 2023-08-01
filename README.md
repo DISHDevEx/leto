@@ -136,38 +136,44 @@ Run the following command to import Evaluator class and Get PSNR and SSIM
 ```
 from utils import Evaluator
 video_eval = Evaluator()
+```
 ## if checking locally 
-original_file = 'path/to/input/file'
-reconstructed_file = 'path/to/output/file' ( Add your orginal and recontructed file) 
-
+```
+original_file_path = 'path/to/input/file'
+reconstructed_file_path = 'path/to/output/file' ( Add your orginal and recontructed file) 
+```
+## Call calculate_psnr and calculate ssim metrics 
+```
 psnr = video_eval.calculate_psnr(original_file_path, reconstructed_file_path)
 print(f"Video PSNR: {psnr} dB")
+
 ssim = video_eval.calculate_video_ssim(original_file_path, reconstructed_file_path)
 print(f"SSIM: {ssim}")
+```
 
-### for calculating PSNR and SSIM for videos in S3 bucket. First load the videos from s3
- 
+
+## for calculating PSNR and SSIM for videos in S3 bucket. 
+1. First load the videos from s3
+ ```
 video_eval.read_files_and_store_locally(bucket_name, prefix_to_original_file, prefix_reduced_file)
+```
 
-## call the function to get a  list of tuple of type (original_file_path,modified_file_path)
-
+2. call the function to get a  list of tuple of type  - (original_file_path,modified_file_path)
+```
 video_path_list  = video_eval.match_files(orginal_folder, modified_folder)
 
+```
+3. Getting result scores in a form of list of dictionaries 
 
-psnr = []
-ssim = []
-## iterate over the video_path_list to get individual psnr and ssim 
-for i in range(0,len(video_path_list)):
-  original_file_path = video_path_list[i][0]
-  reconstructed_file_path = video_path_list[i][1]
-  psnr_score = video_eval.calculate_psnr(original_file_path, reconstructed_file_path)
-  print(f"Video PSNR: {psnr_score} dB")
-  ssim_score = video_eval.calculate_video_ssim(original_file_path, reconstructed_file_path)
-  print(f"SSIM: {ssim_score}")
-  psnr.append(psnr_score)
-  ssim.append(ssim_score)
+```
+list_scores = video_eval.create_scores_dict(video_path_list)
 
 
-## cleanup 
+```
+
+
+## cleanup  local files
+
+```
 video_eval.clean_files(path_to_orginal_folder,path_to_modified_folder)
 ````
