@@ -6,11 +6,9 @@ from setuptools import find_packages, setup
 import sys
 
 from pathlib import Path
+
 this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
-
-
-
 
 
 def get_version():
@@ -40,7 +38,7 @@ def get_version():
     then an IndexError will be thrown and the build will exit with exit status 1.
 
     """
-    version = '{{VERSION_PLACEHOLDER}}'
+    version = "{{VERSION_PLACEHOLDER}}"
     if "--version" in sys.argv:
         try:
             version = sys.argv[3]
@@ -57,28 +55,23 @@ version_var = str(get_version())
 
 
 setup(
-    name='mediapipe_model',
+    name="mediapipe_model",
     version=version_var,
-    description='Mediapipe ML Model',
-    url='https://github.com/DISHDevEx/leto',
-    author_email='devex@dish.com',
-    license='Dish Wireless',
-    packages=find_packages(
-        include=['visulize',
-                 'object_detection'
-                 
-        ]
-    ),
+    description="Mediapipe ML Model",
+    url="https://github.com/DISHDevEx/leto",
+    author_email="devex@dish.com",
+    license="Dish Wireless",
+    packages=find_packages(include=["visulize", "object_detection"]),
     include_package_data=True,
     install_requires=[
-        'numpy',
-        'pandas',
-        'boto3',
-        'opencv-python',
-        'static-ffmpeg',
-        'aEye',
-        'mediapipe'
-        ],
+        "numpy",
+        "pandas",
+        "boto3",
+        "opencv-python",
+        "static-ffmpeg",
+        "aEye",
+        "mediapipe",
+    ],
     long_description=long_description,
-    long_description_content_type='text/markdown'
-    )
+    long_description_content_type="text/markdown",
+)

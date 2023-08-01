@@ -5,11 +5,10 @@ import boto3
 
 
 class Builder:
-    
     def __init__(self) -> None:
         pass
 
-    def build(self,cfg, registry, default_args=None):
+    def build(self, cfg, registry, default_args=None):
         """Build module function.
 
         Parameters
@@ -27,8 +26,7 @@ class Builder:
 
         return build_from_cfg(cfg, registry, default_args)
 
-
-    def build_backbone(self,cfg):
+    def build_backbone(self, cfg):
         """Build backbone.
 
         Parameters
@@ -38,8 +36,7 @@ class Builder:
         """
         return self.build(cfg, BACKBONES)
 
-
-    def build_component(self,cfg):
+    def build_component(self, cfg):
         """Build component.
 
         Parameters
@@ -49,8 +46,7 @@ class Builder:
         """
         return self.build(cfg, COMPONENTS)
 
-
-    def build_loss(self,cfg):
+    def build_loss(self, cfg):
         """Build loss.
 
         Parameters
@@ -58,10 +54,9 @@ class Builder:
             cfg: dict
                 Configuration for building loss.
         """
-        return self.build(self,cfg, LOSSES)
+        return self.build(self, cfg, LOSSES)
 
-
-    def build_model(self,cfg, train_cfg=None, test_cfg=None):
+    def build_model(self, cfg, train_cfg=None, test_cfg=None):
         """Build model.
 
         Parameters
@@ -75,8 +70,7 @@ class Builder:
         """
         return self.build(cfg, MODELS, dict(train_cfg=train_cfg, test_cfg=test_cfg))
 
-
-    def download_model(self,local_path, bucket_name, key):
+    def download_model(self, local_path, bucket_name, key):
         """
         Downloads any model file from s3 to a local path.
 

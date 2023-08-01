@@ -6,12 +6,11 @@ import logging
 
 
 def app_fps_bitrate():
-
     """
-    Runner method for fps_bitrate.fps_bitrate().  This method abstracts some of the 
+    Runner method for fps_bitrate.fps_bitrate().  This method abstracts some of the
     interaction with S3 and AWS away from fps_bitrate.
 
-    Input and Output S3 paths are hard coded in this version; this can be abstracted in 
+    Input and Output S3 paths are hard coded in this version; this can be abstracted in
     future versions to allow for dynamic Input and Output allocation.
 
     Input Video S3 Path: aeye-data-bucket/input_video/
@@ -28,24 +27,25 @@ def app_fps_bitrate():
                 output video S3 path.
     """
 
-    logging.info('successfully loaded function')
+    logging.info("successfully loaded function")
 
-    aux=Aux()
-    
+    aux = Aux()
+
     try:
-        video_list = aux.load_s3(bucket = 'aeye-data-bucket', prefix = 'input_video/')
+        video_list = aux.load_s3(bucket="aeye-data-bucket", prefix="input_video/")
     except Exception as e:
         print(e)
-        logging.warning(f"unable to load video list from s3; ensure AWS credentials have been provided.")
-    
+        logging.warning(
+            f"unable to load video list from s3; ensure AWS credentials have been provided."
+        )
+
     fps_bitrate(video_list)
     out = aux.execute_label_and_write_local(video_list)
-    aux.upload_s3(video_list, "leto-dish", "reduction/fps_bitrate/")
+    aux.upload_s3(video_list, "leto-dish", "reduced-videos/fps_bitrate/")
     aux.clean()
 
-    return logging.info('video reduction completed on ' + sys.version + '.')
+    return logging.info("video reduction completed on " + sys.version + ".")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app_fps_bitrate()
-
-    

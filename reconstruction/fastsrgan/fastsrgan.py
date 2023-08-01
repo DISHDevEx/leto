@@ -5,15 +5,17 @@ import os
 import sys
 import cv2
 import boto3
-import argparse
 import subprocess
-from cv2 import dnn_superres
-from aEye import Aux
+import tensorflow as tf
+from tensorflow import keras
+import numpy as np
+
 
 # get git repo root level
 root_path = subprocess.run(
     ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=False
 ).stdout.rstrip("\n")
+
 # add git repo path to use all libraries
 sys.path.append(root_path)
 
@@ -21,52 +23,49 @@ from utilities import CloudFunctionality
 from utilities import parse_recon_args
 
 
-def create_model_name(model_prefix_s3):
-    split_on_file_name = model_prefix_s3.split("/")
-    split_on_file_extension = split_on_file_name[1].split(".")
-    split_on_scaling = split_on_file_extension[0].split("_")
-    return split_on_scaling[0]
-
-
-def superres_video(args):
+def super_resolve_video(args):
     """
-    Function that enhances video resolution using Deep Neural Networks.
+    Function that enhances video resolution using Low Latency GAN.
     """
-
+    # Loop through all videos that need to be reduced.
     for i in range(len(os.listdir("reduced_videos"))):
         input_video_path = os.path.join(
             "./reduced_videos/", os.listdir("reduced_videos")[i]
         )
+
         superres_video_path = os.path.join(
             "./reconstructed_videos/", os.listdir("reduced_videos")[i]
         )
+
         input_video = cv2.VideoCapture(input_video_path)
-        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+
+        # Create a variable to store the choice codec for the output video.
+        fourcc = cv2.VideoWriter_fourcc(*args.codec)
+
         fps = input_video.get(cv2.CAP_PROP_FPS)
-        superres_video = cv2.VideoWriter(
-            superres_video_path, fourcc, fps, args.resolution
-        )
 
-        # Create an instance of DNN Super Resolution implementation class
-        model = dnn_superres.DnnSuperResImpl_create()
-        model.readModel(args.local_model_path)
+        superres_video = cv2.VideoWriter(superres_video_path, fourcc, fps, (1440, 1920))
 
-        model.setModel(create_model_name(args.model_prefix_s3), 4)
+        # Create an instance of fastsrgan model
+        model = keras.models.load_model("fastsrgan.h5")
 
         while input_video.isOpened():
             ret, frame = input_video.read()
-            if not ret:
+            if ret is True:
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+                # Rescale to 0-1.
+                frame = frame / 255.0
+
+                sr_frame = model.predict(np.expand_dims(frame, axis=0))[0]
+
+                sr_frame = (((sr_frame + 1) / 2.0) * 255).astype(np.uint8)
+
+                sr_frame = cv2.cvtColor(sr_frame, cv2.COLOR_RGB2BGR)
+
+                superres_video.write(sr_frame)
+            else:
                 break
-
-            result = model.upsample(frame)
-
-            # Resize frame
-            resized = cv2.resize(
-                result, args.resolution, interpolation=cv2.INTER_LANCZOS4
-            )
-
-            # Write resized frame to the output video file
-            superres_video.write(resized)
 
         # Release video capture and writer objects
         input_video.release()
@@ -80,6 +79,6 @@ if __name__ == "__main__":
 
     cloud_functionality.preprocess(args)
 
-    superres_video(args)
+    super_resolve_video(args)
 
     cloud_functionality.postprocess(args)
