@@ -90,7 +90,6 @@ Default output: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsa
 ----------------------------------
 # Reconstruction Modules
 
-- RealBasicVSR
 
 ### Running RealBasicVSR
 
@@ -149,7 +148,18 @@ pip install -r requirements_opencv_resolution_upscaler.txt
 
 3. Run the python file
 ```console
+python opencv_resolution_upscaler.py \
+ --input_bucket_s3{} \
+ --input_prefix_s3{}\
+ --output_bucket_s3{}\
+ --output_prefix_s3{}\
+ --scaling_resolution{}\
+```
+ex/
+```console
 python opencv_resolution_upscaler.py
+--output_prefix_s3 reconstructed-videos/benchmark/opencv/car/
+--scaling_resolution (1920, 1080)
 ```
 
 * debugging note: if you get a ImportError: libGL.so.1, run the following

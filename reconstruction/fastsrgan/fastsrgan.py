@@ -24,18 +24,24 @@ from utilities import parse_recon_args
 
 def super_resolve_video(args):
     '''
-    Function that enhances video resolution using Deep Neural Networks.
+    Function that enhances video resolution using Low Latency GAN.
     '''
-
-    tf.debugging.set_log_device_placement(True)
-
+    # Loop through all videos that need to be reduced.
     for i in range(len(os.listdir('reduced_videos'))):
+
+
         input_video_path = os.path.join('./reduced_videos/',os.listdir('reduced_videos')[i])
+
         superres_video_path = os.path.join('./reconstructed_videos/',os.listdir('reduced_videos')[i])
+
         input_video = cv2.VideoCapture(input_video_path)
+
+        #Create a variable to store the choice codec for the output video.
         fourcc = cv2.VideoWriter_fourcc(*args.codec)
+
         fps = input_video.get(cv2.CAP_PROP_FPS)
-        superres_video = cv2.VideoWriter(superres_video_path, -1, fps, args.resolution)
+
+        superres_video = cv2.VideoWriter(superres_video_path, fourcc, fps, (1440,1920))
 
         # Create an instance of fastsrgan model
         model = keras.models.load_model('fastsrgan.h5')
@@ -45,19 +51,20 @@ def super_resolve_video(args):
             ret, frame = input_video.read()
             if ret is True:
 
-                with tf.device('/GPU:0'):
-                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-                    # Rescale to 0-1.
-                    frame = frame / 255.0
+                # Rescale to 0-1.
+                frame = frame / 255.0
 
-                    sr_frame = model.predict(np.expand_dims(frame, axis=0))[0]
+                sr_frame = model.predict(np.expand_dims(frame, axis=0))[0]
 
-                    sr_frame = (((sr_frame + 1) / 2.) * 255).astype(np.uint8)
+                sr_frame = (((sr_frame + 1) / 2.) * 255).astype(np.uint8)
 
-                    sr_frame = cv2.cvtColor(sr_frame, cv2.COLOR_RGB2BGR)
+                sr_frame = cv2.cvtColor(sr_frame, cv2.COLOR_RGB2BGR)
 
-                    superres_video.write(sr_frame)
+                superres_video.write(sr_frame)
+            else:
+                break
 
         # Release video capture and writer objects
         input_video.release()
@@ -65,8 +72,13 @@ def super_resolve_video(args):
 
 if __name__ == '__main__':
     cloud_functionality = CloudFunctionality()
+
     args = parse_recon_args()
 
     cloud_functionality.preprocess(args)
+
     super_resolve_video(args)
+
+
     cloud_functionality.postprocess(args)
+

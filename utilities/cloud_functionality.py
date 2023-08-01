@@ -1,6 +1,7 @@
 import os
 from aEye import Aux
 import boto3
+import cv2
 
 class CloudFunctionality:
 
@@ -51,12 +52,11 @@ class CloudFunctionality:
         # Load reconstructed video files
         reconstructed_video_list = self.aux.load_local('./reconstructed_videos')
 
-        self.aux.set_local_path('./reconstructed_videos')
-
         # Upload reconstructed video files to s3
         self.aux.upload_s3(reconstructed_video_list, bucket = args.output_bucket_s3, prefix = args.output_prefix_s3)
 
         # Delete reconstructed_videos folder from local
+        self.aux.set_local_path('./reconstructed_videos')
         self.aux.clean()
 
         self.aux.set_local_path('./reduced_videos')
@@ -68,4 +68,5 @@ class CloudFunctionality:
         cv2.destroyAllWindows()
 
         #After cleaning videos, delete the pretrained model as well.
-        os.remove(args.model_path)
+        if(args.clean_model.lower() == "true")
+        os.remove(args.local_model_path)
