@@ -78,11 +78,6 @@ pip install -r requirements_ffmpeg_resolution_downsampler.txt
 python ffmpeg_resolution_downsampler.py
 ```
 
-* debugging note: if you get a ImportError: libGL.so.1, run the following
-```console
-  apt-get update && apt-get install libgl1
-```
-
 Default input: s3://leto-dish/original-videos/benchmark/car/
 Default output: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/
 
