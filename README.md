@@ -132,6 +132,11 @@ Please read the Mediapipe model readme for more instructions.
 
 
 ## Running utils file
+### Run requirements_utilities.txt
+
+```
+pip install -r requirements_utilities.txt
+```
 Run the following command to import Evaluator class and Get PSNR and SSIM
 ```
 from utils import Evaluator
