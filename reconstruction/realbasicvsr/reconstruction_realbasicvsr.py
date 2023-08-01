@@ -66,8 +66,8 @@ def init_model(config, checkpoint=None):
 
 def realbasicvsr_runner(args):
 
-    input_dir = "reduced_videos"
-    output_dir = "reconstructed_videos"
+    input_dir_og = "reduced_videos"
+    output_dir_og = "reconstructed_videos"
     fps = 25
 
     # Initialize the model.
@@ -75,58 +75,59 @@ def realbasicvsr_runner(args):
 
     # Read frames from video and create an array of frames.
 
-    # Extract the file extension to see if video or directory was passed in.
-    file_extension = os.path.splitext(input_dir)[1]
+    for i in range(len(os.listdir("reduced_videos"))):
+        input_dir= os.path.join(
+            "./reduced_videos/", os.listdir("reduced_videos")[i]
+        )
 
-    # If Input is a video file.
-    if file_extension in VIDEO_EXTENSIONS:
-        video_reader = mmcv.VideoReader(input_dir)
-        inputs = []
-        for frame in video_reader:
-            inputs.append(np.flip(frame, axis=2))
+        output_dir = os.path.join(
+            "./reconstructed_videos/", os.listdir("reduced_videos")[i]
+        )
 
-    # If input is a directory.
-    elif file_extension == "":
-        inputs = []
-        input_paths = sorted(glob.glob(f"{input_dir}/*"))
-        for input_path in input_paths:
-            img = mmcv.imread(input_path, channel_order="rgb")
-            inputs.append(img)
+        # Extract the file extension to see if video or directory was passed in.
+        file_extension = os.path.splitext(input_dir)[1]
 
-    # If what was passed in was neither an input directory or a video.
-    else:
-        raise ValueError('"input_dir" can only be a video or a directory.')
+        # If Input is a video file.
+        if file_extension in VIDEO_EXTENSIONS:
+            video_reader = mmcv.VideoReader(input_dir)
+            inputs = []
+            for frame in video_reader:
+                inputs.append(np.flip(frame, axis=2))
 
-    # Pre-process input frames.
-    for i, img in enumerate(inputs):
-        img = torch.from_numpy(img / 255.0).permute(2, 0, 1).float()
-        inputs[i] = img.unsqueeze(0)
-    inputs = torch.stack(inputs, dim=1)
+        # If what was passed in was not a video.
+        else:
+            raise ValueError('"input_dir" can only be a video or a directory.')
 
-    # Map to cuda, if available.
-    cuda_flag = False
-    if torch.cuda.is_available():
-        model = model.cuda()
-        cuda_flag = True
+        # Pre-process input frames.
+        for i, img in enumerate(inputs):
+            img = torch.from_numpy(img / 255.0).permute(2, 0, 1).float()
+            inputs[i] = img.unsqueeze(0)
+        inputs = torch.stack(inputs, dim=1)
 
-    # Apply super resolution to all of the frames.
-    with torch.no_grad():
+        # Map to cuda, if available.
+        cuda_flag = False
+        if torch.cuda.is_available():
+            model = model.cuda()
+            cuda_flag = True
 
-        if cuda_flag:
-            inputs = inputs.cuda()
-        outputs = model(inputs, test_mode=True)["output"].cpu()
+        # Apply super resolution to all of the frames.
+        with torch.no_grad():
 
-    # Process the frames outputs and synthesize output video.
-    output_dir = os.path.dirname(output_dir)
-    mmcv.mkdir_or_exist(output_dir)
+            if cuda_flag:
+                inputs = inputs.cuda()
+            outputs = model(inputs, test_mode=True)["output"].cpu()
 
-    h, w = outputs.shape[-2:]
-    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-    video_writer = cv2.VideoWriter(output_dir, fourcc, fps, (w, h))
-    for i in range(0, outputs.size(1)):
-        img = tensor2img(outputs[:, i, :, :, :])
-        video_writer.write(img.astype(np.uint8))
-    video_writer.release()
+        # Process the frames outputs and synthesize output video.
+        output_dir = os.path.dirname(output_dir)
+        mmcv.mkdir_or_exist(output_dir)
+
+        h, w = outputs.shape[-2:]
+        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+        video_writer = cv2.VideoWriter(output_dir, fourcc, fps, (w, h))
+        for i in range(0, outputs.size(1)):
+            img = tensor2img(outputs[:, i, :, :, :])
+            video_writer.write(img.astype(np.uint8))
+        video_writer.release()
 
 
 if __name__ == "__main__":
