@@ -191,9 +191,38 @@ class Evaluator:
                     reduced_video_path = os.path.join(modified_folder ,file_name)
                     video_tuple = (original_video_path,reduced_video_path)
                     video_path_pair_list.append(video_tuple)
-                    return video_path_pair_list
-                else:
-                        return ("Videos are different")
+        if len(video_path_pair_list) ==0:
+            return("No videos match")
+        else:
+            return video_path_pair_list
+    
+
+    def create_scores_dict(self,video_path_list):
+        '''
+        Function gives list of dictionaries with ssim and PSNR calculated 
+        Parameters:
+        video_path_list = list of tuple of pair of original and reconstructed/reduced videos
+
+        Returns:
+        list_scores : a list of dictionaries containing scores
+        
+        
+        '''
+        list_scores =[]
+        for i in range(0,len(video_path_list)):
+            dict_1 ={}
+            original_file_path = video_path_list[i][0]
+            reconstructed_file_path = video_path_list[i][1]
+            psnr_score = Evaluator.calculate_psnr(original_file_path, reconstructed_file_path)
+            print(f"Video PSNR: {psnr_score} dB")
+            ssim_score = Evaluator.calculate_video_ssim(original_file_path, reconstructed_file_path)
+            dict_1['original_file_path']  = video_path_list[i][0]
+            dict_1['reconstructed_file_path']  = video_path_list[i][1]
+            dict_1["psnr"] = psnr_score
+            dict_1["ssim"] = ssim_score
+            print(dict_1)
+            list_scores.append(dict_1)
+        return list_scores
 
 
     def clean_files(self,path_to_orginal_folder, path_to_modified_folder):
