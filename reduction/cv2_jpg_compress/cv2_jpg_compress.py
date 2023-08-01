@@ -1,10 +1,24 @@
-from aEye import Aux
+
 import subprocess
 import argparse 
 import static_ffmpeg
 import cv2
 import os
 import logging
+import sys
+from aEye import Aux
+
+# get git repo root level
+root_path = subprocess.run(
+    ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=False
+).stdout.rstrip("\n")
+
+# add git repo path to use all libraries
+sys.path.append(root_path)
+
+from utilities import CloudFunctionality
+from utilities import parse_recon_args
+
 
 def parse_args():
     """
@@ -116,7 +130,7 @@ def main():
     aux = Aux()
 
 
-    os.mkdir(args.temp_path)
+    os.mkdir(f'./{args.temp_path}')
 
 
     video_list  = aux.load_s3(args.input_bucket_s3, args.input_prefix_s3)
@@ -124,7 +138,7 @@ def main():
         print(video.title)
         cv2_jpg_compress(video, args.temp_path, args.quality, args.crf)
 
-    result = aux.load_local(args.temp_path) 
+    result = aux.load_local(f'./{args.temp_path}') 
 
     aux.upload_s3(result,args.output_bucket_s3, args.output_prefix_s3)
 
