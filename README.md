@@ -92,6 +92,7 @@ Default output: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsa
 ### Running RealBasicVSR
 
 - **Very High Quality SR, takes a very LONG time**
+- **Reccomended EC2 Image image-id ami-051619310404cab17**
 
 1. Move to working directory
 ```console
@@ -102,35 +103,27 @@ cd ~/leto/reconstruction/realbasicvsr
 ```console
 bash reconstruction_realbasicvsr_setup.sh
 ```
-- Ensure base is activated for packages to install in path {sagemaker}.
 
-3. Run preprocessing function
+3. Run the python file
 ```console
-python realbasicvsr_preprocessing.py
+python reconstruction_realbasicvsr.py \
+ --input_bucket_s3{} \
+ --input_prefix_s3{} \
+ --output_bucket_s3{} \
+ --output_prefix_s3{} \
+ --download_model {True}{False} \
+ --clean_model {True}{False} \
+ --model_prefix_s3 pretrained-models/realbasicvsr_x4.pth
+ --local_model_path realbasicvsr_x4.pth
 ```
-- Default cloud input: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/
-
-- Note Pre Processing will save local video and a 200mb pretrained model
-
-4. Run inference module on desired vido
+ex/
 ```console
-python reconstruction_realbasicvsr.py {input_dir} {output_dir}
+python reconstruction_realbasicvsr.py \
+--output_prefix_s3 reconstructed-videos/benchmark/realbasicvsr/car/ \
+--model_prefix_s3 pretrained-models/realbasicvsr_x4.pth \
+--local_model_path realbasicvsr_x4.pth
+--clean_model True
 ```
-Example:
-```console
-python reconstruction_realbasicvsr.py  ./reduced_videos/resized_480x360_video_benchmark_car.mp4 ./reconstructed_videos/reconstructed_4x_video_benchmark_car.mp4
-```
-
--  Necessary arguments: input_dir, output_dir
-
-5. Run postprocessing function
-```console
-python realbasicvsr_postprocessing.py
-```
-- Default cloud output: s3://leto-dish/reconstructed-videos/benchmark/realbasicvsr/car/
-
-- Optional argument to delete locally saved pretrained model (from preprocessing).
-- Note Postprocessor will delete any locally saved video**
 
 
 
