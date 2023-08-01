@@ -158,12 +158,16 @@ print(f"SSIM: {ssim}")
 
 
 ## for calculating PSNR and SSIM for videos in S3 bucket. 
-1. First load the videos from s3
+1. First load the videos from s3 to local
  ```
 video_eval.read_files_and_store_locally(bucket_name, prefix_to_original_file, prefix_reduced_file)
 ```
 
-2. call the function to get a  list of tuple of type  - (original_file_path,modified_file_path)
+2. call the function to get a  list of tuple of type  - (original_file_path,modified_file_path). 
+  a. Input will be  local_folders names created in above step (eg: 'original_videos', 'modified_videos')
+
+  b. modified_file_path :either reconstruction/ reduction folder
+
 ```
 video_path_list  = video_eval.match_files(orginal_folder, modified_folder)
 
