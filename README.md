@@ -47,6 +47,10 @@
 │       ├── superres
 │           ├── requirements_superres.txt
 │           ├── reconstruction_superres.py
+│       ├── fastsrgan
+│           ├── fastsrgan.py
+│           ├── requirements_fastsrgan.txt
+
 │
 ├──  tests				contains unit tests
 │   ├── test_get_meta_data.py
