@@ -1,6 +1,6 @@
-'''
+"""
 Module that enhances video resolution using Deep Neural Networks.
-'''
+"""
 import os
 import sys
 import cv2
@@ -11,14 +11,15 @@ from cv2 import dnn_superres
 from aEye import Aux
 
 # get git repo root level
-root_path = subprocess.run(['git', 'rev-parse',  '--show-toplevel'],
-                            capture_output=True, text=True, check=False)\
-                      .stdout.rstrip('\n')
-#add git repo path to use all libraries
+root_path = subprocess.run(
+    ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=False
+).stdout.rstrip("\n")
+# add git repo path to use all libraries
 sys.path.append(root_path)
 
 from utilities import CloudFunctionality
 from utilities import parse_recon_args
+
 
 def create_model_name(model_prefix_s3):
     split_on_file_name = model_prefix_s3.split("/")
@@ -28,19 +29,23 @@ def create_model_name(model_prefix_s3):
 
 
 def superres_video(args):
-    '''
+    """
     Function that enhances video resolution using Deep Neural Networks.
-    '''
+    """
 
-
-
-    for i in range(len(os.listdir('reduced_videos'))):
-        input_video_path = os.path.join('./reduced_videos/',os.listdir('reduced_videos')[i])
-        superres_video_path = os.path.join('./reconstructed_videos/',os.listdir('reduced_videos')[i])
+    for i in range(len(os.listdir("reduced_videos"))):
+        input_video_path = os.path.join(
+            "./reduced_videos/", os.listdir("reduced_videos")[i]
+        )
+        superres_video_path = os.path.join(
+            "./reconstructed_videos/", os.listdir("reduced_videos")[i]
+        )
         input_video = cv2.VideoCapture(input_video_path)
-        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
         fps = input_video.get(cv2.CAP_PROP_FPS)
-        superres_video = cv2.VideoWriter(superres_video_path, fourcc, fps, args.resolution)
+        superres_video = cv2.VideoWriter(
+            superres_video_path, fourcc, fps, args.resolution
+        )
 
         # Create an instance of DNN Super Resolution implementation class
         model = dnn_superres.DnnSuperResImpl_create()
@@ -56,7 +61,9 @@ def superres_video(args):
             result = model.upsample(frame)
 
             # Resize frame
-            resized = cv2.resize(result, args.resolution, interpolation = cv2.INTER_LANCZOS4)
+            resized = cv2.resize(
+                result, args.resolution, interpolation=cv2.INTER_LANCZOS4
+            )
 
             # Write resized frame to the output video file
             superres_video.write(resized)
@@ -65,7 +72,8 @@ def superres_video(args):
         input_video.release()
         superres_video.release()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     cloud_functionality = CloudFunctionality()
 
     args = parse_recon_args()

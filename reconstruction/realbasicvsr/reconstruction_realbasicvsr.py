@@ -101,37 +101,34 @@ def main():
     model = init_model(args.config, args.checkpoint)
 
     # Read frames from video and create an array of frames.
-    
-    #Extract the file extension to see if video or directory was passed in.
+
+    # Extract the file extension to see if video or directory was passed in.
     file_extension = os.path.splitext(args.input_dir)[1]
-    
-    # If Input is a video file. 
-    if file_extension in VIDEO_EXTENSIONS:  
+
+    # If Input is a video file.
+    if file_extension in VIDEO_EXTENSIONS:
         video_reader = mmcv.VideoReader(args.input_dir)
         inputs = []
         for frame in video_reader:
             inputs.append(np.flip(frame, axis=2))
-            
-    # If input is a directory. 
-    elif file_extension == "":  
+
+    # If input is a directory.
+    elif file_extension == "":
         inputs = []
         input_paths = sorted(glob.glob(f"{args.input_dir}/*"))
         for input_path in input_paths:
             img = mmcv.imread(input_path, channel_order="rgb")
             inputs.append(img)
-            
-    #If what was passed in was neither an input directory or a video.      
-    else: 
+
+    # If what was passed in was neither an input directory or a video.
+    else:
         raise ValueError('"input_dir" can only be a video or a directory.')
-        
-        
-    # Pre-process input frames. 
+
+    # Pre-process input frames.
     for i, img in enumerate(inputs):
         img = torch.from_numpy(img / 255.0).permute(2, 0, 1).float()
         inputs[i] = img.unsqueeze(0)
     inputs = torch.stack(inputs, dim=1)
-    
-    
 
     # Map to cuda, if available.
     cuda_flag = False
@@ -139,7 +136,7 @@ def main():
         model = model.cuda()
         cuda_flag = True
 
-    # Apply super resolution to all of the frames. 
+    # Apply super resolution to all of the frames.
     with torch.no_grad():
         if isinstance(args.max_seq_len, int):
             outputs = []
@@ -154,7 +151,7 @@ def main():
                 inputs = inputs.cuda()
             outputs = model(inputs, test_mode=True)["output"].cpu()
 
-    #Process the frames outputs and synthesize output video. 
+    # Process the frames outputs and synthesize output video.
     output_dir = os.path.dirname(args.output_dir)
     mmcv.mkdir_or_exist(output_dir)
 

@@ -7,12 +7,12 @@ This class will tweak some methods and their outputs from the original model to 
 
 from ultralytics import YOLO
 
-class Yolo:
 
+class Yolo:
     def __init__(self) -> None:
         """
         Yolo stands for 'You only look once'. This class is just a wrapper for the yolov8 model.
-        
+
 
         Attributes
         ----------
@@ -29,7 +29,7 @@ class Yolo:
             Load in model weight locally.
         train -> None:
             Train the model based on the input.
-        
+
         predict_ -> list of result value.
             Predict data based on the current model and input
 
@@ -37,7 +37,6 @@ class Yolo:
 
         self.model = YOLO
         self.model_weight = None
-        
 
     def get_model_weight(self):
         """
@@ -52,13 +51,13 @@ class Yolo:
         """
 
         return self.model_weight
-    
-    def load_model_weight(self, local_path = 'yolov8s.pt'):
+
+    def load_model_weight(self, local_path="yolov8s.pt"):
         """
         This method will load in from local path and set the model weight.
         By default this function will load in the 2nd smallest pretrained model from ultralytics.
         If 'yolov8s.pt' doesn't exist in your local machine, ultralytics will download the weight 'yolov8s.pt' to the local machine.
-        
+
         ##################################
         This must be called at least once in the beginning to set the weight into model before running .train_ or .predict_
 
@@ -68,7 +67,7 @@ class Yolo:
         ----------
             local_path: str
                 The local path of the model weight.
-                
+
 
         Returns
         ----------
@@ -78,11 +77,10 @@ class Yolo:
         self.model_weight = local_path
         self.model = self.model(local_path)
 
-
-    def train_(self,data = None, **parameter):
+    def train_(self, data=None, **parameter):
         """
         This method will train the model based on the parameter and the given dataset.
-        The structure of the dataset has to be fit the ultralics framework. 
+        The structure of the dataset has to be fit the ultralics framework.
         The best and easiest way to obtain a valid dataset is to used https://universe.roboflow.com/
 
         Please also refer to training_parameter_input.py for the entire list of all possible **parameter can take in
@@ -97,24 +95,23 @@ class Yolo:
 
             **parameter: dict of argument
                 An unpacked the dict of argument that are native from ultralics framework
-                
+
 
         Returns
         ----------
         None
         """
-        
-        self.model.train(data = data , **parameter)
-        
 
-    def predict_(self, data = None, **parameter):
+        self.model.train(data=data, **parameter)
+
+    def predict_(self, data=None, **parameter):
         """
         This method will predict the model based on the parameter and the given data.
-        
+
         The data can be inputted with many format; it can be a video, an image and even a list of images.
         It can also take in an entire directory path.
-        
-        Please refer to https://docs.ultralytics.com/modes/predict/#inference-sources 
+
+        Please refer to https://docs.ultralytics.com/modes/predict/#inference-sources
         for the full list of valid sources, videos, and images format.
 
         Please also refer to prediction_parameter_input.py for the entire list of all possible **parameter can take in
@@ -141,6 +138,3 @@ class Yolo:
 
         result = self.model.predict(data, **parameter)
         return result
-    
-
-    
