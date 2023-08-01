@@ -57,8 +57,7 @@
 ```
 ----------------------------------
 # Reduction Modules
-- ffmpeg_resolution_downsampler
-- View the [fps_bitrate README](/reduction/fps_bitrate/README.md) for run-book
+
 
 
 ### Running ffmpeg resolution downsampler
@@ -80,6 +79,25 @@ python ffmpeg_resolution_downsampler.py
 
 Default input: s3://leto-dish/original-videos/benchmark/car/
 Default output: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/
+
+### Running fps_bitrate reduction
+
+1. Move to working directory:
+```console
+cd leto/reduction/fps_bitrate
+```
+
+3. Install requirements:
+
+```console
+pip install -r requirements_fps_bitrate.txt
+```
+
+4. Execute the runner method, ***app_fps_bitrate.py***
+
+```console
+python app_fps_bitrate.py
+```
 
 
 ----------------------------------
