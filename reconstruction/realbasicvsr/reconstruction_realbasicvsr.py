@@ -4,7 +4,8 @@ Module to contain the reconstruction technique based off of RealBasicVSR. 4x rec
 import argparse
 import glob
 import os
-
+import subprocess
+import sys
 import cv2
 import mmcv
 import numpy as np
@@ -14,6 +15,13 @@ from mmedit.core import tensor2img
 
 from builder import Builder
 
+# get git repo root level
+root_path = subprocess.run(
+    ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=False
+).stdout.rstrip("\n")
+
+# add git repo path to use all libraries
+sys.path.append(root_path)
 
 from utilities import CloudFunctionality
 from utilities import parse_recon_args
@@ -39,6 +47,7 @@ def init_model(config, checkpoint=None):
     builder = Builder()
     if isinstance(config, str):
         config = mmcv.Config.fromfile(config)
+
     elif not isinstance(config, mmcv.Config):
         raise TypeError(
             "config must be a filename or Config object, " f"but got {type(config)}"
@@ -56,10 +65,9 @@ def init_model(config, checkpoint=None):
 
 
 def realbasicvsr_runner(args):
-    args = parse_args()
 
-    input_dir = "./reduced_videos"
-    output_dir = "./reconstructed_videos"
+    input_dir = "reduced_videos"
+    output_dir = "reconstructed_videos"
     fps = 25
 
     # Initialize the model.
@@ -128,6 +136,6 @@ if __name__ == "__main__":
 
     cloud_functionality.preprocess(args)
 
-    realbasicvsr_runner()
+    realbasicvsr_runner(args)
 
     cloud_functionality.postprocess(args)
