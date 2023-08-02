@@ -186,8 +186,8 @@ class Evaluator:
             original_video_path = os.path.join(original_folder,os.listdir(original_folder)[i])
             original_video_name = os.listdir(original_folder)[i].split(".")[0].lower()
             for file_name in os.listdir(modified_folder):
-                file_name = file_name.lower()
-                if original_video_name in file_name:
+                file_name_1 = file_name.lower()
+                if original_video_name in file_name_1:
                     reduced_video_path = os.path.join(modified_folder ,file_name)
                     video_tuple = (original_video_path,reduced_video_path)
                     video_path_pair_list.append(video_tuple)
@@ -209,13 +209,14 @@ class Evaluator:
         
         '''
         list_scores =[]
+        video_val = Evaluator()
         for i in range(0,len(video_path_list)):
             dict_1 ={}
             original_file_path = video_path_list[i][0]
             reconstructed_file_path = video_path_list[i][1]
-            psnr_score = Evaluator.calculate_psnr(original_file_path, reconstructed_file_path)
+            psnr_score = video_val.calculate_psnr(original_file_path, reconstructed_file_path)
             print(f"Video PSNR: {psnr_score} dB")
-            ssim_score = Evaluator.calculate_video_ssim(original_file_path, reconstructed_file_path)
+            ssim_score = video_val.calculate_video_ssim(original_file_path, reconstructed_file_path)
             dict_1['original_file_path']  = video_path_list[i][0]
             dict_1['reconstructed_file_path']  = video_path_list[i][1]
             dict_1["psnr"] = psnr_score
