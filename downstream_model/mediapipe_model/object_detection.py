@@ -3,7 +3,8 @@ import cv2
 import numpy as np
 from .visulize import visualize
 
-def object_detection(model_path, input_video, output_video, save_video = False):
+
+def object_detection(model_path, input_video, output_video, save_video=False):
     """
     Given a specific model and video, it will initiate the model and will
     scan through the video frame by frame adding the bounding boxes to the output video.
@@ -22,8 +23,26 @@ def object_detection(model_path, input_video, output_video, save_video = False):
         The condition to save video.
     Returns
     ----------
+<<<<<<< HEAD
         output_data: list
         The average confidence of each frame    
+=======
+    output_data: diction
+        The diction of the prediction in the format below.
+        {
+            0 : [ bounding_box_1, bounding_box_2, etc  ],
+            1 : [ bounding_box_1, bounding_box_2, etc  ],
+
+        }
+
+        The key value of integer understands the frame index of the video.
+        Each frame index contains a list of bounding box predicted.
+        Each frame index could contains any amount of predicted box, therefore its value is in a List format.
+
+        Each bounding box is a List that contains all the neccessariy elements to make a bounding box.
+        The format is below:
+            bounding_box_1 = [ start_point_x, start_point_y, end_point_x, end_point_y, probability, category_name ]
+>>>>>>> main
     """
     BaseOptions = mp.tasks.BaseOptions
     ObjectDetector = mp.tasks.vision.ObjectDetector
@@ -35,7 +54,8 @@ def object_detection(model_path, input_video, output_video, save_video = False):
     options = ObjectDetectorOptions(
         base_options=BaseOptions(model_asset_path=model_path),
         max_results=5,
-        running_mode=VisionRunningMode.VIDEO)
+        running_mode=VisionRunningMode.VIDEO,
+    )
 
     # Opens the model, parses frame by frame and applies model
     with ObjectDetector.create_from_options(options) as detector:
@@ -44,7 +64,7 @@ def object_detection(model_path, input_video, output_video, save_video = False):
         x = cap.get(cv2.CAP_PROP_FPS)
         frame_width = int(cap.get(3))
         frame_height = int(cap.get(4))
-        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
         out = cv2.VideoWriter(output_video, fourcc, x, (frame_width, frame_height))
         if cap.isOpened() == False:
             print("Error opening video file")
@@ -54,8 +74,7 @@ def object_detection(model_path, input_video, output_video, save_video = False):
         # While the video still has frames, apply the model to get the bounding box
 
         output_data = {}
-        while (cap.isOpened()):
-
+        while cap.isOpened():
             # Capture frame-by-frame
             ret, frame = cap.read()
             if ret == True:
@@ -63,11 +82,19 @@ def object_detection(model_path, input_video, output_video, save_video = False):
                 mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
                 # Calculate the timestamp of the current frame
                 frame_timestamp_ms = int(1000 * frame_index / x)
-                
+
                 # Perform object detection on the video frame.
-                detection_result = detector.detect_for_video(mp_image, frame_timestamp_ms)
+                detection_result = detector.detect_for_video(
+                    mp_image, frame_timestamp_ms
+                )
                 image_copy = np.copy(mp_image.numpy_view())
+<<<<<<< HEAD
                 annotated_image, average_confidence = visualize(image_copy, detection_result)  #Adds Bounding box to img
+=======
+                annotated_image, bounding_box_data = visualize(
+                    image_copy, detection_result
+                )  # Adds Bounding box to img
+>>>>>>> main
                 if save_video:
                     out.write(annotated_image)
                 

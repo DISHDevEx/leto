@@ -47,9 +47,14 @@
 │       ├── superres
 │           ├── requirements_superres.txt
 │           ├── reconstruction_superres.py
+│       ├── fastsrgan
+│           ├── fastsrgan.py
+│           ├── requirements_fastsrgan.txt
+|
 │   ├── utilities
-|       ├──download_model.py
-|       ├──metrics.py
+|       ├──cloud_functionality.py
+|       ├──recon_args.py
+|       ├──utils.py
 |
 │
 ├──  tests				contains unit tests
@@ -61,8 +66,7 @@
 ```
 ----------------------------------
 # Reduction Modules
-- ffmpeg_resolution_downsampler
-- View the [fps_bitrate README](/reduction/fps_bitrate/README.md) for run-book
+
 
 
 ### Running ffmpeg resolution downsampler
@@ -82,21 +86,40 @@ pip install -r requirements_ffmpeg_resolution_downsampler.txt
 python ffmpeg_resolution_downsampler.py
 ```
 
-* debugging note: if you get a ImportError: libGL.so.1, run the following
-```console
-  apt-get update && apt-get install libgl1
-```
-
 Default input: s3://leto-dish/original-videos/benchmark/car/
 Default output: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/
+
+### Running fps_bitrate reduction
+
+1. Move to working directory:
+```console
+cd leto/reduction/fps_bitrate
+```
+
+3. Install requirements:
+
+```console
+pip install -r requirements_fps_bitrate.txt
+```
+
+4. Execute the runner method, ***app_fps_bitrate.py***
+
+```console
+python app_fps_bitrate.py
+```
 
 
 ----------------------------------
 # Reconstruction Modules
 
-- RealBasicVSR
+- Default cloud input: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/resized_480x360_video_benchmark_car.mp4
+
+- Default cloud outout: s3://leto-dish/reconstructed-videos/benchmark/misc/car/resized_480x360_video_benchmark_car.mp4
 
 ### Running RealBasicVSR
+
+- **Very High Quality SR, takes a very LONG time**
+- **Reccomended EC2 Image image-id ami-051619310404cab17**
 
 1. Move to working directory
 ```console
@@ -107,37 +130,29 @@ cd ~/leto/reconstruction/realbasicvsr
 ```console
 bash reconstruction_realbasicvsr_setup.sh
 ```
-- Ensure base is activated for packages to install in path {sagemaker}.
 
-3. Run preprocessing function
+3. Run the python file
 ```console
-python realbasicvsr_preprocessing.py
+python reconstruction_realbasicvsr.py \
+ --input_bucket_s3{} \
+ --input_prefix_s3{} \
+ --output_bucket_s3{} \
+ --output_prefix_s3{} \
+ --download_model {True}{False} \
+ --clean_model {True}{False} \
+ --model_prefix_s3 pretrained-models/realbasicvsr_x4.pth
+ --local_model_path realbasicvsr_x4.pth
 ```
-- Default cloud input: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/
-
-- Note Pre Processing will save local video and a 200mb pretrained model
-
-4. Run inference module on desired vido
+ex/
 ```console
-python reconstruction_realbasicvsr.py {input_dir} {output_dir}
+python reconstruction_realbasicvsr.py \
+--output_prefix_s3 reconstructed-videos/benchmark/realbasicvsr/car/ \
+--model_prefix_s3 pretrained-models/realbasicvsr_x4.pth \
+--local_model_path realbasicvsr_x4.pth
+--clean_model True
 ```
-Example:
-```console
-python reconstruction_realbasicvsr.py  ./reduced_videos/resized_480x360_video_benchmark_car.mp4 ./reconstructed_videos/reconstructed_4x_video_benchmark_car.mp4
-```
 
--  Necessary arguments: input_dir, output_dir
 
-5. Run postprocessing function
-```console
-python realbasicvsr_postprocessing.py
-```
-- Default cloud output: s3://leto-dish/reconstructed-videos/benchmark/realbasicvsr/car/
-
-- Optional argument to delete locally saved pretrained model (from preprocessing).
-- Note Postprocessor will delete any locally saved video**
-
-- OpenCV Resolution Upscaler
 
 ### Running opencv resolution upscaler
 
@@ -146,26 +161,30 @@ python realbasicvsr_postprocessing.py
 cd reconstruction/opencv_resolution_upscaler
 ```
 
-2. Pip install requirements
-```console
+2. Install dependencies
+```python
 pip install -r requirements_opencv_resolution_upscaler.txt
 ```
 
 3. Run the python file
 ```console
-python opencv_resolution_upscaler.py
+python opencv_resolution_upscaler.py \
+ --input_bucket_s3{} \
+ --input_prefix_s3{} \
+ --output_bucket_s3{} \
+ --output_prefix_s3{} \
+ --resolution{} \
+ --download_model False \
+ --clean_model False \
 ```
-
-* debugging note: if you get a ImportError: libGL.so.1, run the following
+ex/
 ```console
-  apt-get update && apt-get install libgl1
+python opencv_resolution_upscaler.py \
+--output_prefix_s3 reconstructed-videos/benchmark/opencv/car/ \
+--resolution 1920 1080 \
+--download_model False \
+--clean_model False \
 ```
-
-Default cloud input: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/resized_480x360_video_benchmark_car.mp4
-
-Default cloud output: s3://leto-dish/reconstructed-videos/benchmark/opencv/car/video_benchmark_car_upscaled.mp4
-
-- SuperResolution
 
 ### Running SuperResolution
 
@@ -174,18 +193,76 @@ Default cloud output: s3://leto-dish/reconstructed-videos/benchmark/opencv/car/v
 cd reconstruction/superres
 ```
 
-2. Run requirements_superres_setup.sh to install dependencies
-```console
-bash requirements_superres_setup.sh
+2. Install dependencies
+```python
+pip install -r requirements_superres.txt
 ```
 
 3. Run the python file
 ```console
-python reconstruction_superres.py
+python reconstruction_superres.py \
+ --input_bucket_s3{} \
+ --input_prefix_s3{} \
+ --output_bucket_s3{} \
+ --output_prefix_s3{} \
+ --resolution{} \
+ --download_model {True}{False} \
+ --clean_model {True}{False} \
+ --model_prefix_s3 pretrained-models/fsrcnn_x4.pb
+ --local_model_path model.pb
 ```
-- Default cloud input: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/resized_480x360_video_benchmark_car.mp4
-- Default cloud outout: s3://leto-dish/reconstructed-videos/benchmark/super_res/car/benchmark_superres_fsrcnn.mp4
-- This file will delete locally saved video file and pre-trained model
+ex/
+```console
+python reconstruction_superres.py \
+--output_prefix_s3 reconstructed-videos/benchmark/fsrcnn/car/ \
+--resolution 1920 1080 \
+--model_prefix_s3 pretrained-models/fsrcnn_x4.pb \
+--local_model_path model.pb
+--clean_model True
+```
+
+- model_prefix_s3 available for this module:
+  - pretrained-models/edsr_x4.pb
+  - pretrained-models/espcn_x4.pb
+  - pretrained-models/fsrcnn_x4.pb
+  - pretrained-models/lapsrn_x4.pb
+
+
+### Running FastSRGAN
+
+- **Reccomended EC2 image-id ami-0f598ecd07418eba2**
+
+1. Move to working directory
+```console
+cd reconstruction/fastsrgan
+```
+
+2. Install dependencies
+```python
+pip install -r requirements_fastsrgan.txt
+```
+
+3. Run the python file
+
+```console
+python fastsrgan.py \
+ --input_bucket_s3{} \
+ --input_prefix_s3{} \
+ --output_bucket_s3{} \
+ --output_prefix_s3{} \
+ --download_model {True}{False} \
+ --clean_model {True}{False} \
+ --model_prefix_s3 pretrained-models/fastsrgan.h5
+ --local_model_path fastsrgan.h5
+```
+ex/
+```console
+python fastsrgan.py \
+--output_prefix_s3 reconstructed-videos/benchmark/fastsrgan/car/ \
+--model_prefix_s3 pretrained-models/fastsrgan.h5 \
+--local_model_path fastsrgan.h5
+--clean_model True
+```
 
 ### Yolo Model
 
@@ -246,3 +323,56 @@ for video in video_list_s3:
   #mediapipe
   average_confidence.append(calculateMAC_mp(video,model))
 ```
+
+## Running utils file
+### Run requirements_utilities.txt
+
+```
+pip install -r requirements_utilities.txt
+```
+Run the following command to import Evaluator class and Get PSNR and SSIM
+```
+from utils import *
+```
+## if checking locally 
+```
+original_file_path = 'path/to/input/file'
+reconstructed_file_path = 'path/to/output/file' ( Add your orginal and recontructed file) 
+```
+## Call calculate_psnr and calculate ssim metrics 
+```
+psnr = calculate_psnr(original_file_path, reconstructed_file_path)
+print(f"Video PSNR: {psnr} dB")
+
+ssim = calculate_video_ssim(original_file_path, reconstructed_file_path)
+print(f"SSIM: {ssim}")
+```
+
+
+## for calculating PSNR and SSIM for videos in S3 bucket. 
+1. First load the videos from s3 to local
+ ```
+read_files_and_store_locally(bucket_name, prefix_to_original_file, prefix_reduced_file)
+
+```
+
+2. call the function (video_eval.match_files) to get a  list of tuple of type  - (original_file_path,modified_file_path). Input will be  local_folders names created in above step (eg: 'original_videos', 'modified_videos')
+
+```
+video_path_list  = match_files('original_videos', 'modified_videos')
+
+```
+
+3. Getting result scores in a form of list of dictionaries 
+
+```
+list_scores = create_scores_dict(video_path_list)
+
+
+```
+
+## cleanup  local files
+
+```
+video_eval.clean_files(path_to_orginal_folder,path_to_modified_folder)
+````

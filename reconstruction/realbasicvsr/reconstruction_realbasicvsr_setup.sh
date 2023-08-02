@@ -1,8 +1,6 @@
 #!/bin/sh
-pip install --upgrade pip
-pip install torch torchvision torchaudio 
-pip install openmim
-mim install mmcv-full
-pip install mmedit
-pip install aEye
-apt-get update && apt-get install libgl1
+python -m pip install --upgrade pip
+python -m pip install openmim
+python -m mim install mmcv-full
+python -m pip install mmedit
+python -m pip install aEye

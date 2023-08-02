@@ -9,14 +9,14 @@
 #which will take the input video file from the source S3 path, reduce the resolution, label it, and then upload the downsampled video to the destination S3 path.
 
 #Install pip
-sudo yum -y update
+sudo yum update -y
 if which pip &> /dev/null || sudo yum install -y python3-pip; then
     echo "Successfully installed pip";pip --version
 else
     echo " Failed to install pip"
 fi
 #Install mesa-libGL
-if sudo yum -y install mesa-libGL; then
+if sudo yum install -y mesa-libGL; then
     echo "Successfully installed mesa-libGL"
 else
     echo " Failed to install mesa-libGL"
@@ -49,6 +49,8 @@ fi
 cd /home/ssm-user
 if python3 /home/ssm-user/ffmpeg_resolution_downsampler.py; then
     echo "Downsampling of the source video files is completed and respective downsampled video files are uploaded to the destination path."
+else
+    echo "ffmpeg_resolution_downsampler.py script execution failed."
 fi
 #Add libraries path to the environment variable 'PATH' permanently
 if echo "export PATH=/home/ssm-user/.local/bin:$PATH;" >> ~/.bashrc; then
