@@ -139,8 +139,7 @@ pip install -r requirements_utilities.txt
 ```
 Run the following command to import Evaluator class and Get PSNR and SSIM
 ```
-from utils import Evaluator
-video_eval = Evaluator()
+from utils import *
 ```
 ## if checking locally 
 ```
@@ -149,10 +148,10 @@ reconstructed_file_path = 'path/to/output/file' ( Add your orginal and recontruc
 ```
 ## Call calculate_psnr and calculate ssim metrics 
 ```
-psnr = video_eval.calculate_psnr(original_file_path, reconstructed_file_path)
+psnr = calculate_psnr(original_file_path, reconstructed_file_path)
 print(f"Video PSNR: {psnr} dB")
 
-ssim = video_eval.calculate_video_ssim(original_file_path, reconstructed_file_path)
+ssim = calculate_video_ssim(original_file_path, reconstructed_file_path)
 print(f"SSIM: {ssim}")
 ```
 
@@ -160,26 +159,24 @@ print(f"SSIM: {ssim}")
 ## for calculating PSNR and SSIM for videos in S3 bucket. 
 1. First load the videos from s3 to local
  ```
-video_eval.read_files_and_store_locally(bucket_name, prefix_to_original_file, prefix_reduced_file)
-```
-
-2. call the function (video_eval.match_files) to get a  list of tuple of type  - (original_file_path,modified_file_path). 
-  a. Input will be  local_folders names created in above step (eg: 'original_videos', 'modified_videos')
-
-  b. modified_file_path :either reconstruction/ reduction folder
+read_files_and_store_locally(bucket_name, prefix_to_original_file, prefix_reduced_file)
 
 ```
-video_path_list  = video_eval.match_files('original_videos', 'modified_videos')
+
+2. call the function (video_eval.match_files) to get a  list of tuple of type  - (original_file_path,modified_file_path). Input will be  local_folders names created in above step (eg: 'original_videos', 'modified_videos')
 
 ```
+video_path_list  = match_files('original_videos', 'modified_videos')
+
+```
+
 3. Getting result scores in a form of list of dictionaries 
 
 ```
-list_scores = video_eval.create_scores_dict(video_path_list)
+list_scores = create_scores_dict(video_path_list)
 
 
 ```
-
 
 ## cleanup  local files
 

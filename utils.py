@@ -6,12 +6,7 @@ import os
 import re
 
 
-class Evaluator:
-    def __init__(self):
-        print("Start calculating Video metrics") 
-
-
-    def calculate_psnr(self,original_path, compressed_path):
+def calculate_psnr(original_path, compressed_path):
         '''
         This will help to calculate PSNR for video having any resolution 
             PSNR is Peak Signal to Noise ratio  which is used o measure the quality of a reconstructed or compressed image or video signal 
@@ -84,7 +79,8 @@ class Evaluator:
 
         return average_psnr
 
-    def calculate_video_ssim(self,original_path, compressed_path):
+
+def calculate_video_ssim(original_path, compressed_path):
         '''This works with video of any resolution
            SSIM is is a perceptual metric that quantifies image quality 
            degradation* caused by processing such as data compression or by losses in data transmission. 
@@ -142,9 +138,10 @@ class Evaluator:
         original_video.release()
         compressed_video.release()
 
-        return average_ssim
+        return average_ssim   
+    
 
-    def read_files_and_store_locally(self,bucket_name,prefix_orginal_files, prefix_reduced_files):
+def read_files_and_store_locally(bucket_name,prefix_orginal_files, prefix_reduced_files):
         ''' Function to read file from S3 using aEye 
         Parameters:
         bucket_name = S3 bucket name
@@ -171,8 +168,8 @@ class Evaluator:
         return ("Files have been successfully loaded")
 
 
-    def match_files(self,original_folder, modified_folder):
-        ''' Function to match original video to reduced/reconstructed video
+def match_files(original_folder, modified_folder):
+    ''' Function to match original video to reduced/reconstructed video
             Parameters:
             original_folder :str name of original_folder location
             modified_folder : str original folder location
@@ -180,24 +177,23 @@ class Evaluator:
             Return:
             video_path_pair_list : list -> consisting of tuple between original_video_path and reduced filepath
         '''
-         # Match file names 
-        video_path_pair_list = []
-        for i in range(len(os.listdir(original_folder))):
-            original_video_path = os.path.join(original_folder,os.listdir(original_folder)[i])
-            original_video_name = os.listdir(original_folder)[i].split(".")[0].lower()
-            for file_name in os.listdir(modified_folder):
-                file_name_1 = file_name.lower()
-                if original_video_name in file_name_1:
-                    reduced_video_path = os.path.join(modified_folder ,file_name)
-                    video_tuple = (original_video_path,reduced_video_path)
-                    video_path_pair_list.append(video_tuple)
-        if len(video_path_pair_list) ==0:
-            return("No videos match")
-        else:
-            return video_path_pair_list
-    
+    video_path_pair_list = []
+    for i in range(len(os.listdir(original_folder))):
+        original_video_path = os.path.join(original_folder,os.listdir(original_folder)[i])
+        original_video_name = os.listdir(original_folder)[i].split(".")[0].lower()
+        for file_name in os.listdir(modified_folder):
+            file_name_1 = file_name.lower()
+            if original_video_name in file_name_1:
+                reduced_video_path = os.path.join(modified_folder ,file_name)
+                video_tuple = (original_video_path,reduced_video_path)
+                video_path_pair_list.append(video_tuple)
+    if len(video_path_pair_list) ==0:
+        return("No videos match")
+    else:
+        return video_path_pair_list
 
-    def create_scores_dict(self,video_path_list):
+
+def create_scores_dict(video_path_list):
         '''
         Function gives list of dictionaries with ssim and PSNR calculated 
         Parameters:
@@ -209,30 +205,27 @@ class Evaluator:
         
         '''
         list_scores =[]
-        video_val = Evaluator()
         for i in range(0,len(video_path_list)):
             dict_1 ={}
             original_file_path = video_path_list[i][0]
             reconstructed_file_path = video_path_list[i][1]
-            psnr_score = video_val.calculate_psnr(original_file_path, reconstructed_file_path)
-            print(f"Video PSNR: {psnr_score} dB")
-            ssim_score = video_val.calculate_video_ssim(original_file_path, reconstructed_file_path)
+            psnr_score = calculate_psnr(original_file_path, reconstructed_file_path)
+            #print(f"Video PSNR: {psnr_score} dB")
+            ssim_score = calculate_video_ssim(original_file_path, reconstructed_file_path)
             dict_1['original_file_path']  = video_path_list[i][0]
             dict_1['reconstructed_file_path']  = video_path_list[i][1]
             dict_1["psnr"] = psnr_score
             dict_1["ssim"] = ssim_score
-            print(dict_1)
+            #print(dict_1)
             list_scores.append(dict_1)
         return list_scores
 
 
-    def clean_files(self,path_to_orginal_folder, path_to_modified_folder):
-        # delete local files
+def clean_files(path_to_orginal_folder, path_to_modified_folder):
+        '''delete local files '''
         aux = Aux()
         aux.set_local_path(path_to_orginal_folder)
         aux.clean()
         aux.set_local_path(path_to_modified_folder)
         aux.clean()
         return print("Folders removed")
-
-
