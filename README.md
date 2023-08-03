@@ -60,6 +60,12 @@
 
 ```
 ----------------------------------
+
+Mapping:
+
+ffmpeg resolution downsampler --> fastsrgan, superres( edsr_x4,espcn_x4,fsrcnn_x4,lapsrn_x4), opencv_resoltion_upscaler, realbasicvser(very slow)
+)
+
 # Reduction Modules
 
 
@@ -110,43 +116,6 @@ python app_fps_bitrate.py
 - Default cloud input: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/resized_480x360_video_benchmark_car.mp4
 
 - Default cloud outout: s3://leto-dish/reconstructed-videos/benchmark/misc/car/resized_480x360_video_benchmark_car.mp4
-
-### Running RealBasicVSR
-
-- **Very High Quality SR, takes a very LONG time**
-- **Reccomended EC2 Image image-id ami-051619310404cab17**
-
-1. Move to working directory
-```console
-cd ~/leto/reconstruction/realbasicvsr
-```
-
-2. Run requirements_superres_setup.sh to install dependencies
-```console
-bash reconstruction_realbasicvsr_setup.sh
-```
-
-3. Run the python file
-```console
-python reconstruction_realbasicvsr.py \
- --input_bucket_s3{} \
- --input_prefix_s3{} \
- --output_bucket_s3{} \
- --output_prefix_s3{} \
- --download_model {True}{False} \
- --clean_model {True}{False} \
- --model_prefix_s3 pretrained-models/realbasicvsr_x4.pth
- --local_model_path realbasicvsr_x4.pth
-```
-ex/
-```console
-python reconstruction_realbasicvsr.py \
---output_prefix_s3 reconstructed-videos/benchmark/realbasicvsr/car/ \
---model_prefix_s3 pretrained-models/realbasicvsr_x4.pth \
---local_model_path realbasicvsr_x4.pth
---clean_model True
-```
-
 
 
 ### Running opencv resolution upscaler
@@ -259,6 +228,42 @@ python fastsrgan.py \
 --clean_model True
 ```
 
+### Running RealBasicVSR
+
+- **Very High Quality SR, takes a very LONG time**
+- **Reccomended EC2 Image image-id ami-051619310404cab17**
+
+1. Move to working directory
+```console
+cd ~/leto/reconstruction/realbasicvsr
+```
+
+2. Run requirements_superres_setup.sh to install dependencies
+```console
+bash reconstruction_realbasicvsr_setup.sh
+```
+
+3. Run the python file
+```console
+python reconstruction_realbasicvsr.py \
+ --input_bucket_s3{} \
+ --input_prefix_s3{} \
+ --output_bucket_s3{} \
+ --output_prefix_s3{} \
+ --download_model {True}{False} \
+ --clean_model {True}{False} \
+ --model_prefix_s3 pretrained-models/realbasicvsr_x4.pth
+ --local_model_path realbasicvsr_x4.pth
+```
+ex/
+```console
+python reconstruction_realbasicvsr.py \
+--output_prefix_s3 reconstructed-videos/benchmark/realbasicvsr/car/ \
+--model_prefix_s3 pretrained-models/realbasicvsr_x4.pth \
+--local_model_path realbasicvsr_x4.pth
+--clean_model True
+```
+
 ### Yolo Model
 
 Please read the Yolo model readme for more instructions.
@@ -278,12 +283,12 @@ Run the following command to import Evaluator class and Get PSNR and SSIM
 ```
 from utils import *
 ```
-## if checking locally 
+## if checking locally
 ```
 original_file_path = 'path/to/input/file'
-reconstructed_file_path = 'path/to/output/file' ( Add your orginal and recontructed file) 
+reconstructed_file_path = 'path/to/output/file' ( Add your orginal and recontructed file)
 ```
-## Call calculate_psnr and calculate ssim metrics 
+## Call calculate_psnr and calculate ssim metrics
 ```
 psnr = calculate_psnr(original_file_path, reconstructed_file_path)
 print(f"Video PSNR: {psnr} dB")
@@ -293,7 +298,7 @@ print(f"SSIM: {ssim}")
 ```
 
 
-## for calculating PSNR and SSIM for videos in S3 bucket. 
+## for calculating PSNR and SSIM for videos in S3 bucket.
 1. First load the videos from s3 to local
  ```
 read_files_and_store_locally(bucket_name, prefix_to_original_file, prefix_reduced_file)
@@ -307,7 +312,7 @@ video_path_list  = match_files('original_videos', 'modified_videos')
 
 ```
 
-3. Getting result scores in a form of list of dictionaries 
+3. Getting result scores in a form of list of dictionaries
 
 ```
 list_scores = create_scores_dict(video_path_list)
