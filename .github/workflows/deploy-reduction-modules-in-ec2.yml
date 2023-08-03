@@ -42,4 +42,4 @@ jobs:
         --document-name "AWS-RunShellScript" \
         --instance-ids "${{ secrets.REDUCTION_INSTANCE_ID }}" \
         --max-concurrency "1" --max-errors "1" \
-        --parameters '{"commands": ["#!/bin/bash","sudo su ssm-user","cd $HOME"]}'
+        --parameters '{"commands": ["#!/bin/bash","sudo su ssm-user","cd $HOME","mkdir -p $HOME/sampledir"]}'
