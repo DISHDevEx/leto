@@ -1,7 +1,5 @@
 # **Leto**
-
----
-
+----------------------------------
 # Project Structure
 
 ```
@@ -64,27 +62,24 @@
 │      ├── test_video.mp4
 
 ```
-
----
-
+----------------------------------
 # Reduction Modules
+
+
 
 ### Running ffmpeg resolution downsampler
 
 1. Move to working directory
-
 ```console
 cd leto/reduction/ffmpeg_resolution_downsampler
 ```
 
 2. Pip install requirements
-
 ```console
 pip install -r requirements_ffmpeg_resolution_downsampler.txt
 ```
 
 3. Run the python file
-
 ```console
 python ffmpeg_resolution_downsampler.py
 ```
@@ -95,7 +90,6 @@ Default output: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsa
 ### Running fps_bitrate reduction
 
 1. Move to working directory:
-
 ```console
 cd leto/reduction/fps_bitrate
 ```
@@ -106,7 +100,7 @@ cd leto/reduction/fps_bitrate
 pip install -r requirements_fps_bitrate.txt
 ```
 
-4. Execute the runner method, **_app_fps_bitrate.py_**
+4. Execute the runner method, ***app_fps_bitrate.py***
 
 ```console
 python app_fps_bitrate.py
@@ -115,7 +109,6 @@ python app_fps_bitrate.py
 ### Running cv2_jpg_compression reduction
 
 1. Move to working directory:
-
 ```console
 cd leto/reduction/cv2_jpg_compress/
 ```
@@ -126,14 +119,14 @@ cd leto/reduction/cv2_jpg_compress/
 pip install -r requirements_cv2_jpg_compress.txt
 ```
 
-4. Execute the runner method, **_cv2_jpg_compress.py_**
+4. Execute the runner method, ***cv2_jpg_compress.py***
 
 ```console
 python cv2_jpg_compress.py
 ```
 
----
 
+----------------------------------
 # Reconstruction Modules
 
 - Default cloud input: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/resized_480x360_video_benchmark_car.mp4
@@ -146,19 +139,16 @@ python cv2_jpg_compress.py
 - **Reccomended EC2 Image image-id ami-051619310404cab17**
 
 1. Move to working directory
-
 ```console
 cd ~/leto/reconstruction/realbasicvsr
 ```
 
 2. Run requirements_superres_setup.sh to install dependencies
-
 ```console
 bash reconstruction_realbasicvsr_setup.sh
 ```
 
 3. Run the python file
-
 ```console
 python reconstruction_realbasicvsr.py \
  --input_bucket_s3{} \
@@ -170,9 +160,7 @@ python reconstruction_realbasicvsr.py \
  --model_prefix_s3 pretrained-models/realbasicvsr_x4.pth
  --local_model_path realbasicvsr_x4.pth
 ```
-
 ex/
-
 ```console
 python reconstruction_realbasicvsr.py \
 --output_prefix_s3 reconstructed-videos/benchmark/realbasicvsr/car/ \
@@ -181,22 +169,21 @@ python reconstruction_realbasicvsr.py \
 --clean_model True
 ```
 
+
+
 ### Running opencv resolution upscaler
 
 1. Move to working directory
-
 ```console
 cd reconstruction/opencv_resolution_upscaler
 ```
 
 2. Install dependencies
-
 ```python
 pip install -r requirements_opencv_resolution_upscaler.txt
 ```
 
 3. Run the python file
-
 ```console
 python opencv_resolution_upscaler.py \
  --input_bucket_s3{} \
@@ -207,9 +194,7 @@ python opencv_resolution_upscaler.py \
  --download_model False \
  --clean_model False \
 ```
-
 ex/
-
 ```console
 python opencv_resolution_upscaler.py \
 --output_prefix_s3 reconstructed-videos/benchmark/opencv/car/ \
@@ -221,19 +206,16 @@ python opencv_resolution_upscaler.py \
 ### Running SuperResolution
 
 1. Move to working directory
-
 ```console
 cd reconstruction/superres
 ```
 
 2. Install dependencies
-
 ```python
 pip install -r requirements_superres.txt
 ```
 
 3. Run the python file
-
 ```console
 python reconstruction_superres.py \
  --input_bucket_s3{} \
@@ -246,9 +228,7 @@ python reconstruction_superres.py \
  --model_prefix_s3 pretrained-models/fsrcnn_x4.pb
  --local_model_path model.pb
 ```
-
 ex/
-
 ```console
 python reconstruction_superres.py \
 --output_prefix_s3 reconstructed-videos/benchmark/fsrcnn/car/ \
@@ -264,18 +244,17 @@ python reconstruction_superres.py \
   - pretrained-models/fsrcnn_x4.pb
   - pretrained-models/lapsrn_x4.pb
 
+
 ### Running FastSRGAN
 
 - **Reccomended EC2 image-id ami-0f598ecd07418eba2**
 
 1. Move to working directory
-
 ```console
 cd reconstruction/fastsrgan
 ```
 
 2. Install dependencies
-
 ```python
 pip install -r requirements_fastsrgan.txt
 ```
@@ -293,9 +272,7 @@ python fastsrgan.py \
  --model_prefix_s3 pretrained-models/fastsrgan.h5
  --local_model_path fastsrgan.h5
 ```
-
 ex/
-
 ```console
 python fastsrgan.py \
 --output_prefix_s3 reconstructed-videos/benchmark/fastsrgan/car/ \
@@ -312,29 +289,23 @@ Please read the Yolo model readme for more instructions.
 
 Please read the Mediapipe model readme for more instructions.
 
-## Running utils file
 
+## Running utils file
 ### Run requirements_utilities.txt
 
 ```
 pip install -r requirements_utilities.txt
 ```
-
 Run the following command to import Evaluator class and Get PSNR and SSIM
-
 ```
 from utils import *
 ```
-
-## if checking locally
-
+## if checking locally 
 ```
 original_file_path = 'path/to/input/file'
-reconstructed_file_path = 'path/to/output/file' ( Add your orginal and recontructed file)
+reconstructed_file_path = 'path/to/output/file' ( Add your orginal and recontructed file) 
 ```
-
-## Call calculate_psnr and calculate ssim metrics
-
+## Call calculate_psnr and calculate ssim metrics 
 ```
 psnr = calculate_psnr(original_file_path, reconstructed_file_path)
 print(f"Video PSNR: {psnr} dB")
@@ -343,23 +314,22 @@ ssim = calculate_video_ssim(original_file_path, reconstructed_file_path)
 print(f"SSIM: {ssim}")
 ```
 
-## for calculating PSNR and SSIM for videos in S3 bucket.
 
+## for calculating PSNR and SSIM for videos in S3 bucket. 
 1. First load the videos from s3 to local
-
-```
+ ```
 read_files_and_store_locally(bucket_name, prefix_to_original_file, prefix_reduced_file)
 
 ```
 
-2. call the function (video_eval.match_files) to get a list of tuple of type - (original_file_path,modified_file_path). Input will be local_folders names created in above step (eg: 'original_videos', 'modified_videos')
+2. call the function (video_eval.match_files) to get a  list of tuple of type  - (original_file_path,modified_file_path). Input will be  local_folders names created in above step (eg: 'original_videos', 'modified_videos')
 
 ```
 video_path_list  = match_files('original_videos', 'modified_videos')
 
 ```
 
-3. Getting result scores in a form of list of dictionaries
+3. Getting result scores in a form of list of dictionaries 
 
 ```
 list_scores = create_scores_dict(video_path_list)
@@ -367,8 +337,8 @@ list_scores = create_scores_dict(video_path_list)
 
 ```
 
-## cleanup local files
+## cleanup  local files
 
 ```
 video_eval.clean_files(path_to_orginal_folder,path_to_modified_folder)
-```
+````

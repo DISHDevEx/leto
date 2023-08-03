@@ -144,6 +144,7 @@ def main():
 
     #use Aux to easily load, upload and clean up  
     aux = Aux()
+    
     result = aux.load_local(args.temp_path)
     aux.upload_s3(result,bucket=args.output_bucket_s3, prefix=args.output_prefix_s3)
 
