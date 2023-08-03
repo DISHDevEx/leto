@@ -66,7 +66,7 @@
 ```
 ----------------------------------
 
-Mapping:
+Reduction to Reconstruction Mapping:
 
 ffmpeg resolution downsampler(240p,360p,420p,720p,1080p)(lanczos,bicubic) --> fastsrgan, superres(edsr_x4,espcn_x4,fsrcnn_x4,lapsrn_x4), opencv_resoltion_upscaler, realbasicvser(very slow).
 
@@ -101,7 +101,7 @@ ex/
 ```console
 python ffmpeg_resolution_downsampler.py \
 --input_prefix original-videos/benchmark/car/ \
---output_prefix_s3 ffmpeg-resolution-downsampler-480p-lanczos/ \
+--output_prefix_s3 reduced-videos/ffmpeg-resolution-downsampler-480p-lanczos/benchmark/car \
 --quality 480p \
 --algorithm lanczos
 ```
@@ -116,16 +116,29 @@ Default output: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsa
 cd leto/reduction/fps_bitrate
 ```
 
-3. Install requirements:
+2. Install requirements:
 
 ```console
 pip install -r requirements_fps_bitrate.txt
 ```
 
-4. Execute the runner method, ***app_fps_bitrate.py***
-
+3. Run the python file
 ```console
-python app_fps_bitrate.py
+python fps_bitrate.py \
+ --input_bucket_s3{} \
+ --input_prefix_s3{} \
+ --output_bucket_s3{} \
+ --output_prefix_s3{} \
+ --fps{} \
+ --bitrate{}
+```
+ex/
+```console
+python fps_bitrate.py \
+--input_prefix original-videos/benchmark/car/ \
+--output_prefix_s3 reduced-videos/fps_bitrate-30-0/benchmark/car \
+--fps 30 \
+--bitrate 0
 ```
 
 
@@ -134,7 +147,7 @@ python app_fps_bitrate.py
 
 - Default cloud input: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/resized_480x360_video_benchmark_car.mp4
 
-- Default cloud outout: s3://leto-dish/reconstructed-videos/benchmark/misc/car/resized_480x360_video_benchmark_car.mp4
+- Default cloud output: s3://leto-dish/reconstructed-videos/benchmark/misc/car/resized_480x360_video_benchmark_car.mp4
 
 
 ### Running opencv resolution upscaler
