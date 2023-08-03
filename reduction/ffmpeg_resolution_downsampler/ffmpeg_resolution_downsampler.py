@@ -52,7 +52,7 @@ def parse_args():
     )
 
     parser.add_argument(
-        "--resolution",
+        "--quality",
         type=str,
         default="360p",
         help="Can use: 240p, 360p,480p,720p,1080p as inputs.",
@@ -82,7 +82,7 @@ def main():
         bucket=args.input_bucket_s3, prefix=args.input_prefix_s3
     )
 
-    downsampled_video = labeler.change_resolution(video_list_s3, args.resolution, args.algorithm)
+    downsampled_video = labeler.change_resolution(video_list_s3, args.quality, args.algorithm)
 
     aux.execute_label_and_write_local(downsampled_video)
 

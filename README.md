@@ -89,7 +89,21 @@ pip install -r requirements_ffmpeg_resolution_downsampler.txt
 
 3. Run the python file
 ```console
-python ffmpeg_resolution_downsampler.py
+python ffmpeg_resolution_downsampler.py \
+ --input_bucket_s3{} \
+ --input_prefix_s3{} \
+ --output_bucket_s3{} \
+ --output_prefix_s3{} \
+ --quality{} \
+ --algorithm{}
+```
+ex/
+```console
+python ffmpeg_resolution_downsampler.py \
+--input_prefix original-videos/benchmark/car/
+--output_prefix_s3 ffmpeg-resolution-downsampler-480p-lanczos/ \
+--quality 480p \
+--algorithm lanczos
 ```
 
 Default input: s3://leto-dish/original-videos/benchmark/car/
