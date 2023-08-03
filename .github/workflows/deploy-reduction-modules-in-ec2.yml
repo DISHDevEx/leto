@@ -1,0 +1,45 @@
+#GitHub workflow to deploy the Leto - Reduction modules in the target AWS EC2 instance
+#Version: v1.0.0
+#
+name: deploy-reduction-modules-in-ec2
+
+on:
+  workflow_dispatch:
+    #Inputs for workflow
+    inputs:
+      module:
+        # Description to be shown in the UI
+        description: Reduction module
+        #Input selection is mandatory
+        required: true
+        type: choice
+        options:
+          - Select module name
+          - cv2_jpg_compress
+          - ffmpeg_resolution_downsampler
+          - fps_bitrate
+env:
+  AWS_REGION : ${{ secrets.AWS_REGION }}
+#Permission for fetching an OpenId Connect (OIDC) token
+permissions:
+    id-token: write
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+       role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
+       role-session-name: ${{ secrets.SAMPLE_ROLE_SESSION }}
+       aws-region: ${{ env.AWS_REGION }}
+
+    - name: Deploy cv2_jpg_compress module in target AWS EC2 instances
+      run: |
+        aws ssm send-command \
+        --document-name "AWS-RunShellScript" \
+        --instance-ids "${{ secrets.REDUCTION_INSTANCE_ID }}" \
+        --max-concurrency "1" --max-errors "1" \
+        --parameters '{"commands": ["#!/bin/bash","sudo su ssm-user","cd $HOME","mkdir sampledir","git clone https://github.com/DISHDevEx/leto.git", "pwd","ls -l"]}''
