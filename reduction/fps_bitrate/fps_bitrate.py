@@ -1,5 +1,9 @@
+from aEye import Video
 from aEye import Labeler
+from aEye import Aux
+import sys
 import logging
+import argparse
 
 def parse_args():
     """
@@ -109,7 +113,7 @@ def fps_bitrate(video_list, fps=30, bitrate=0):
 
     return video_list
 
-def runner_fps_bitrate(args):
+def main():
     """
     Runner method for fps_bitrate.fps_bitrate().  This method abstracts some of the
     interaction with S3 and AWS away from fps_bitrate.
@@ -124,6 +128,8 @@ def runner_fps_bitrate(args):
         None: however, results in a list of processed videos being stored to the
                 output video S3 path.
     """
+
+    args = parse_args()
 
     logging.info("successfully loaded function")
 
@@ -145,4 +151,4 @@ def runner_fps_bitrate(args):
     return logging.info("video reduction completed on " + sys.version + ".")
 
 if __name__ == "__main__":
-    app_fps_bitrate(args)
+    main()
