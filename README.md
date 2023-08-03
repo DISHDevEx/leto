@@ -100,7 +100,7 @@ python ffmpeg_resolution_downsampler.py \
 ex/
 ```console
 python ffmpeg_resolution_downsampler.py \
---input_prefix original-videos/benchmark/car/
+--input_prefix original-videos/benchmark/car/ \
 --output_prefix_s3 ffmpeg-resolution-downsampler-480p-lanczos/ \
 --quality 480p \
 --algorithm lanczos
