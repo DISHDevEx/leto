@@ -1,6 +1,6 @@
 
 """
-Module contains the cv2 jpg quality compression method and reencode cv2 video using ffmpeg.
+Module contains the cv2 jpg quality reduction method and reencode cv2 video using ffmpeg.
 
 """
 import subprocess
@@ -35,7 +35,7 @@ def parse_args():
             output s3 prefix, quality, crf, and temp path.
     """
 
-    parser = argparse.ArgumentParser(description="A script of opencv jpg compression")
+    parser = argparse.ArgumentParser(description="A script of opencv jpg reduction")
 
     parser.add_argument('--input_bucket_s3',
                         type =str,
