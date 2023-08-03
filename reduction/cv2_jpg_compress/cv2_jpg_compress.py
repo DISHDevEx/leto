@@ -35,7 +35,7 @@ def parse_args():
             output s3 prefix, quality, crf, and temp path.
     """
 
-    parser = argparse.ArgumentParser(description="Inference script of opencv video upscaler")
+    parser = argparse.ArgumentParser(description="A script of opencv jpg compression")
 
     parser.add_argument('--input_bucket_s3',
                         type =str,
@@ -144,7 +144,7 @@ def main():
 
     #use Aux to easily load, upload and clean up  
     aux = Aux()
-    
+
     result = aux.load_local(args.temp_path)
     aux.upload_s3(result,bucket=args.output_bucket_s3, prefix=args.output_prefix_s3)
 
