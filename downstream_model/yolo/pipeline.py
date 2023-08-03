@@ -26,21 +26,8 @@ def pipeline(input_video, model, output_video, save_video=False):
             The condition to save video.
     Returns
     ---------
-        output_data: dict
-            The diction of the prediction in the format below.
-            {
-                0 : [ bounding_box_1, bounding_box_2, etc  ],
-                1 : [ bounding_box_1, bounding_box_2, etc  ],
-
-            }
-
-            The key value of integer understands the frame index of the video.
-            Each frame index contains a list of bounding box predicted.
-            Each frame index could contains any amount of predicted box, therefore its value is in a List format.
-
-            Each bounding box is a List that contains all the neccessariy elements to make a bounding box.
-            The format is below:
-                bounding_box_1 = [ start_point_x, start_point_y, end_point_x, end_point_y, probability, category_name ]
+        output_data: list
+        The average confidence of each frame    
     """
 
     cap = cv2.VideoCapture(input_video)
@@ -64,13 +51,11 @@ def pipeline(input_video, model, output_video, save_video=False):
             detection_result = model.predict_(im2, verbose=False, device=None)
 
             copy_image = frame.copy()
-            annotated_image, bounding_box_data = visualize_yolo(
-                copy_image, detection_result
-            )
+            annotated_image, average_confidence = visualize_yolo(copy_image, detection_result)
             if save_video:
                 out.write(annotated_image)
 
-            output_data[frame_index] = bounding_box_data
+            output_data[frame_index] = average_confidence
             frame_index += 1
         # Break the loop
         else:

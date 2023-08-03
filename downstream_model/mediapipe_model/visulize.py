@@ -18,19 +18,10 @@ def visualize(image, detection_result):
       image: a cv2 image
         Image with bounding boxes.
 
-      bounding_box_data: List
-        This is a list of all the bounding box in a single frame.
-        This could have any amount of bounding box.
-        The format is below.
-        bounding_box_data = [  b1, b2, etc      ]
-
-        Each b_ value represent a list of all the neccessariy elements to make a bounding box.
-        Its format is below.
-        b1 = [ start_point_x, start_point_y, end_point_x, end_point_y, probability, category_name ]
-
+      average_confidence : float
+            The average confidence of all the labels detected by the model  
 
     """
-    bounding_box_data = []
     for detection in detection_result.detections:
         # Draw bounding_box
         bbox = detection.bounding_box
@@ -42,26 +33,9 @@ def visualize(image, detection_result):
         category = detection.categories[0]
         category_name = category.category_name
         probability = round(category.score, 2)
-        result_text = category_name + " (" + str(probability) + ")"
-        text_location = (MARGIN + bbox.origin_x, MARGIN + ROW_SIZE + bbox.origin_y)
-        cv2.putText(
-            image,
-            result_text,
-            text_location,
-            cv2.FONT_HERSHEY_PLAIN,
-            FONT_SIZE,
-            TEXT_COLOR,
-            FONT_THICKNESS,
-        )
-        bounding_box_data.append(
-            [
-                start_point[0],
-                start_point[1],
-                end_point[0],
-                end_point[1],
-                probability,
-                category_name,
-            ]
-        )
-
-    return image, bounding_box_data
+        sum_confidence += probability  
+        # Calculate the average confidence of all labels in the frame 
+        if len(detection_result[0]):
+          average_confidence = sum_confidence/len(detection_result[0])
+        return image, average_confidence
+        
