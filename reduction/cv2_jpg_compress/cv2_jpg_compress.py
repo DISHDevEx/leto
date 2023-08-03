@@ -1,4 +1,8 @@
 
+"""
+Module contains the cv2 jpg quality compression method and reencode cv2 video using ffmpeg.
+
+"""
 import subprocess
 import argparse 
 import static_ffmpeg
@@ -22,13 +26,13 @@ def parse_args():
     """
     Parses the arguments needed for Super Resolution reconstruction module.
     Catalogues: input s3 bucket, input s3 prefix, output s3 bucket, output s3 prefix,
-            codec, resolution, model bucket, model prefix and algorithm.
+            quality, crf, and temp path.
 
     Returns
     -------
         args: argparse.Namespace object
             Returns an object with the relevent input s3 bucket, input s3 prefix, output s3 bucket,
-            output s3 prefix, codec, resolution, model bucket, model prefix and algorithm.
+            output s3 prefix, quality, crf, and temp path.
     """
 
     parser = argparse.ArgumentParser(description="Inference script of opencv video upscaler")
@@ -74,10 +78,11 @@ def parse_args():
 
 
 def cv2_jpg_compress(video, path = "temp" , quality = 15, crf = 28):
+
     # Create a VideoCapture object
     cap = cv2.VideoCapture(video.get_presigned_url().strip("'"))
     
-    # Check if camera opened successfully
+    # Check if video opened successfully
     if (cap.isOpened() == False): 
         print("Unable to read video ")
     
@@ -88,6 +93,8 @@ def cv2_jpg_compress(video, path = "temp" , quality = 15, crf = 28):
     fps = cap.get(cv2.CAP_PROP_FPS)
     title = video.get_title()
     
+
+    #make a temp_path to store cv2 video
     os.mkdir(f'{path}_cv2')
 
     out = cv2.VideoWriter(f"{path}_cv2/compressed_" + title,cv2.VideoWriter_fourcc(*'mp4v'), fps, (frame_width,frame_height))
@@ -98,7 +105,7 @@ def cv2_jpg_compress(video, path = "temp" , quality = 15, crf = 28):
         ret, frame = cap.read()
            
         if ret == True: 
-
+            #compress the jpg quality with cv2
             enc = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, quality])[1]
             out.write(cv2.imdecode(enc,cv2.IMREAD_COLOR) )
             
@@ -112,6 +119,7 @@ def cv2_jpg_compress(video, path = "temp" , quality = 15, crf = 28):
     cap.release()
     out.release()
 
+    #using ffmpeg to reencode video with h264 format with crf value
     cmd = f"static_ffmpeg -y -i {path}_cv2/compressed_{title} -c:v libx264  -crf {crf} -preset slow {path}/compressed_{title}"
     subprocess.run(cmd, shell=True)
 
@@ -130,13 +138,13 @@ def main():
     os.mkdir(args.temp_path)
 
     video_list  = aux.load_s3(args.input_bucket_s3, args.input_prefix_s3)
+    #compress each and store in temp_path
     for video in video_list:
-        cv2_jpg_compress(video, args.temp_path, args.quality, args.crf)
-        
-         
+        cv2_jpg_compress(video, args.temp_path, args.quality, args.crf) 
+
+    #use Aux to easily load, upload and clean up  
     aux = Aux()
     result = aux.load_local(args.temp_path)
-    print(result)
     aux.upload_s3(result,bucket=args.output_bucket_s3, prefix=args.output_prefix_s3)
 
     aux.clean()
