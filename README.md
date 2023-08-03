@@ -324,7 +324,7 @@ list_scores = create_scores_dict(video_path_list)
 ## cleanup  local files
 
 ```
-video_eval.clean_files(path_to_orginal_folder,path_to_modified_folder)
+clean_files(path_to_orginal_folder,path_to_modified_folder)
 ```
 
 ## Average Precision
