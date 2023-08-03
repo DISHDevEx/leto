@@ -115,19 +115,19 @@ python app_fps_bitrate.py
 
 1. Move to working directory:
 ```console
-cd leto/reduction/cv2_jpg_compress/
+cd leto/reduction/cv2_jpg_reduction/
 ```
 
 3. Install requirements:
 
 ```console
-pip install -r requirements_cv2_jpg_compress.txt
+pip install -r requirements_cv2_jpg_reduction.txt
 ```
 
-4. Execute the runner method, ***cv2_jpg_compress.py***
+4. Execute the runner method, ***cv2_jpg_reduction.py***
 
 ```console
-python cv2_jpg_compress.py
+python cv2_jpg_reduction.py
 ```
 
 

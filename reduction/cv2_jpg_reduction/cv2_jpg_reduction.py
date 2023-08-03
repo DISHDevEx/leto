@@ -54,7 +54,7 @@ def parse_args():
 
     parser.add_argument("--output_prefix_s3",
                         type = str,
-                        default = "reduced-videos/cv2_compression/",
+                        default = "reduced-videos/benchmark/cv2_reduction/car/",
                         help ="s3 prefix of the output video")
 
     parser.add_argument("--temp_path",
@@ -77,10 +77,10 @@ def parse_args():
     return args
 
 
-def cv2_jpg_compress(video, path = "temp" , quality = 15, crf = 28):
+def cv2_jpg_reduction(video, path = "temp" , quality = 15, crf = 28):
 
     # Create a VideoCapture object
-    cap = cv2.VideoCapture(video.get_presigned_url().strip("'"))
+    cap = cv2.VideoCapture(video.get_file().strip("'"))
     
     # Check if video opened successfully
     if (cap.isOpened() == False): 
@@ -95,6 +95,7 @@ def cv2_jpg_compress(video, path = "temp" , quality = 15, crf = 28):
     
 
     #make a temp_path to store cv2 video
+    #this is needed because ffmpeg cant edit same file in place
     os.mkdir(f'{path}_cv2')
 
     out = cv2.VideoWriter(f"{path}_cv2/compressed_" + title,cv2.VideoWriter_fourcc(*'mp4v'), fps, (frame_width,frame_height))
