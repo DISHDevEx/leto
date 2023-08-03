@@ -275,12 +275,19 @@ Please read the Mediapipe model readme for more instructions.
 # Evaluating metrics
 
 ## Running utils file
-### Run requirements_utilities.txt
 
+
+1. Move to working directory
+```console
+cd utilities
+```
+
+2. Run requirements_utilities.txt
 ```
 pip install -r requirements_utilities.txt
 ```
-Run the following command to import Evaluator class and Get PSNR and SSIM
+
+3. Run the following command to import Evaluator class and Get PSNR and SSIM
 ```
 from utils import *
 ```
@@ -321,7 +328,7 @@ list_scores = create_scores_dict(video_path_list)
 
 ```
 
-## cleanup  local files
+4. cleanup  local files
 
 ```
 clean_files(path_to_orginal_folder,path_to_modified_folder)
