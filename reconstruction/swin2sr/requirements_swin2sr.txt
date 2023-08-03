@@ -1,3 +1,0 @@
-aEye
-cv2
-static_ffmpeg

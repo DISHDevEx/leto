@@ -16,8 +16,6 @@ root_path = subprocess.run(
 # add git repo path to use all libraries
 sys.path.append(root_path)
 
-from utilities import CloudFunctionality
-from utilities import parse_recon_args
 
 
 def parse_args():
@@ -52,7 +50,7 @@ def parse_args():
 
     parser.add_argument("--output_prefix_s3",
                         type = str,
-                        default = "reconstructed-videos/benchmark/superres/car/",
+                        default = "reduced-videos/cv2_compression/",
                         help ="s3 prefix of the output video")
 
     parser.add_argument("--temp_path",
@@ -108,12 +106,11 @@ def cv2_jpg_compress(video, path = "temp" , quality = 15, crf = 28):
     # Break the loop
         else:
             break 
+            
     logging.info(f"successfully compressed {title} with cv2 jpeg quality rate of {quality}")
-
 
     cap.release()
     out.release()
-    print(os.system('ls'))
 
     cmd = f"static_ffmpeg -y -i {path}_cv2/compressed_{title} -c:v libx264  -crf {crf} -preset slow {path}/compressed_{title}"
     subprocess.run(cmd, shell=True)
@@ -126,22 +123,23 @@ def cv2_jpg_compress(video, path = "temp" , quality = 15, crf = 28):
 
 
 def main():
+    
     args = parse_args()
     aux = Aux()
 
-
-    os.mkdir(f'./{args.temp_path}')
-
+    os.mkdir(args.temp_path)
 
     video_list  = aux.load_s3(args.input_bucket_s3, args.input_prefix_s3)
     for video in video_list:
-        print(video.title)
         cv2_jpg_compress(video, args.temp_path, args.quality, args.crf)
+        
+         
+    aux = Aux()
+    result = aux.load_local(args.temp_path)
+    print(result)
+    aux.upload_s3(result,bucket=args.output_bucket_s3, prefix=args.output_prefix_s3)
 
-    result = aux.load_local(f'./{args.temp_path}') 
-
-    aux.upload_s3(result,args.output_bucket_s3, args.output_prefix_s3)
-
+    aux.clean()
 
 if __name__ == "__main__":
     main()

@@ -1,3 +1,0 @@
-super_image
-PIL 
-requests
