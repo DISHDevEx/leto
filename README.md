@@ -68,9 +68,9 @@
 
 Mapping:
 
-ffmpeg resolution downsampler(240p,360p,420p,720p,1080p) --> fastsrgan, superres( edsr_x4,espcn_x4,fsrcnn_x4,lapsrn_x4), opencv_resoltion_upscaler, realbasicvser(very slow).
+ffmpeg resolution downsampler(240p,360p,420p,720p,1080p)(lanczos,bicubic) --> fastsrgan, superres(edsr_x4,espcn_x4,fsrcnn_x4,lapsrn_x4), opencv_resoltion_upscaler, realbasicvser(very slow).
 
-fps_bitrate --> Parings with frame
+fps_bitrate --> Parings with frame interpolation coming soon!
 
 
 # Reduction Modules
@@ -340,7 +340,7 @@ clean_files(path_to_orginal_folder,path_to_modified_folder)
 ```
 
 ## Average Precision
-The average precision is computed as the downstream model detects the objects in the video. 
+The average precision is computed as the downstream model detects the objects in the video.
 Ensure the working directory is the root directory
 
 1. Install the requirements for one of the downstream model.
