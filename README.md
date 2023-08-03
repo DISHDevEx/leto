@@ -31,9 +31,9 @@
 │           ├── app-fps_bitrate.py
 │           ├── requirements.txt
 │           ├── README.md
-│       ├── cv2_jpg_compress
-│           ├── cv2_jpg_compress.py
-│           ├── requirements_cv2_jpg_compress.txt
+│       ├── cv2_jpg_reduction
+│           ├── cv2_jpg_reduction.py
+│           ├── requirements_cv2_jpg_reduction.txt
 │
 │   ├── reconstruction
 │       ├── realbasicvser
