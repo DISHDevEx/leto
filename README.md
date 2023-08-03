@@ -63,12 +63,12 @@
 
 Mapping:
 
-ffmpeg resolution downsampler --> fastsrgan, superres( edsr_x4,espcn_x4,fsrcnn_x4,lapsrn_x4), opencv_resoltion_upscaler, realbasicvser(very slow)
-)
+ffmpeg resolution downsampler(240p,360p,420p,720p,1080p) --> fastsrgan, superres( edsr_x4,espcn_x4,fsrcnn_x4,lapsrn_x4), opencv_resoltion_upscaler, realbasicvser(very slow).
+
+fps_bitrate --> Parings with frame
+
 
 # Reduction Modules
-
-
 
 ### Running ffmpeg resolution downsampler
 
