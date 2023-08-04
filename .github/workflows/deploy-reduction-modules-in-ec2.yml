@@ -38,7 +38,7 @@ jobs:
 
     #Deploy cv2_jpg_reduction module in target AWS EC2 instance
     - name: Deploy cv2_jpg_reduction module in EC2 instance
-      if: github.event.inputs.job == 'cv2_jpg_reduction'
+      if: github.event.inputs.module == 'cv2_jpg_reduction'
       run: |
         #Install 'expect-dev' package to use 'unbuffer' command with ssm and git clone repository into EC2
         sudo apt-get -y install expect-dev
