@@ -1,2 +1,1 @@
 aEye>=1.2.2
-static-ffmpeg>=2.5
