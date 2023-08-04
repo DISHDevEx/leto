@@ -4,7 +4,7 @@
 
 ```
 ├──  leto				contains all modules that facilites all functionality to achieve leto's goal
-│   ├── downstream_model
+│   ├── benchmarking
 │       ├── mediapipe
 │           ├── object_detection.py
 │           ├── visualize.py
@@ -22,6 +22,8 @@
 │           ├── Dockerfile_yolo
 │           ├──lambda_function_yolo.py
 │           ├── requirements_yolo.txt
+│       ├── video_quality_functions.py
+│
 │   ├── reduction
 │       ├── ffmpeg_resolution_downsampler
 │           ├── requirements_ffmpeg_resolution_downsampler.txt
@@ -54,7 +56,6 @@
 │   ├── utilities
 |       ├──cloud_functionality.py
 |       ├──recon_args.py
-|       ├──utils.py
 |
 │
 ├──  tests				contains unit tests
