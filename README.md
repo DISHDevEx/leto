@@ -31,6 +31,9 @@
 │           ├── app-fps_bitrate.py
 │           ├── requirements.txt
 │           ├── README.md
+│       ├── cv2_jpg_reduction
+│           ├── cv2_jpg_reduction.py
+│           ├── requirements_cv2_jpg_reduction.txt
 │
 │   ├── reconstruction
 │       ├── realbasicvser
@@ -106,6 +109,25 @@ pip install -r requirements_fps_bitrate.txt
 
 ```console
 python app_fps_bitrate.py
+```
+
+### Running cv2_jpg_compression reduction
+
+1. Move to working directory:
+```console
+cd leto/reduction/cv2_jpg_reduction/
+```
+
+3. Install requirements:
+
+```console
+pip install -r requirements_cv2_jpg_reduction.txt
+```
+
+4. Execute the runner method, ***cv2_jpg_reduction.py***
+
+```console
+python cv2_jpg_reduction.py
 ```
 
 
