@@ -98,7 +98,7 @@ def cv2_jpg_reduction(video, path = "temp" , quality = 15, crf = 28):
     #this is needed because ffmpeg cant edit same file in place
     os.mkdir(f'{path}_cv2')
 
-    out = cv2.VideoWriter(f"{path}_cv2/compressed_" + title,cv2.VideoWriter_fourcc(*'mp4v'), fps, (frame_width,frame_height))
+    out = cv2.VideoWriter(f"{path}_cv2/" + title,cv2.VideoWriter_fourcc(*'mp4v'), fps, (frame_width,frame_height))
     
     index = 0
     while(True):
@@ -115,19 +115,19 @@ def cv2_jpg_reduction(video, path = "temp" , quality = 15, crf = 28):
         else:
             break 
             
-    logging.info(f"successfully compressed {title} with cv2 jpeg quality rate of {quality}")
+    logging.info(f"successfully reduce {title} with cv2 jpeg quality rate of {quality}")
 
     cap.release()
     out.release()
 
     #using ffmpeg to reencode video with h264 format with crf value
-    cmd = f"static_ffmpeg -y -i {path}_cv2/compressed_{title} -c:v libx264  -crf {crf} -preset slow {path}/compressed_{title}"
+    cmd = f"static_ffmpeg -y -i {path}_cv2/{title} -c:v libx264  -crf {crf} -preset slow {path}/{title}"
     subprocess.run(cmd, shell=True)
 
     
     logging.info(f"successfully reencode {title} into h264 format with the crf of {crf}")
     
-    os.remove(f'{path}_cv2/compressed_{title}')
+    os.remove(f'{path}_cv2/{title}')
     os.rmdir(f'{path}_cv2')
 
 
@@ -139,7 +139,7 @@ def main():
     os.mkdir(args.temp_path)
 
     video_list  = aux.load_s3(args.input_bucket_s3, args.input_prefix_s3)
-    #compress each and store in temp_path
+    #reduce each and store in temp_path
     for video in video_list:
         cv2_jpg_reduction(video, args.temp_path, args.quality, args.crf) 
 
