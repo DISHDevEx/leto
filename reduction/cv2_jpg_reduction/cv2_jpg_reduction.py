@@ -141,7 +141,7 @@ def main():
     video_list  = aux.load_s3(args.input_bucket_s3, args.input_prefix_s3)
     #compress each and store in temp_path
     for video in video_list:
-        cv2_jpg_compress(video, args.temp_path, args.quality, args.crf) 
+        cv2_jpg_reduction(video, args.temp_path, args.quality, args.crf) 
 
     #use Aux to easily load, upload and clean up  
     aux = Aux()
