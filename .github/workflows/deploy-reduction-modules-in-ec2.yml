@@ -15,7 +15,7 @@ on:
         type: choice
         options:
           - Select module name
-          - cv2_jpg_compress
+          - cv2_jpg_reduction
           - ffmpeg_resolution_downsampler
           - fps_bitrate
 env:
@@ -36,10 +36,18 @@ jobs:
        role-session-name: ${{ secrets.SAMPLE_ROLE_SESSION }}
        aws-region: ${{ env.AWS_REGION }}
 
-    - name: Deploy cv2_jpg_compress module in target AWS EC2 instances
+    #Deploy cv2_jpg_reduction module in target AWS EC2 instance
+    - name: Deploy cv2_jpg_reduction module in EC2 instance
       run: |
-        aws ssm send-command \
-        --document-name "AWS-RunShellScript" \
-        --instance-ids "${{ secrets.REDUCTION_INSTANCE_ID }}" \
-        --max-concurrency "1" --max-errors "1" \
-        --parameters '{"commands": ["#!/bin/bash","mkdir /home/ssm-user/sampledir"]}'
+        #Install 'expect-dev' package to use 'unbuffer' command with ssm and git clone repository into EC2
+        sudo apt-get -y install expect-dev
+        unbuffer aws ssm start-session \
+        --document-name 'AWS-StartNonInteractiveCommand' \
+        --parameters '{"command": ["git clone https://github.com/DISHDevEx/leto.git $HOME/."]}' \
+        --target ${{ secrets.REDUCTION_INSTANCE_ID }}
+        #Install requirements for cv2_jpg_reduction module in EC2 instance
+        unbuffer aws ssm start-session \
+        --document-name 'AWS-StartNonInteractiveCommand' \
+        --parameters '{"command": ["python3 -m pip3 install -r $HOME/leto/reduction/cv2_jpg_reduction/requirements_cv2_jpg_reduction.txt"]}' \
+        --target ${{ secrets.REDUCTION_INSTANCE_ID }}
+        #The python script related to cv2_jpg_reduction module will be executed in the same EC2 via respective AWS step function
