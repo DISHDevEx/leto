@@ -38,10 +38,10 @@ jobs:
 
     #Deploy cv2_jpg_reduction module in target AWS EC2 instance
     - name: Deploy cv2_jpg_reduction module in EC2 instance
+      if: github.event.inputs.job == 'cv2_jpg_reduction'
       run: |
         #Install 'expect-dev' package to use 'unbuffer' command with ssm and git clone repository into EC2
         sudo apt-get -y install expect-dev
-        if [ "${{ github.event.inputs.module == "cv2_jpg_reduction" }}"]; then
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
         --parameters '{"command": ["git clone https://github.com/DISHDevEx/leto.git $HOME/."]}' \
@@ -52,4 +52,3 @@ jobs:
         --parameters '{"command": ["python3 -m pip3 install -r $HOME/leto/reduction/cv2_jpg_reduction/requirements_cv2_jpg_reduction.txt"]}' \
         --target ${{ secrets.REDUCTION_INSTANCE_ID }}
         #The python script related to cv2_jpg_reduction module will be executed in the same EC2 via respective AWS step function
-        fi
