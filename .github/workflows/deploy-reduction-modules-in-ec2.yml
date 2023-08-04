@@ -41,7 +41,7 @@ jobs:
       run: |
         #Install 'expect-dev' package to use 'unbuffer' command with ssm and git clone repository into EC2
         sudo apt-get -y install expect-dev
-        if [ "${{ github.event.inputs.job == "cv2_jpg_reduction" }}"]; then
+        if [ "${{ github.event.inputs.module == "cv2_jpg_reduction" }}"]; then
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
         --parameters '{"command": ["git clone https://github.com/DISHDevEx/leto.git $HOME/."]}' \
