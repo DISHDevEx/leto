@@ -44,8 +44,7 @@ jobs:
         --document-name "AWS-RunShellScript" \
         --instance-ids "${{ secrets.REDUCTION_INSTANCE_ID }}" \
         --max-concurrency "1" --max-errors "1" \
-        --working-directory "/home/ssm-user"
-        --parameters '{"commands": ["git clone https://github.com/DISHDevEx/leto.git"]}'
+        --parameters '{"commands": ["git clone https://github.com/DISHDevEx/leto.git"]},{"workingDirectory":["/home/ssm-user"]}'
         # #Install 'expect-dev' package to use 'unbuffer' command with ssm and clone the repository to the ssm-user directory
         # sudo apt-get -y install expect-dev
         # unbuffer aws ssm start-session \
