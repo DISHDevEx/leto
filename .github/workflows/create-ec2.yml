@@ -25,9 +25,9 @@ jobs:
           role-session-name: samplerolesession
           aws-region: ${{ env.AWS_REGION }}
       - name: Create EC2 instance
-          run: |
-            aws ec2 run-instances \
-              --image-id ami-0f34c5ae932e6f0e4 \
-              --instance-type t2.micro \
-              --key-name '${{ secrets.KEY_PAIR_NAME }}' \
-              --region us-east-1
+        run: |
+          aws ec2 run-instances \
+            --image-id ami-0f34c5ae932e6f0e4 \
+            --instance-type t2.micro \
+            --key-name '${{ secrets.KEY_PAIR_NAME }}' \
+            --region us-east-1
