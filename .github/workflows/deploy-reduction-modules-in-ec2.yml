@@ -46,9 +46,9 @@ jobs:
         --document-name 'AWS-StartNonInteractiveCommand' \
         --parameters '{"command": ["git clone https://github.com/DISHDevEx/leto.git"]}' \
         --target ${{ secrets.REDUCTION_INSTANCE_ID }}
-        #Install requirements for cv2_jpg_reduction module in EC2 instance
-        unbuffer aws ssm start-session \
-        --document-name 'AWS-StartNonInteractiveCommand' \
-        --parameters '{"command": ["python3 -m pip3 install -r /home/ssm-user/leto/reduction/cv2_jpg_reduction/requirements_cv2_jpg_reduction.txt"]}' \
-        --target ${{ secrets.REDUCTION_INSTANCE_ID }}
-        #The python script related to cv2_jpg_reduction module will be executed in the same EC2 via respective AWS step function
+        # #Install requirements for cv2_jpg_reduction module in EC2 instance
+        # unbuffer aws ssm start-session \
+        # --document-name 'AWS-StartNonInteractiveCommand' \
+        # --parameters '{"command": ["python3 -m pip3 install -r /home/ssm-user/leto/reduction/cv2_jpg_reduction/requirements_cv2_jpg_reduction.txt"]}' \
+        # --target ${{ secrets.REDUCTION_INSTANCE_ID }}
+        # #The python script related to cv2_jpg_reduction module will be executed in the same EC2 via respective AWS step function
