@@ -32,4 +32,5 @@ jobs:
             --key-name '${{ secrets.KEY_PAIR_NAME }}' \
             --region us-east-1 \
             --subnet-id ${{ secrets.SUBNET_ID }} \
-            --security-group-ids ${{ secrets.SECURITY_GROUP_ID }}
+            --security-group-ids ${{ secrets.SECURITY_GROUP_ID }} \
+            --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=${{ github.event.inputs.ec2_name }}}]'
