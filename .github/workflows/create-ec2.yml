@@ -7,7 +7,7 @@ on:
         description: 'Enter name of the EC2'
         required: true
       ami_id:
-        description: 'Enter ami id for the EC2'
+        description: 'Enter AMI id for the EC2'
         required: true
       instance_type:
         description: 'Enter EC2 instance type(Eg: t3.small)'
