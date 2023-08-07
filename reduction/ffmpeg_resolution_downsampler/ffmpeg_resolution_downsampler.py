@@ -47,7 +47,7 @@ def parse_args():
     parser.add_argument(
         "--output_prefix_s3",
         type=str,
-        default="reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/",
+        default="reduced-videos/benchmark/ffmpeg-360/car/",
         help="s3 prefix of the output video",
     )
 
