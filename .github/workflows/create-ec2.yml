@@ -1,10 +1,16 @@
-name: Your Workflow
+name: Create new EC2 instance
 
 on:
   workflow_dispatch:
     inputs:
       ec2_name:
-        description: 'Input the name of the ec2.'
+        description: 'Enter name of the EC2'
+        required: true
+      ami_id:
+        description: 'Enter ami id for the EC2'
+        required: true
+      instance_type:
+        description: 'Enter EC2 instance type(Eg: t3.small)'
         required: true
 env:
   AWS_REGION : ${{ secrets.AWS_REGION }}
@@ -27,8 +33,8 @@ jobs:
       - name: Create EC2 instance
         run: |
           aws ec2 run-instances \
-            --image-id ami-0f34c5ae932e6f0e4 \
-            --instance-type t3.small \
+            --image-id ${{ github.event.inputs.ami_id }} \
+            --instance-type ${{ github.event.inputs.instance_type }} \
             --key-name '${{ secrets.KEY_PAIR_NAME }}' \
             --region us-east-1 \
             --subnet-id ${{ secrets.SUBNET_ID }} \
