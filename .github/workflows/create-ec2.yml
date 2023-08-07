@@ -28,12 +28,12 @@ jobs:
         run: |
           aws ec2 run-instances \
             --image-id ami-0f34c5ae932e6f0e4 \
-            --instance-type t2.micro \
+            --instance-type t3.small \
             --key-name '${{ secrets.KEY_PAIR_NAME }}' \
             --region us-east-1 \
             --subnet-id ${{ secrets.SUBNET_ID }} \
             --security-group-ids ${{ secrets.SECURITY_GROUP_ID }} \
-            --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=${{ github.event.inputs.ec2_name }}}]' \
+            --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=github_wf+${{ github.event.inputs.ec2_name }}}]' \
             --iam-instance-profile Name=${{ secrets.IAM_INSTANCE_PROFILE }}
             --block-device-mappings "[{\"DeviceName\":\"/dev/xvda\",\"Ebs\":{\"VolumeSize\":30,\"DeleteOnTermination\":true}}]" \
             --count 1 
