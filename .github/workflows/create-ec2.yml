@@ -33,7 +33,6 @@ jobs:
             --region us-east-1 \
             --subnet-id ${{ secrets.SUBNET_ID }} \
             --security-group-ids ${{ secrets.SECURITY_GROUP_ID }} \
-            --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=github_wf+${{ github.event.inputs.ec2_name }}}]' \
-            --iam-instance-profile Name=${{ secrets.IAM_INSTANCE_PROFILE }}
-            --block-device-mappings "[{\"DeviceName\":\"/dev/xvda\",\"Ebs\":{\"VolumeSize\":30,\"DeleteOnTermination\":true}}]" \
+            --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=github_wf_+${{ github.event.inputs.ec2_name }}}]' \
+            --iam-instance-profile Name=${{ secrets.IAM_INSTANCE_PROFILE }} \
             --count 1 
