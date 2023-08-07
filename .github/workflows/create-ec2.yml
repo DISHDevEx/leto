@@ -1,0 +1,39 @@
+name: Your Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      ec2_name:
+        description: 'Input the name of the ec2.'
+        required: true
+env:
+  AWS_REGION : ${{ secrets.AWS_REGION }}
+# permission can be added at job level or workflow level
+permissions:
+      id-token: write   # This is required for requesting the JWT
+      contents: read    # This is required for actions/checkout
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
+          role-session-name: samplerolesession
+          aws-region: ${{ env.AWS_REGION }}
+      - name: upload to s3
+        run: |
+          aws ec2 run-instances /
+          --image-id ami-0f34c5ae932e6f0e4 /
+          --count 1 /
+          --instance-type t3.small /
+          --region us-east-1 /
+          --subnet-id ${{ env.SUBNET_ID }} /
+          --key-name ${{ env.KEY_PAIR_NAME }} /
+          --security-group-ids ${{ env.SECURITY_GROUP_ID }} /
+          --iam-instance-profile Name=${{ secrets.IAM_INSTANCE_PROFILE }} /
+          --block-device-mappings "[{\"DeviceName\":\"/dev/xvda\",\"Ebs\":{\"VolumeSize\":30,\"DeleteOnTermination\":true}}]" /
+          --tag-specifications ResourceType=instance,Tags=[{Key=Name,Value=${{ github.event.inputs.ec2_name }}}]
