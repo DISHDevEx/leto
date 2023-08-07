@@ -40,11 +40,11 @@ jobs:
     - name: Deploy cv2_jpg_reduction module in EC2 instance
       if: github.event.inputs.module == 'cv2_jpg_reduction'
       run: |
-        #Install 'expect-dev' package to use 'unbuffer' command with ssm and give 755 permission to the ssm-user directory
+        #Install 'expect-dev' package to use 'unbuffer' command with ssm and give 777 permission to the ssm-user directory
         sudo apt-get -y install expect-dev
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
-        --parameters '{"command": ["sudo chmod 755 /home/ssm-user"]}' \
+        --parameters '{"command": ["sudo chmod 777 /home/ssm-user"]}' \
         --target ${{ secrets.REDUCTION_INSTANCE_ID }}
         #Install 'expect-dev' package to use 'unbuffer' command with ssm and git clone repository into EC2
         unbuffer aws ssm start-session \
