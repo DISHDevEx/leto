@@ -26,4 +26,4 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
       - name: upload to s3
         run: |
-          aws ec2 run-instances --image-id ami-0f34c5ae932e6f0e4 --count 1 --instance-type t3.small --region us-east-1 --subnet-id ${{ secrets.SUBNET_ID }} --key-name "'${{ secrets.KEY_PAIR_NAME }}'" --security-group-ids ${{ secrets.SECURITY_GROUP_ID }} --iam-instance-profile Name=${{ secrets.IAM_INSTANCE_PROFILE }} --block-device-mappings "[{\"DeviceName\":\"/dev/xvda\",\"Ebs\":{\"VolumeSize\":30,\"DeleteOnTermination\":true}}]" --tag-specifications ResourceType=instance,Tags=[{Key=Name,Value="${{ github.event.inputs.ec2_name }}"}]
+          aws ec2 run-instances --image-id ami-0f34c5ae932e6f0e4 --count 1 --instance-type t3.small --region us-east-1 --subnet-id ${{ secrets.SUBNET_ID }} --key-name "${{ secrets.KEY_PAIR_NAME }}" --security-group-ids ${{ secrets.SECURITY_GROUP_ID }} --iam-instance-profile Name=${{ secrets.IAM_INSTANCE_PROFILE }} --block-device-mappings "[{\"DeviceName\":\"/dev/xvda\",\"Ebs\":{\"VolumeSize\":30,\"DeleteOnTermination\":true}}]" --tag-specifications ResourceType=instance,Tags=[{Key=Name,Value="${{ github.event.inputs.ec2_name }}"}]
