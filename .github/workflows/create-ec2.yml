@@ -27,6 +27,7 @@ jobs:
       - name: upload to s3
         run: |
           aws ec2 run-instances \
+          --key-name '${{ secrets.KEY_PAIR_NAME }}' \
           --image-id ami-0f34c5ae932e6f0e4 \
           --count 1 \
           --instance-type t3.small \
