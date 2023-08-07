@@ -14,7 +14,7 @@
 2. Install the necessary requirements
 
 ```console
-!pip install -r downstream_model/mediapipe_model/requirements_yolo.txt
+!pip install -r benchmarking/mediapipe_model/requirements_yolo.txt
 ```
 
 3. Import all utlity

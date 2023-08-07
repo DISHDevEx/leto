@@ -361,22 +361,22 @@ list_scores = create_scores_dict(video_path_list)
 
 ```
 
-4. cleanup  local files
+4. cleanup  local filesi
 
 ```
 clean_files(path_to_orginal_folder,path_to_modified_folder)
 ```
 
 ## Average Precision
-The average precision is computed as the downstream model detects the objects in the video.
+The average precision is computed as the benchmarking model detects the objects in the video.
 Ensure the working directory is the root directory
 
-1. Install the requirements for one of the downstream model.
+1. Install the requirements for one of the benchmarking model.
 ```console
 #YOLO
-!pip install -r downstream_model/yolo/requirements_yolo.txt
+!pip install -r benchmarking/yolo/requirements_yolo.txt
 #Mediapipe
-!pip install -r downstream_model/mediapipe_model/requirements_mp.txt
+!pip install -r benchmarking/mediapipe_model/requirements_mp.txt
 ```
 
 2. Import the required utility
@@ -385,7 +385,7 @@ import boto3
 import cv2
 from aEye import Video
 from aEye import Aux
-from downstream_model.yolo import Yolo
+from benchmarking.yolo import Yolo
 from utilities import *
 ```
 
@@ -395,7 +395,7 @@ aux = Aux()
 video_list_s3 = aux.load_s3(bucket = 'leto-dish', prefix = 'original-videos/benchmark/collisiondetection/')
 ```
 
-4. Load in Downstream model
+4. Load in benchmarking model
 
 ```console
 model = Yolo()

@@ -6,8 +6,8 @@ root_path = subprocess.run(['git', 'rev-parse', '--show-toplevel'],
                            capture_output=True, text=True, check=False).stdout.rstrip('\n')
 #add git repo path to use all libraries
 sys.path.append(root_path)
-from downstream_model.yolo import pipeline
-from downstream_model.mediapipe_model import object_detection
+from benchmarking.yolo import pipeline
+from benchmarking.mediapipe_model import object_detection
 
 import cv2
 import numpy as np
@@ -19,13 +19,13 @@ import re
 
 def calculate_psnr(original_path, compressed_path):
         '''
-        This will help to calculate PSNR for video having any resolution 
-            PSNR is Peak Signal to Noise ratio  which is used o measure the quality of a reconstructed or compressed image or video signal 
-            compared to its original, uncompressed version. 
-            It provides a quantitative measure of the fidelity of 
-            the reconstructed signal by calculating the ratio 
-            between the maximum possible signal power (peak signal) 
-            and the power of the distortion or noise introduced 
+        This will help to calculate PSNR for video having any resolution
+            PSNR is Peak Signal to Noise ratio  which is used o measure the quality of a reconstructed or compressed image or video signal
+            compared to its original, uncompressed version.
+            It provides a quantitative measure of the fidelity of
+            the reconstructed signal by calculating the ratio
+            between the maximum possible signal power (peak signal)
+            and the power of the distortion or noise introduced
             during the compression or reconstruction process.
           Parameters
         ----------------------
@@ -93,9 +93,9 @@ def calculate_psnr(original_path, compressed_path):
 
 def calculate_video_ssim(original_path, compressed_path):
         '''This works with video of any resolution
-           SSIM is is a perceptual metric that quantifies image quality 
-           degradation* caused by processing such as data compression or by losses in data transmission. 
-           It is a full reference metric that requires two images 
+           SSIM is is a perceptual metric that quantifies image quality
+           degradation* caused by processing such as data compression or by losses in data transmission.
+           It is a full reference metric that requires two images
            from the same image capture— a reference image and a processed image
 
 
@@ -111,8 +111,8 @@ def calculate_video_ssim(original_path, compressed_path):
              range : -1 to +1
              -1 -> no similarity
              +1 -> perfect similarity
-  
-    
+
+
         '''
         original_video = cv2.VideoCapture(original_path)
         compressed_video = cv2.VideoCapture(compressed_path)
@@ -149,12 +149,12 @@ def calculate_video_ssim(original_path, compressed_path):
         original_video.release()
         compressed_video.release()
 
-        return average_ssim   
+        return average_ssim
 
 def calculateMAC_yolo(video,model):
     """
     Calculates average confidence of a video by calculating average confidence of each frame
-    
+
     Parameters
     ----------
     video : string
@@ -164,13 +164,13 @@ def calculateMAC_yolo(video,model):
     Returns
     ---------
     mean_average_confidence: float
-    The calculated  mean average confidence(MAC) of the video 
+    The calculated  mean average confidence(MAC) of the video
     """
     mean_average_confidence = 0
-    # Get object detection parameters from pipeline method    
+    # Get object detection parameters from pipeline method
     result = pipeline(video.get_file().strip("'"), model, video.title)
     # Obtain average precions of all frames in a list
-    frame_average_confidence = [result[res] for res in result] 
+    frame_average_confidence = [result[res] for res in result]
     # Average confidence of the video is the sum of average confidence of each frame/ total frames
     if len(frame_average_confidence):
         mean_average_confidence = sum(frame_average_confidence)/len(frame_average_confidence)
@@ -180,7 +180,7 @@ def calculateMAC_yolo(video,model):
 def calculateMAC_mp(video,model):
     """
     Calculates average confidence of a video by calculating average confidence of each frame
-    
+
     Parameters
     ----------
     video : string
@@ -190,28 +190,28 @@ def calculateMAC_mp(video,model):
     Returns
     ---------
     mean_average_confidence: float
-    The calculated  mean average confidence(MAC) of the video 
+    The calculated  mean average confidence(MAC) of the video
     """
     mean_average_confidence = 0
-    # Get object detection parameters from object_detection method    
+    # Get object detection parameters from object_detection method
     result = object_detection(video.get_file().strip("'"), model, video.title)
     # Obtain average precions of all frames in a list
-    frame_average_confidence = [result[res] for res in result] 
+    frame_average_confidence = [result[res] for res in result]
     # Average confidence of the video is the sum of average confidence of each frame/ total frames
     if len(frame_average_confidence):
         mean_average_confidence = sum(frame_average_confidence)/len(frame_average_confidence)
     return mean_average_confidence
-    
+
 
 def read_files_and_store_locally(bucket_name,prefix_orginal_files, prefix_reduced_files):
-        ''' Function to read file from S3 using aEye 
+        ''' Function to read file from S3 using aEye
         Parameters:
         bucket_name = S3 bucket name
         prefix_orginal_file : path where original buckets are stored
         prefix_reduced_file : path where reduced buckets are stored
-        
+
         Returns:
-        after matching return orginal 
+        after matching return orginal
         video file path and reduced video file path of same video
         '''
 
@@ -257,14 +257,14 @@ def match_files(original_folder, modified_folder):
 
 def create_scores_dict(video_path_list):
         '''
-        Function gives list of dictionaries with ssim and PSNR calculated 
+        Function gives list of dictionaries with ssim and PSNR calculated
         Parameters:
         video_path_list = list of tuple of pair of original and reconstructed/reduced videos
 
         Returns:
         list_scores : a list of dictionaries containing scores
-        
-        
+
+
         '''
         list_scores =[]
         for i in range(0,len(video_path_list)):
