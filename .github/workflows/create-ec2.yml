@@ -30,4 +30,6 @@ jobs:
             --image-id ami-0f34c5ae932e6f0e4 \
             --instance-type t2.micro \
             --key-name '${{ secrets.KEY_PAIR_NAME }}' \
-            --region us-east-1
+            --region us-east-1 \
+            --subnet-id ${{ secrets.SUBNET_ID }} \
+            --security-group-ids ${{ secrets.SECURITY_GROUP_ID }}
