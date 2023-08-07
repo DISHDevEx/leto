@@ -26,5 +26,4 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
       - name: upload to s3
         run: |
-          aws ssm start-session --target ${{ secrets.INSTANCE_ID }}
-          ls
+          aws s3 ls
