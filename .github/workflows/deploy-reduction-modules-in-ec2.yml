@@ -44,7 +44,7 @@ jobs:
         sudo apt-get -y install expect-dev
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
-        --parameters '{"command": ["sudo chown -R $USER /home/ssm-user"]}' \
+        --parameters '{"command": ["sudo chown -R $USER /home"]}' \
         --target ${{ secrets.REDUCTION_INSTANCE_ID }}
         #Install 'expect-dev' package to use 'unbuffer' command with ssm and git clone repository into EC2
         unbuffer aws ssm start-session \
