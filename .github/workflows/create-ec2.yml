@@ -35,4 +35,4 @@ jobs:
           --security-group-ids ${{ secrets.SECURITY_GROUP_ID }} \
           --iam-instance-profile Name=${{ secrets.IAM_INSTANCE_PROFILE }} \
           --block-device-mappings "[{\"DeviceName\":\"/dev/xvda\",\"Ebs\":{\"VolumeSize\":30,\"DeleteOnTermination\":true}}]" \
-          --tag-specifications ResourceType=instance,Tags=[{Key=Name,Value='${{ github.event.inputs.ec2_name }}'}] 
+          --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=${{ github.event.inputs.ec2_name }}}]'
