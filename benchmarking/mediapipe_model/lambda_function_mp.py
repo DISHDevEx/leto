@@ -1,3 +1,6 @@
+"""
+Module to contain the handler function for the MediaPipe lambda function. This file is what the lambda functions runs.
+"""
 import os
 from object_detection import object_detection
 
@@ -8,6 +11,14 @@ import urllib.parse
 
 
 def handler(event, context):
+    """
+    Current version of the lambda function reads from an s3 bucket and applies mediapipe's object detection model on the files.
+
+    Parameters
+    ----------
+        event : dictionary
+            The s3 path information for mediapipe's object detection model to be applied on.
+    """
     print("Loading function")
     print(os.system("ls"))
     s3_client = boto3.client("s3")

@@ -1,3 +1,7 @@
+"""
+Module to contain the functions that enable video benchmarking related to quality metrics.
+"""
+
 # Current directory is brought to root level to avoid import issues
 import subprocess
 import sys
