@@ -1,3 +1,7 @@
+"""
+Script to change the fps and bitrate of a video via ffmpeg.
+"""
+
 from aEye import Video
 from aEye import Labeler
 from aEye import Aux
@@ -7,14 +11,14 @@ import argparse
 
 def parse_args():
     """
-    Parses the arguments needed for ffmpeg based reduction module.
+    Parses the arguments needed for fps bitrate based reduction module.
     Catalogues: input s3 bucket, input s3 prefix, output s3 bucket and output s3 prefix.
 
 
     Returns
     -------
         args: argparse.Namespace object
-            Returns an object with the relevent config, checkpoint, input dir, output dir, maximum sequence length, and fps.
+            Returns an object with the relevent input s3 bucket, input s3 prefix, output s3 bucket and output s3 prefix, fps, and bitrate.
     """
 
     parser = argparse.ArgumentParser(

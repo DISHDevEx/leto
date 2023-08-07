@@ -1,3 +1,7 @@
+"""
+Script to change the resolution of a video via ffmpeg.
+"""
+
 import argparse
 import logging
 
@@ -11,13 +15,13 @@ import os
 def parse_args():
     """
     Parses the arguments needed for ffmpeg based reduction module.
-    Catalogues: input s3 bucket, input s3 prefix, output s3 bucket and output s3 prefix.
+    Catalogues: input s3 bucket, input s3 prefix, output s3 bucket, output s3 prefix, quality{eg. 360p}, algorithm{eg. lanczos, bicubic }.
 
 
     Returns
     -------
         args: argparse.Namespace object
-            Returns an object with the relevent config, checkpoint, input dir, output dir, maximum sequence length, and fps.
+            Returns an object with the relevent input s3 bucket, input s3 prefix, output s3 bucket, output s3 prefix, quality{eg. 360p}, algorithm{eg. lanczos, bicubic }.
     """
 
     parser = argparse.ArgumentParser(
@@ -70,6 +74,21 @@ def parse_args():
 
 
 def main():
+    """
+    Runner method for ffmpeg resolution downsampler.  This method abstracts some of the
+    interaction with S3 and AWS away from ffmpeg.
+
+    Parameters
+    ----------
+        None: runner method
+
+
+    Returns
+    ----------
+        None: however, results in a list of processed videos being stored to the
+                output video S3 path.
+    """
+
     logging.info("running reduction module")
 
     args = parse_args()

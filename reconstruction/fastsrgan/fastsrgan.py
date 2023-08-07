@@ -26,6 +26,8 @@ from utilities import parse_recon_args
 def super_resolve_video(args):
     """
     Function that enhances video resolution using Low Latency GAN.
+
+
     """
     # Loop through all videos that need to be reduced.
     for i in range(len(os.listdir("reduced_videos"))):
