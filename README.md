@@ -79,7 +79,7 @@ fps_bitrate --> Parings with frame interpolation coming soon!
 
 # Reduction Modules
 
-- **Reccomended EC2 Image image-id ami-09538990a0c4fe9be**
+- **Reccomended EC2 Image image-id ami-0f598ecd07418eba2**
 
 - **Please use ec2-user!**
 
