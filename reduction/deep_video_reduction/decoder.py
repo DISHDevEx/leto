@@ -1,7 +1,6 @@
 import joblib
 import tensorflow as tf
 from imageio import imread
-from scipy.misc import imsave
 from argparse import ArgumentParser
 import math
 import numpy as np
