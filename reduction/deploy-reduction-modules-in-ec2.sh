@@ -9,13 +9,13 @@ sudo yum install -y mesa-libGL
 sudo yum install -y git
 git --version
 sudo yum install -y python3-pip
-PYTHON_VERSION=$(python3 --version)
+python3 --version
 pip3 --version
 #Set 'WORKING_DIRECTORY' and 'MODULE_NAME' variables 
 WORKING_DIRECTORY="/home/ssm-user/leto"
 MODULE_NAME=$1
 #If the leto directory exists, then do git pull else do git clone
-if [-d "$WORKING_DIRECTORY"]; then
+if [ -d "$WORKING_DIRECTORY" ]; then
     echo "Doing 'git pull' as the leto directory already exists." 
     cd $WORKING_DIRECTORY
     git pull
@@ -29,7 +29,10 @@ fi
 #Deploy the requirements for selected module
 echo "Installing requirements for $MODULE_NAME module."
 #Install requirements
-if python3 -m pip install -r $WORKING_DIRECTORY/reduction/$MODULE_NAME/requirements*.txt; then
+#Find the requirements file of the module
+cd $WORKING_DIRECTORY/reduction/$MODULE_NAME && fVar=$(find -type f -name 'requirements*.txt');
+FILE_NAME=${fVar:2}
+if python3 -m pip install -r $WORKING_DIRECTORY/reduction/$MODULE_NAME/$FILE_NAME; then
     echo "Successfully installed requirements for $MODULE_NAME module."
 else
     echo "Requirements installation failed for $MODULE_NAME module."
