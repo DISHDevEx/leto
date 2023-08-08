@@ -15,14 +15,14 @@ on:
         type: string
       git_branch:
         # Description to be shown in the UI
-        description: Enter git branch name
+        description: Enter Git branch name
         #Branch entry is not mandatory
         required: false
         type: string
         default: main
       module:
         # Description to be shown in the UI
-        description: Select reduction module
+        description: Select reduction module name
         #Input selection is mandatory
         required: true
         type: choice

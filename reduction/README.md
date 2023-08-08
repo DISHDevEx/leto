@@ -21,7 +21,7 @@ a)Enter EC2 instance id: "Enter respective EC2 instance id" #Instance id entry i
 
 b)Enter Git branch name: "Enter desired branch name" #This entry is optional and default branch value is main
 
-c)Reduction module name: "Select respective reduction module name" #Reduction module name selection is required
+c)Select reduction module name: "Select respective reduction module name" #Reduction module name selection is required
 
 4.The workflow will do the following steps in the EC2,
 
