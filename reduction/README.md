@@ -7,7 +7,7 @@ The module is deployed using shell scripts in AWS EC2 instance as per the below 
 
 1.Create an AWS EC2 Amazon Linux instance using 'Create new EC2 instance' workflow in the leto repository with the following configuration,
 
-a)Enter name of the EC2: <Mention desired name>
+a)Enter name of the EC2: <Enter desired name for EC2 instance>
 
 b)Enter AMI id for the EC2: ami-0f34c5ae932e6f0e4
 
