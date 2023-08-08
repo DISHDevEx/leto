@@ -1,6 +1,6 @@
 import joblib
 import tensorflow as tf
-from imageio import imread
+from imageio import imread, imwrite
 import numpy as np
 from argparse import ArgumentParser
 import math
@@ -55,6 +55,8 @@ def decoder(loadmodel, refer_path, outputfolder):
                 motion_input: motion_feature,
                 previousImage: im1
             })
+
+        imwrite(recon_d, './image/recon_d.jpg')
 
         # print(recon_d)
 
