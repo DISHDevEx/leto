@@ -17,7 +17,7 @@ pip install -r ../../benchmarking/yolo/requirements_yolo.txt
 ```
 3. Run the following command to import Evaluator class and Get PSNR and SSIM
 ```
-from video_quality import *
+from video_quality_functions import *
 ```
 ## if checking locally
 ```
@@ -81,7 +81,7 @@ import cv2
 from aEye import Video
 from aEye import Aux
 from benchmarking.yolo import Yolo
-from video_quality import *
+from video_quality_functions import *
 ```
 
 3. Import videos using aux object
