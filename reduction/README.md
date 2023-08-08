@@ -19,7 +19,7 @@ c)Enter EC2 instance type: t3.small
 
 a)Enter EC2 instance id: "Enter respective EC2 instance id" #Instance id entry is required
 
-b)Enter Git branch name: "Enter desired branch name" #This entry is optional and default branch value is main
+b)Enter Git branch name: "Enter desired branch name" #This entry is optional and default branch value is 'main'
 
 c)Select reduction module name: "Select respective reduction module name" #Reduction module name selection is required
 
