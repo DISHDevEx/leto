@@ -17,8 +17,8 @@ def load_graph(frozen_graph_filename):
 
 def decoder(loadmodel, refer_path, outputfolder):
     graph = load_graph(loadmodel)
-    prefix = 'import/build_towers/tower_0/train_net_inference_one_pass/train_net/'
-    reconframe = graph.get_tensor_by_name(prefix + 'ReconFrame:0')
+
+    reconframe = graph.get_tensor_by_name('import/build_towers/tower_0/train_net_inference_one_pass/train_net/ReconFrame:0')
     res_input = graph.get_tensor_by_name('import/quant_feature:0')
     res_prior_input = graph.get_tensor_by_name('import/quant_z:0')
     motion_input = graph.get_tensor_by_name('import/quant_mv:0')
