@@ -28,7 +28,7 @@ else
     echo "Git clone is completed successfully."
 fi
 #Switch git branch if 'GIT_BRANCH' is not null
-if [ -n "$GIT_BRANCH" ]; then
+if [ "$GIT_BRANCH" != "main" ]; then
     echo "Switching branch to $GIT_BRANCH"
     git switch $GIT_BRANCH
     echo "Branch switched to $GIT_BRANCH"

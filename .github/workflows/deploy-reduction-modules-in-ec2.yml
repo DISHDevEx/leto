@@ -19,6 +19,7 @@ on:
         #Branch entry is not mandatory
         required: false
         type: string
+        default: main
       module:
         # Description to be shown in the UI
         description: Reduction module
