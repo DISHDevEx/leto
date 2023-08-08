@@ -173,8 +173,22 @@ pip install -r requirements_cv2_jpg_reduction.txt
 4. Execute the runner method, ***cv2_jpg_reduction.py***
 
 ```console
-python cv2_jpg_reduction.py
+python cv2_jpg_reduction.py \
+ --input_bucket_s3{} \
+ --input_prefix_s3{} \
+ --output_bucket_s3{} \
+ --output_prefix_s3{} \
+ --quality{}
+ --crf{}
 ```
+ex/
+
+```console
+python cv2_jpg_reduction.py \
+--input_prefix original-videos/benchmark/car/ \
+--output_prefix_s3 reduced-videos/fps_bitrate-30-0/benchmark/car \
+-- quality 15 \
+-- crf 28 \
 
 ----------------------------------
 # Reconstruction Modules
