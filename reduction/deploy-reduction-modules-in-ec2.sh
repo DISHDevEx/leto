@@ -30,12 +30,14 @@ fi
 #Switch git branch if 'GIT_BRANCH' is not null
 if [ "$GIT_BRANCH" != "main" ]; then
     cd $WORKING_DIRECTORY/leto
+    pwd
     echo "Switching branch to $GIT_BRANCH"
     git switch $GIT_BRANCH
     echo "Branch switched to $GIT_BRANCH"
     cd ..
 else
     cd $WORKING_DIRECTORY/leto
+    pwd
     GIT_BRANCH="main"
     echo "Switching branch to $GIT_BRANCH"
     git switch $GIT_BRANCH
