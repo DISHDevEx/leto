@@ -49,5 +49,5 @@ jobs:
       run: |
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
-        --parameters '{"command": ["bash /home/ssm-user/deploy-reduction-modules-in-ec2.sh ${{ github.event.inputs.module }} | tee /home/ssm-user/deploy-reduction-modules-in-ec2.log"]}' \
+        --parameters '{"command": ["bash /home/ssm-user/deploy-reduction-modules-in-ec2.sh ${{ github.event.inputs.module }} > /home/ssm-user/deploy-reduction-modules-in-ec2.log"]}' \
         --target ${{ secrets.REDUCTION_INSTANCE_ID }}
