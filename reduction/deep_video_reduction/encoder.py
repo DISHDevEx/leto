@@ -5,7 +5,6 @@ from imageio import imread
 import numpy as np
 from argparse import ArgumentParser
 
-
 def load_graph(frozen_graph_filename):
     with tf.io.gfile.GFile(frozen_graph_filename, "rb") as f:
         graph_def = tf.compat.v1.GraphDef()

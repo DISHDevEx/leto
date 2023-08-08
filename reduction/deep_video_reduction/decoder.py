@@ -4,6 +4,8 @@ from imageio import imread
 from scipy.misc import imsave
 from argparse import ArgumentParser
 import math
+import numpy as np
+import cv2
 
 def CalcuPSNR(target, ref):
     diff = ref - target
@@ -56,11 +58,8 @@ def decoder(loadmodel, refer_path, outputfolder):
                 previousImage: im1
             })
 
-        # imwrite('./image/recon_d.jpg', recon_d)
         reconstructed_image = np.squeeze(recon_d)
-        imsave(outputfolder + 'output.jpg', reconstructed_image)
-
-        # print(recon_d)
+        cv2.imwrite(outputfolder + 'output.jpg', reconstructed_image)
 
         # check
         # imagedir = './image/'
