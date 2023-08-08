@@ -26,11 +26,12 @@ else
     cd $WORKING_DIRECTORY
     git clone https://github.com/DISHDevEx/leto.git
     echo "Git clone is completed successfully."
-    if [ -n "$GIT_BRANCH" ]; then
-        echo "Switching branch to $GIT_BRANCH"
-        git switch $GIT_BRANCH
-        echo "Branch switched to $GIT_BRANCH"
-    fi
+fi
+#Switch git branch if 'GIT_BRANCH' is not null
+if [ -n "$GIT_BRANCH" ]; then
+    echo "Switching branch to $GIT_BRANCH"
+    git switch $GIT_BRANCH
+    echo "Branch switched to $GIT_BRANCH"
 fi
 #Deploy the requirements for selected module
 echo "Installing requirements for $MODULE_NAME module."
