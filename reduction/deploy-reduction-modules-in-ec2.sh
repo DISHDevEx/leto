@@ -12,12 +12,12 @@ sudo yum install -y python3-pip
 python3 --version
 pip3 --version
 #Set 'WORKING_DIRECTORY' and 'MODULE_NAME' variables 
-WORKING_DIRECTORY="/home/ssm-user/leto"
+WORKING_DIRECTORY="/home/ssm-user"
 MODULE_NAME=$1
 #If the leto directory exists, then do git pull else do git clone
-if [ -d "$WORKING_DIRECTORY" ]; then
+if [ -d "$WORKING_DIRECTORY/leto" ]; then
     echo "Doing 'git pull' as the leto directory already exists." 
-    cd $WORKING_DIRECTORY
+    cd $WORKING_DIRECTORY/leto
     git pull
     echo "Git pull is completed successfully."
 else
@@ -30,9 +30,9 @@ fi
 echo "Installing requirements for $MODULE_NAME module."
 #Install requirements
 #Find the requirements file of the module
-cd $WORKING_DIRECTORY/reduction/$MODULE_NAME && fVar=$(find -type f -name 'requirements*.txt');
+cd $WORKING_DIRECTORY/leto/reduction/$MODULE_NAME && fVar=$(find -type f -name 'requirements*.txt');
 FILE_NAME=${fVar:2}
-if python3 -m pip install -r $WORKING_DIRECTORY/reduction/$MODULE_NAME/$FILE_NAME; then
+if python3 -m pip install -r $WORKING_DIRECTORY/leto/reduction/$MODULE_NAME/$FILE_NAME; then
     echo "Successfully installed requirements for $MODULE_NAME module."
 else
     echo "Requirements installation failed for $MODULE_NAME module."
