@@ -84,6 +84,7 @@ fps_bitrate --> Parings with frame interpolation coming soon!
 - **Please use ec2-user!**
 
 
+
 ### Running ffmpeg resolution downsampler
 
 1. Move to working directory
@@ -132,10 +133,28 @@ cd leto/reduction/fps_bitrate
 pip install -r requirements_fps_bitrate.txt
 ```
 
-4. Execute the runner method, ***app_fps_bitrate.py***
-
+3. Run the python file
 ```console
-python app_fps_bitrate.py
+python fps_bitrate.py \
+ --input_bucket_s3{} \
+ --input_prefix_s3{} \
+ --output_bucket_s3{} \
+ --output_prefix_s3{} \
+ --fps{} \
+ --bitrate{}
+```
+ex/
+```console
+python fps_bitrate.py \
+--input_prefix original-videos/benchmark/car/ \
+--output_prefix_s3 reduced-videos/fps_bitrate-30-0/benchmark/car \
+--fps 30 \
+--bitrate 0
+```
+
+Default input: s3://leto-dish/original-videos/benchmark/car/
+
+Default output: s3://leto-dish/reduced-videos/benchmark/fps_bitrate-30-0/car/
 ```
 
 ### Running cv2_jpg_compression reduction
