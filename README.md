@@ -157,53 +157,6 @@ pip install -r requirements_cv2_jpg_reduction.txt
 python cv2_jpg_reduction.py
 ```
 
-
-----------------------------------
-# Reconstruction Modules
-
-- Default cloud input: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/resized_480x360_video_benchmark_car.mp4
-
-- Default cloud outout: s3://leto-dish/reconstructed-videos/benchmark/misc/car/resized_480x360_video_benchmark_car.mp4
-
-### Running RealBasicVSR
-
-- **Very High Quality SR, takes a very LONG time**
-- **Reccomended EC2 Image image-id ami-051619310404cab17**
-- **Please use ec2-user!**
-
-1. Move to working directory
-```console
-cd ~/leto/reconstruction/realbasicvsr
-```
-
-2. Run requirements_superres_setup.sh to install dependencies
-```console
-bash reconstruction_realbasicvsr_setup.sh
-```
-
-3. Run the python file
-```console
-python fps_bitrate.py \
- --input_bucket_s3{} \
- --input_prefix_s3{} \
- --output_bucket_s3{} \
- --output_prefix_s3{} \
- --fps{} \
- --bitrate{}
-```
-ex/
-```console
-python fps_bitrate.py \
---input_prefix original-videos/benchmark/car/ \
---output_prefix_s3 reduced-videos/fps_bitrate-30-0/benchmark/car \
---fps 30 \
---bitrate 0
-```
-
-Default input: s3://leto-dish/original-videos/benchmark/car/
-
-Default output: s3://leto-dish/reduced-videos/benchmark/fps_bitrate-30-0/car/
-
 ----------------------------------
 # Reconstruction Modules
 
