@@ -50,14 +50,20 @@ def encoder(loadmodel, input_path, refer_path, outputfolder):
     if not os.path.exists(outputfolder):
         os.mkdir(outputfolder)
 
-    output = open(outputfolder + 'quantized_res_feature.pkl', 'wb')
-    pickle.dump(Res_q, output)
+    # output = open(outputfolder + 'quantized_res_feature.pkl', 'wb')
+    # pickle.dump(Res_q, output)
+    with open(outputfolder + 'quantized_res_feature.pkl', 'wb') as f:
+        pickle.dump(Res_q, f)
 
-    output = open(outputfolder + 'quantized_res_prior_feature.pkl', 'wb')
-    pickle.dump(Res_prior_q, output)
+    with open(outputfolder + 'quantized_res_prior_feature.pkl', 'wb') as f:
+        pickle.dump(Res_prior_q, f)
+    # output = open(outputfolder + 'quantized_res_prior_feature.pkl', 'wb')
+    # pickle.dump(Res_prior_q, output)
 
-    output = open(outputfolder + 'quantized_motion_feature.pkl', 'wb')
-    pickle.dump(motion_q, output)
+    with open(outputfolder + 'quantized_motion_feature.pkl', 'wb') as f:
+        pickle.dump(motion_q, f)
+    # output = open(outputfolder + 'quantized_motion_feature.pkl', 'wb')
+    # pickle.dump(motion_q, output)
 
 
 if __name__ == "__main__":
