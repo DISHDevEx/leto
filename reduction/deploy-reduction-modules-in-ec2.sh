@@ -35,14 +35,15 @@ if [ "$GIT_BRANCH" != "main" ]; then
     git switch $GIT_BRANCH
     echo "Branch switched to $GIT_BRANCH"
     cd ..
+    pwd
 else
     cd $WORKING_DIRECTORY/leto
-    pwd
     GIT_BRANCH="main"
     echo "Switching branch to $GIT_BRANCH"
     git switch $GIT_BRANCH
     echo "Branch switched to $GIT_BRANCH"
     cd ..
+    pwd
 fi
 #Deploy the requirements for selected module
 echo "Installing requirements for $MODULE_NAME module."
