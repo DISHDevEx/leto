@@ -12,7 +12,7 @@ pip install -r requirements_video_quality.txt
 
 3. Run the following command to import Evaluator class and Get PSNR and SSIM
 ```
-from utils import *
+from video_quality import *
 ```
 ## if checking locally
 ```
@@ -69,14 +69,14 @@ Ensure the working directory is the root directory
 !pip install -r benchmarking/mediapipe_model/requirements_mp.txt
 ```
 
-2. Import the required utility
+2. Import the required dependancies
 ```console
 import boto3
 import cv2
 from aEye import Video
 from aEye import Aux
 from benchmarking.yolo import Yolo
-from utilities import *
+from video_quality import *
 ```
 
 3. Import videos using aux object
