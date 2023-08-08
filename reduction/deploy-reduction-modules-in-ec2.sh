@@ -32,6 +32,11 @@ if [ "$GIT_BRANCH" != "main" ]; then
     echo "Switching branch to $GIT_BRANCH"
     git switch $GIT_BRANCH
     echo "Branch switched to $GIT_BRANCH"
+else
+    GIT_BRANCH="main"
+    echo "Switching branch to $GIT_BRANCH"
+    git switch $GIT_BRANCH
+    echo "Branch switched to $GIT_BRANCH"
 fi
 #Deploy the requirements for selected module
 echo "Installing requirements for $MODULE_NAME module."
