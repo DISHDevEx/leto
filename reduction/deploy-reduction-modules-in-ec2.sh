@@ -38,7 +38,7 @@ else
     echo "Requirements installation failed for $MODULE_NAME module."
 fi
 #Add libraries path to the environment variable PATH temporarily
-if [ -d "$WORKING_DIRECTORY/leto" ]; then
+if [ "$(tail -1 ~/.bashrc)" != "unset rc" ]; then
     echo "Libraries path is already added permanently to the environment variable PATH to support recurring execution of python script."
     source ~/.bashrc
 else
