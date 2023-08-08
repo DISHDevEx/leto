@@ -56,7 +56,7 @@ def decoder(loadmodel, refer_path, outputfolder):
                 previousImage: im1
             })
 
-        imwrite(recon_d, './image/recon_d.jpg')
+        imwrite('./image/recon_d.jpg', recon_d)
 
         # print(recon_d)
 
