@@ -9,7 +9,7 @@ sudo yum install -y mesa-libGL
 sudo yum install -y git
 git --version
 sudo yum install -y python3-pip
-python3 --version
+PYTHON_VERSION=$(python3 --version)
 pip3 --version
 #Set 'WORKING_DIRECTORY' and 'MODULE_NAME' variables 
 WORKING_DIRECTORY="/home/ssm-user/leto"
@@ -28,7 +28,23 @@ else
 fi
 #Deploy the requirements for selected module
 echo "Installing requirements for $MODULE_NAME module."
-cd $WORKING_DIRECTORY/reduction/$MODULE_NAME
-python3 -m pip install -r requirements*.txt
-echo "Successfully installed requirements for $MODULE_NAME module."
+#Install requirements
+if python3 -m pip install -r $WORKING_DIRECTORY/reduction/$MODULE_NAME/requirements*.txt; then
+    echo "Successfully installed requirements for $MODULE_NAME module."
+else
+    echo "Requirements installation failed for $MODULE_NAME module."
+fi
+#Add libraries path to the environment variable PATH temporarily
+if export PATH=/home/ssm-user/.local/bin:$PATH; then
+    echo "Libraries are temporarily added to the PATH temporarily."
+else
+    echo "Failed to add the Libraries to the PATH temporarily."
+fi
+#Add libraries path to the environment variable 'PATH' permanently
+if echo "export PATH=/home/ssm-user/.local/bin:$PATH;" >> ~/.bashrc; then
+    echo "Libraries path is permanently added to the environment variable PATH to support recurring execution of python script."
+    source ~/.bashrc
+else
+    echo "Failed to permanently add Libraries path to the environment variable PATH to support recurring execution of python script."
+fi
 
