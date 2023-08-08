@@ -79,6 +79,8 @@ fps_bitrate --> Parings with frame interpolation coming soon!
 
 # Reduction Modules
 
+- **Reccomended EC2 Image image-id ami-09538990a0c4fe9be**
+
 ### Running ffmpeg resolution downsampler
 
 1. Move to working directory
