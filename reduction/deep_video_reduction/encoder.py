@@ -1,4 +1,4 @@
-import pickle
+import joblib
 import os
 import tensorflow as tf
 from imageio import imread
@@ -53,15 +53,15 @@ def encoder(loadmodel, input_path, refer_path, outputfolder):
     # output = open(outputfolder + 'quantized_res_feature.pkl', 'wb')
     # pickle.dump(Res_q, output)
     with open(outputfolder + 'quantized_res_feature.pkl', 'wb') as f:
-        pickle.dump(Res_q, f)
+        joblib.dump(Res_q, f)
 
     with open(outputfolder + 'quantized_res_prior_feature.pkl', 'wb') as f:
-        pickle.dump(Res_prior_q, f)
+        joblib.dump(Res_prior_q, f)
     # output = open(outputfolder + 'quantized_res_prior_feature.pkl', 'wb')
     # pickle.dump(Res_prior_q, output)
 
     with open(outputfolder + 'quantized_motion_feature.pkl', 'wb') as f:
-        pickle.dump(motion_q, f)
+        joblib.dump(motion_q, f)
     # output = open(outputfolder + 'quantized_motion_feature.pkl', 'wb')
     # pickle.dump(motion_q, output)
 
