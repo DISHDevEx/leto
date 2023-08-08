@@ -1,7 +1,7 @@
 import joblib
 import tensorflow as tf
-from imageio import imread, imwrite
-import numpy as np
+from imageio import imread
+from scipy.misc import imsave
 from argparse import ArgumentParser
 import math
 
@@ -56,7 +56,9 @@ def decoder(loadmodel, refer_path, outputfolder):
                 previousImage: im1
             })
 
-        imwrite('./image/recon_d.jpg', recon_d)
+        # imwrite('./image/recon_d.jpg', recon_d)
+        reconstructed_image = np.squeeze(recon_d)
+        imsave(outputfolder + 'output.jpg', reconstructed_image)
 
         # print(recon_d)
 
