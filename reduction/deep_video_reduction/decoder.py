@@ -19,9 +19,9 @@ def decoder(loadmodel, refer_path, outputfolder):
     graph = load_graph(loadmodel)
     prefix = 'import/build_towers/tower_0/train_net_inference_one_pass/train_net/'
     reconframe = graph.get_tensor_by_name(prefix + 'ReconFrame:0')
-    res_input = graph.get_tensor_by_name(prefix + 'quant_feature:0')
-    res_prior_input = graph.get_tensor_by_name(prefix + 'quant_z:0')
-    motion_input = graph.get_tensor_by_name(prefix + 'quant_mv:0')
+    res_input = graph.get_tensor_by_name('import/quant_feature:0')
+    res_prior_input = graph.get_tensor_by_name('import/quant_z:0')
+    motion_input = graph.get_tensor_by_name('import/quant_mv:0')
     previousImage = graph.get_tensor_by_name('import/input_image_ref:0')
 
     with tf.compat.v1.Session(graph=graph) as sess:
