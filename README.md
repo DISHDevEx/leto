@@ -146,7 +146,7 @@ python fps_bitrate.py \
 ex/
 ```console
 python fps_bitrate.py \
---input_prefix original-videos/benchmark/car/ \
+--input_prefix_s3 original-videos/benchmark/car/ \
 --output_prefix_s3 reduced-videos/fps_bitrate-30-0/benchmark/car \
 --fps 30 \
 --bitrate 0
@@ -185,7 +185,7 @@ ex/
 
 ```console
 python cv2_jpg_reduction.py \
---input_prefix original-videos/benchmark/car/ \
+--input_prefix_s3 original-videos/benchmark/car/ \
 --output_prefix_s3 reduced-videos/fps_bitrate-30-0/benchmark/car \
 -- quality 15 \
 -- crf 28 \
