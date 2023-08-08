@@ -2,7 +2,7 @@
 
 1. Move to working directory
 ```console
-cd video_quality
+cd benchmarking/video_quality
 ```
 
 2. Install the requirements:
@@ -10,10 +10,10 @@ cd video_quality
 pip install -r requirements_video_quality.txt
 ```
 ```
-pip install -r benchmarking/yolo/requirements_yolo.txt
+pip install -r ../../benchmarking/yolo/requirements_yolo.txt
 ```
 ```
-pip install -r benchmarking/mediapipe_model/requirements_mp.txt
+pip install -r ../../benchmarking/yolo/requirements_yolo.txt
 ```
 3. Run the following command to import Evaluator class and Get PSNR and SSIM
 ```
