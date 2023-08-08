@@ -58,7 +58,7 @@ def decoder(loadmodel, refer_path, outputfolder):
             })
 
         reconstructed_image = np.squeeze(recon_d)
-        cv2.imwrite(outputfolder + 'output.jpg', reconstructed_image)
+        cv2.imwrite(outputfolder + 'input.jpg', im1)
 
         # check
         # imagedir = './image/'
