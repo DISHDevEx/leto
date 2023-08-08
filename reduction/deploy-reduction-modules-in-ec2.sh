@@ -13,7 +13,8 @@ python3 --version
 pip3 --version
 #Set 'WORKING_DIRECTORY' and 'MODULE_NAME' variables 
 WORKING_DIRECTORY="/home/ssm-user"
-MODULE_NAME=$1
+GIT_BRANCH=$1
+MODULE_NAME=$2
 #If the leto directory exists, then do git pull else do git clone
 if [ -d "$WORKING_DIRECTORY/leto" ]; then
     echo "Doing 'git pull' as the leto directory already exists." 
@@ -25,6 +26,11 @@ else
     cd $WORKING_DIRECTORY
     git clone https://github.com/DISHDevEx/leto.git
     echo "Git clone is completed successfully."
+    if [ -n "$GIT_BRANCH" ]; then
+        echo "Switching branch to $GIT_BRANCH"
+        git switch $GIT_BRANCH
+        echo "Branch switched to $GIT_BRANCH"
+    fi
 fi
 #Deploy the requirements for selected module
 echo "Installing requirements for $MODULE_NAME module."
