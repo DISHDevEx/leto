@@ -57,6 +57,11 @@ jobs:
         --parameters '{"command": ["curl -o /home/ssm-user/deploy-reduction-modules-in-ec2.sh https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/reduction-deployment/reduction/deploy-reduction-modules-in-ec2.sh"]}' \
         --target ${{ github.event.inputs.instance_id }}
 
+    - name: Debug
+      run: |
+        echo ${{ github.event.inputs.git_branch }}
+        echo ${{ github.event.inputs.module }}
+        
     #Execute shell script to deploy module in target AWS EC2 instance
     - name: Deploy module in EC2 instance
       run: |
