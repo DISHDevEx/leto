@@ -29,14 +29,18 @@ else
 fi
 #Switch git branch if 'GIT_BRANCH' is not null
 if [ "$GIT_BRANCH" != "main" ]; then
+    cd $WORKING_DIRECTORY/leto
     echo "Switching branch to $GIT_BRANCH"
     git switch $GIT_BRANCH
     echo "Branch switched to $GIT_BRANCH"
+    cd ..
 else
+    cd $WORKING_DIRECTORY/leto
     GIT_BRANCH="main"
     echo "Switching branch to $GIT_BRANCH"
     git switch $GIT_BRANCH
     echo "Branch switched to $GIT_BRANCH"
+    cd ..
 fi
 #Deploy the requirements for selected module
 echo "Installing requirements for $MODULE_NAME module."
