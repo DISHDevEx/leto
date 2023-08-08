@@ -1,4 +1,4 @@
-import pickle
+import joblib
 import tensorflow as tf
 from imageio import imread
 import numpy as np
@@ -34,13 +34,13 @@ def decoder(loadmodel, refer_path, outputfolder):
     with tf.compat.v1.Session(graph=graph) as sess:
 
         with open(outputfolder + 'quantized_res_feature.pkl', 'rb') as f:
-            residual_feature = pickle.load(f)
+            residual_feature = joblib.load(f)
 
         with open(outputfolder + 'quantized_res_prior_feature.pkl', 'rb') as f:
-            residual_prior_feature = pickle.load(f)
+            residual_prior_feature = joblib.load(f)
 
         with open(outputfolder + 'quantized_motion_feature.pkl', 'rb') as f:
-            motion_feature = pickle.load(f)
+            motion_feature = joblib.load(f)
 
         im1 = imread(refer_path)
         im1 = im1 / 255.0
