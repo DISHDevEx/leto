@@ -81,6 +81,9 @@ fps_bitrate --> Parings with frame interpolation coming soon!
 
 - **Reccomended EC2 Image image-id ami-09538990a0c4fe9be**
 
+- **Please use ec2-user!**
+
+
 ### Running ffmpeg resolution downsampler
 
 1. Move to working directory
@@ -166,6 +169,7 @@ python cv2_jpg_reduction.py
 
 - **Very High Quality SR, takes a very LONG time**
 - **Reccomended EC2 Image image-id ami-051619310404cab17**
+- **Please use ec2-user!**
 
 1. Move to working directory
 ```console
@@ -211,6 +215,7 @@ Default output: s3://leto-dish/reduced-videos/benchmark/fps_bitrate-30-0/car/
 ### Running opencv resolution upscaler
 
 - **Reccomended EC2 image-id ami-0f598ecd07418eba2**
+- **Please use ec2-user!**
 
 1. Move to working directory
 ```console
@@ -245,6 +250,7 @@ python opencv_resolution_upscaler.py \
 ### Running SuperResolution
 
 - **Reccomended EC2 image-id ami-0f598ecd07418eba2**
+- **Please use ec2-user!**
 
 1. Move to working directory
 ```console
@@ -289,6 +295,7 @@ python reconstruction_superres.py \
 ### Running FastSRGAN
 
 - **Reccomended EC2 image-id ami-0f598ecd07418eba2**
+- **Please use ec2-user!**
 
 1. Move to working directory
 ```console
@@ -326,6 +333,7 @@ python fastsrgan.py \
 
 - **Very High Quality SR, takes a very LONG time**
 - **Reccomended EC2 Image image-id ami-051619310404cab17**
+- **Please use ec2-user!**
 
 1. Move to working directory
 ```console
