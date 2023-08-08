@@ -157,6 +157,8 @@ Default output: s3://leto-dish/reduced-videos/benchmark/fps_bitrate-30-0/car/
 
 ### Running opencv resolution upscaler
 
+- **Reccomended EC2 image-id ami-0f598ecd07418eba2**
+
 1. Move to working directory
 ```console
 cd reconstruction/opencv_resolution_upscaler
@@ -188,6 +190,8 @@ python opencv_resolution_upscaler.py \
 ```
 
 ### Running SuperResolution
+
+- **Reccomended EC2 image-id ami-0f598ecd07418eba2**
 
 1. Move to working directory
 ```console

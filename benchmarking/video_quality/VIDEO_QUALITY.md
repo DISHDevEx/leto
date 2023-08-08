@@ -1,24 +1,13 @@
-# Yolo Model
-
-Please read the Yolo model readme for more instructions.
-
-# Mediapipe Model
-
-Please read the Mediapipe model readme for more instructions.
-
 # Evaluating metrics
-
-## Running utils file
-
 
 1. Move to working directory
 ```console
-cd utilities
+cd video_quality
 ```
 
-2. Run requirements_utilities.txt
+2. Run requirements_video_quality.txt
 ```
-pip install -r requirements_utilities.txt
+pip install -r requirements_video_quality.txt
 ```
 
 3. Run the following command to import Evaluator class and Get PSNR and SSIM

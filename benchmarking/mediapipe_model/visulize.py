@@ -40,5 +40,5 @@ def visualize(image, detection_result):
         sum_confidence += probability
         # Calculate the average confidence of all labels in the frame
     if len(detection_result[0]):
-      average_confidence = sum_confidence/len(detection_result[0])
+        average_confidence = sum_confidence / len(detection_result[0])
     return image, average_confidence

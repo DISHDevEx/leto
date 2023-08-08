@@ -101,7 +101,9 @@ def main():
         bucket=args.input_bucket_s3, prefix=args.input_prefix_s3
     )
 
-    downsampled_video = labeler.change_resolution(video_list_s3, args.quality, args.algorithm)
+    downsampled_video = labeler.change_resolution(
+        video_list_s3, args.quality, args.algorithm
+    )
 
     aux.execute_label_and_write_local(downsampled_video)
 

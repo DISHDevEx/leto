@@ -26,9 +26,9 @@ def visualize_yolo(image, detection_result) -> np.ndarray:
         image: cv2 image
             The orginal cv2 Image with bounding boxes draw in along with the corresponding probability and name.
 
-        
+
         average confidence: float
-            The average confidence of all the labels detected by the model  
+            The average confidence of all the labels detected by the model
     """
 
     shape = detection_result[0].orig_shape
@@ -46,8 +46,8 @@ def visualize_yolo(image, detection_result) -> np.ndarray:
 
         # Calculate confidence per label and sum the confidence scores of all labels
         probability = round(detection_result[0].boxes.conf[i].item(), 2)
-        sum_confidence += probability  
-    # Calculate the average confidence of all labels in the frame 
+        sum_confidence += probability
+    # Calculate the average confidence of all labels in the frame
     if len(detection_result[0]):
-        average_confidence = sum_confidence/len(detection_result[0])
-    return image,average_confidence
+        average_confidence = sum_confidence / len(detection_result[0])
+    return image, average_confidence

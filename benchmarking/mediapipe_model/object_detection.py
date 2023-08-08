@@ -74,7 +74,9 @@ def object_detection(model_path, input_video, output_video, save_video=False):
                     mp_image, frame_timestamp_ms
                 )
                 image_copy = np.copy(mp_image.numpy_view())
-                annotated_image, average_confidence = visualize(image_copy, detection_result)  #Adds Bounding box to img
+                annotated_image, average_confidence = visualize(
+                    image_copy, detection_result
+                )  # Adds Bounding box to img
                 if save_video:
                     out.write(annotated_image)
 

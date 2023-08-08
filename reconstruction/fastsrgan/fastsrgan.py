@@ -1,5 +1,5 @@
 """
-Module that enhances video resolution using Deep Neural Networks.
+Module that enhances video resolution using the pretrained FastSRGAN.
 """
 import os
 import sys
@@ -25,9 +25,14 @@ from utilities import parse_recon_args
 
 def super_resolve_video(args):
     """
-    Function that enhances video resolution using Low Latency GAN.
+    Super resolve's videos using a pretained "FastSRGAN".
 
-
+    Parameters
+    ----------
+        args: argparse.Namespace
+            Object contains: input_bucket_s3, input_prefix_s3, output_bucket_s3,
+                             output_prefix_s3, download_model, model_bucket_s3,
+                             model_prefix_s3, local_model_path, clean_model, resolution.
     """
     # Loop through all videos that need to be reduced.
     for i in range(len(os.listdir("reduced_videos"))):

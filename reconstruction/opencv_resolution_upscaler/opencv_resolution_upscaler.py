@@ -25,6 +25,13 @@ from utilities import parse_recon_args
 def upscale_video(args):
     """
     Method that upscales video using opencv and merges audio with the upscaled video.
+
+    Parameters
+    ----------
+        args: argparse.Namespace
+            Object contains: input_bucket_s3, input_prefix_s3, output_bucket_s3,
+                             output_prefix_s3, download_model, model_bucket_s3,
+                             model_prefix_s3, local_model_path, clean_model, resolution.
     """
 
     for i in range(len(os.listdir("reduced_videos"))):

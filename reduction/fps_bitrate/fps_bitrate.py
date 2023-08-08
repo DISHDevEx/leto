@@ -9,6 +9,7 @@ import sys
 import logging
 import argparse
 
+
 def parse_args():
     """
     Parses the arguments needed for fps bitrate based reduction module.
@@ -69,6 +70,7 @@ def parse_args():
 
     return args
 
+
 def fps_bitrate(video_list, fps=30, bitrate=0):
     """
     Wrapper method for the change_fps and set_bitrate methods in aEye.Labeler.
@@ -117,6 +119,7 @@ def fps_bitrate(video_list, fps=30, bitrate=0):
 
     return video_list
 
+
 def main():
     """
     Runner method for fps_bitrate.fps_bitrate().  This method abstracts some of the
@@ -140,19 +143,22 @@ def main():
     aux = Aux()
 
     try:
-        video_list = aux.load_s3(bucket=args.input_bucket_s3, prefix=args.input_prefix_s3)
+        video_list = aux.load_s3(
+            bucket=args.input_bucket_s3, prefix=args.input_prefix_s3
+        )
     except Exception as e:
         print(e)
         logging.warning(
             f"unable to load video list from s3; ensure AWS credentials have been provided."
         )
 
-    fps_bitrate(video_list,args.fps,args.bitrate)
+    fps_bitrate(video_list, args.fps, args.bitrate)
     out = aux.execute_label_and_write_local(video_list)
     aux.upload_s3(video_list, args.output_bucket_s3, args.output_prefix_s3)
     aux.clean()
 
     return logging.info("video reduction completed on " + sys.version + ".")
+
 
 if __name__ == "__main__":
     main()
