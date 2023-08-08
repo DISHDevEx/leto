@@ -7,7 +7,7 @@ from argparse import ArgumentParser
 
 
 def load_graph(frozen_graph_filename):
-    with tf.gfile.GFile(frozen_graph_filename, "rb") as f:
+    with tf.io.gfile.GFile(frozen_graph_filename, "rb") as f:
         graph_def = tf.GraphDef()
         graph_def.ParseFromString(f.read())
 
