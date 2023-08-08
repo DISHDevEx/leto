@@ -30,7 +30,7 @@ def encoder(loadmodel, input_path, refer_path, outputfolder):
     # reconstructed frame
     reconframe = graph.get_tensor_by_name(prefix + 'ReconFrame:0')
 
-    with tf.Session(graph=graph) as sess:
+    with tf.compat.v1.Session(graph=graph) as sess:
 
         im1 = imread(input_path)
         im2 = imread(refer_path)
