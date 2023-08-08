@@ -38,6 +38,10 @@ else
     echo "Requirements installation failed for $MODULE_NAME module."
 fi
 #Add libraries path to the environment variable PATH temporarily
+if [ -d "$WORKING_DIRECTORY/leto" ]; then
+    echo "Libraries path is already added permanently to the environment variable PATH to support recurring execution of python script."
+    source ~/.bashrc
+else
 if export PATH=/home/ssm-user/.local/bin:$PATH; then
     echo "Libraries are temporarily added to the PATH temporarily."
 else
@@ -49,5 +53,6 @@ if echo "export PATH=/home/ssm-user/.local/bin:$PATH;" >> ~/.bashrc; then
     source ~/.bashrc
 else
     echo "Failed to permanently add Libraries path to the environment variable PATH to support recurring execution of python script."
+fi
 fi
 
