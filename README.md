@@ -33,6 +33,9 @@
 │           ├── app-fps_bitrate.py
 │           ├── requirements.txt
 │           ├── README.md
+│       ├── cv2_jpg_reduction
+│           ├── cv2_jpg_reduction.py
+│           ├── requirements_cv2_jpg_reduction.txt
 │
 │   ├── reconstruction
 │       ├── realbasicvser
@@ -122,6 +125,54 @@ cd leto/reduction/fps_bitrate
 
 ```console
 pip install -r requirements_fps_bitrate.txt
+```
+
+4. Execute the runner method, ***app_fps_bitrate.py***
+
+```console
+python app_fps_bitrate.py
+```
+
+### Running cv2_jpg_compression reduction
+
+1. Move to working directory:
+```console
+cd leto/reduction/cv2_jpg_reduction/
+```
+
+3. Install requirements:
+
+```console
+pip install -r requirements_cv2_jpg_reduction.txt
+```
+
+4. Execute the runner method, ***cv2_jpg_reduction.py***
+
+```console
+python cv2_jpg_reduction.py
+```
+
+
+----------------------------------
+# Reconstruction Modules
+
+- Default cloud input: s3://leto-dish/reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/resized_480x360_video_benchmark_car.mp4
+
+- Default cloud outout: s3://leto-dish/reconstructed-videos/benchmark/misc/car/resized_480x360_video_benchmark_car.mp4
+
+### Running RealBasicVSR
+
+- **Very High Quality SR, takes a very LONG time**
+- **Reccomended EC2 Image image-id ami-051619310404cab17**
+
+1. Move to working directory
+```console
+cd ~/leto/reconstruction/realbasicvsr
+```
+
+2. Run requirements_superres_setup.sh to install dependencies
+```console
+bash reconstruction_realbasicvsr_setup.sh
 ```
 
 3. Run the python file

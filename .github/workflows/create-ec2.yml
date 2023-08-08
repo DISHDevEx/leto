@@ -1,0 +1,44 @@
+#This workflow is used to create a new EC2 instance in the AWS 'us-east-1' region
+#
+name: Create new EC2 instance
+
+on:
+  workflow_dispatch:
+    inputs:
+      ec2_name:
+        description: 'Enter name of the EC2'
+        required: true
+      ami_id:
+        description: 'Enter AMI id for the EC2'
+        required: true
+      instance_type:
+        description: 'Enter EC2 instance type(Eg: t3.small)'
+        required: true
+env:
+  AWS_REGION : ${{ secrets.AWS_REGION }}
+# permission can be added at job level or workflow level
+permissions:
+      id-token: write   # This is required for requesting the JWT
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
+          role-session-name: samplerolesession
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Create EC2 instance
+        run: |
+          aws ec2 run-instances \
+            --image-id ${{ github.event.inputs.ami_id }} \
+            --instance-type ${{ github.event.inputs.instance_type }} \
+            --key-name '${{ secrets.KEY_PAIR_NAME }}' \
+            --region us-east-1 \
+            --subnet-id ${{ secrets.SUBNET_ID }} \
+            --security-group-ids ${{ secrets.SECURITY_GROUP_ID }} \
+            --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=github_wf_${{ github.event.inputs.ec2_name }}}]' \
+            --iam-instance-profile Name=${{ secrets.IAM_INSTANCE_PROFILE }} \
+            --block-device-mappings 'DeviceName=/dev/xvda,Ebs={VolumeSize=30}' \
+            --count 1 &>/dev/null
