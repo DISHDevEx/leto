@@ -52,22 +52,4 @@ if python3 -m pip install -r $WORKING_DIRECTORY/leto/reduction/$MODULE_NAME/$FIL
 else
     echo "Requirements installation failed for $MODULE_NAME module."
 fi
-#Add libraries path to the environment variable PATH temporarily
-# if [ "$(tail -1 ~/.bashrc)" != "unset rc" ]; then
-#     echo "Libraries path is already added permanently to the environment variable PATH to support recurring execution of python script."
-#     source ~/.bashrc
-# else
-# if export PATH=/home/ec2-user/.local/bin:$PATH; then
-#     echo "Libraries are temporarily added to the PATH temporarily."
-# else
-#     echo "Failed to add the Libraries to the PATH temporarily."
-# fi
-# #Add libraries path to the environment variable 'PATH' permanently
-# # if echo "export PATH=/home/ec2-user/.local/bin:$PATH;" >> ~/.bashrc; then
-# #     echo "Libraries path is permanently added to the environment variable PATH to support recurring execution of python script."
-# #     source ~/.bashrc
-# # else
-# #     echo "Failed to permanently add Libraries path to the environment variable PATH to support recurring execution of python script."
-# # fi
-# fi
 
