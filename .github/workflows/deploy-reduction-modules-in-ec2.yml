@@ -44,13 +44,13 @@ jobs:
        role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
        role-session-name: ${{ secrets.SAMPLE_ROLE_SESSION }}
        aws-region: ${{ env.AWS_REGION }}
-    #Download deployment shell script from github to '/home/ssm-user' path in target AWS EC2 instance
+    #Download deployment shell script from github to '/home/ec2-user' path in target AWS EC2 instance
     - name: Download deployment script from github to EC2 instance
       run: |
         sudo apt-get -y install expect-dev
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
-        --parameters '{"command": ["curl -o /home/ssm-user/deploy-reduction-modules-in-ec2.sh https://raw.githubusercontent.com/DISHDevEx/leto/main/deployment_scripts/deploy-reduction-modules-in-ec2.sh"]}' \
+        --parameters '{"command": ["curl -o /home/ec2-user/deploy-reduction-modules-in-ec2.sh https://raw.githubusercontent.com/DISHDevEx/leto/main/deployment_scripts/deploy-reduction-modules-in-ec2.sh"]}' \
         --target ${{ github.event.inputs.instance_id }}
 
     - name: Checking parameters being passed to the shell script
@@ -63,5 +63,5 @@ jobs:
       run: |
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
-        --parameters '{"command": ["bash /home/ssm-user/deploy-reduction-modules-in-ec2.sh ${{ github.event.inputs.git_branch }} ${{ github.event.inputs.module }}"]}' \
+        --parameters '{"command": ["bash /home/ec2-user/deploy-reduction-modules-in-ec2.sh ${{ github.event.inputs.git_branch }} ${{ github.event.inputs.module }}"]}' \
         --target ${{ github.event.inputs.instance_id }}
