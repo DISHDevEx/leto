@@ -13,7 +13,7 @@ pip install -r requirements_video_quality.txt
 pip install -r ../../benchmarking/yolo/requirements_yolo.txt
 ```
 ```
-pip install -r ../../benchmarking/yolo/requirements_yolo.txt
+pip install -r ../../benchmarking/mediapipe_model/requirements_mp.txt
 ```
 3. Run the following command to import Evaluator class and Get PSNR and SSIM
 ```
