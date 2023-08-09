@@ -1,6 +1,6 @@
 Reduction modules deployment in AWS EC2 instance with shell scripts:
 --------------------------------------------------------------------
-The reduction modules - https://github.com/DISHDevEx/leto/tree/main/reduction/ - are used to take the input video file from the source S3 path, reduce the resolution, label it, and then upload the processed video to the destination S3 path.
+The [reduction](https://github.com/DISHDevEx/leto/tree/main/reduction/) modules are used to take the input video file from the source S3 path, reduce the resolution, label it, and then upload the processed video to the destination S3 path.
 
 The module is deployed using shell scripts in AWS EC2 instance as per the below steps,
 
