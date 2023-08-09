@@ -1,3 +1,7 @@
+"""
+Given a specific model and video apply object detection.
+"""
+
 import mediapipe as mp
 import cv2
 import numpy as np
@@ -24,7 +28,7 @@ def object_detection(model_path, input_video, output_video, save_video=False):
     Returns
     ----------
         output_data: list
-        The average confidence of each frame    
+        The average confidence of each frame
     """
     BaseOptions = mp.tasks.BaseOptions
     ObjectDetector = mp.tasks.vision.ObjectDetector
@@ -70,10 +74,12 @@ def object_detection(model_path, input_video, output_video, save_video=False):
                     mp_image, frame_timestamp_ms
                 )
                 image_copy = np.copy(mp_image.numpy_view())
-                annotated_image, average_confidence = visualize(image_copy, detection_result)  #Adds Bounding box to img
+                annotated_image, average_confidence = visualize(
+                    image_copy, detection_result
+                )  # Adds Bounding box to img
                 if save_video:
                     out.write(annotated_image)
-                
+
                 output_data[frame_index] = average_confidence
                 frame_index += 1
 
