@@ -44,5 +44,5 @@ jobs:
         sudo apt-get -y install expect-dev
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
-        --parameters '{"command": ["python3 /home/ec2-user/leto/${{ github.event.inputs.python_file_path }}"]}' \
+        --parameters '{"command": ["runuser -l ec2-user -c 'python3 /home/ec2-user/leto/${{ github.event.inputs.python_file_path }}'"]}' \
         --target ${{ github.event.inputs.instance_id }}
