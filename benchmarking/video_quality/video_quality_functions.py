@@ -246,7 +246,7 @@ def read_files_and_store_locally(
     # make directories to store files locally
     if not os.path.exists("original_videos"):
         os.mkdir("./original_videos")
-    if not os.path.exists("reduced_videos"):
+    if not os.path.exists("modified_videos"):
         os.mkdir("./modified_videos")
     # load videos to local
     aux.execute_label_and_write_local(video_list_s3_original_video, "original_videos")
