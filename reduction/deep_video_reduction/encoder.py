@@ -43,26 +43,22 @@ def encoder(loadmodel, input_path, refer_path, outputfolder):
                 inputImage: im1,
                 previousImage: im2
             })
-
+    print('---------------------------')
+    print(recon_val)
     print(bpp_est)
     print(psnr_val)
+    print('---------------------------')
     if not os.path.exists(outputfolder):
         os.mkdir(outputfolder)
 
-    # output = open(outputfolder + 'quantized_res_feature.pkl', 'wb')
-    # pickle.dump(Res_q, output)
     with open(outputfolder + 'quantized_res_feature.pkl', 'wb') as f:
         joblib.dump(Res_q, f)
 
     with open(outputfolder + 'quantized_res_prior_feature.pkl', 'wb') as f:
         joblib.dump(Res_prior_q, f)
-    # output = open(outputfolder + 'quantized_res_prior_feature.pkl', 'wb')
-    # pickle.dump(Res_prior_q, output)
 
     with open(outputfolder + 'quantized_motion_feature.pkl', 'wb') as f:
         joblib.dump(motion_q, f)
-    # output = open(outputfolder + 'quantized_motion_feature.pkl', 'wb')
-    # pickle.dump(motion_q, output)
 
 
 if __name__ == "__main__":
