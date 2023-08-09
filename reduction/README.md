@@ -42,4 +42,5 @@ To run the python scripts which are already deployed in the target AWS EC2 insta
 a)Enter EC2 instance id: "Enter respective EC2 instance id" #Instance id entry is required
 
 b)Enter python file path in leto repository: "Enter the file path" #Python file path entry is mandatory and the file path should be based on it's location in the leto repository
+
   #Example: The file path of 'cv2_jpg_reduction.py' in 'leto' repository is, 'reduction/cv2_jpg_reduction/cv2_jpg_reduction.py'
