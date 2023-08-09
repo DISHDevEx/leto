@@ -6,8 +6,8 @@ import numpy as np
 from argparse import ArgumentParser
 
 def load_graph(frozen_graph_filename):
-    with tf.io.gfile.GFile(frozen_graph_filename, "rb") as f:
-        graph_def = tf.compat.v1.GraphDef()
+    with tf.io.gfile.GFile(frozen_graph_filename, "rb") as f: # GFile is tensorflow's file reader. Similar to I/O objects.
+        graph_def = tf.compat.v1.GraphDef() # tf.compat.v1.GraphDef A protobuf containing the graph of operations.
         graph_def.ParseFromString(f.read())
 
     with tf.Graph().as_default() as graph:
@@ -17,15 +17,36 @@ def load_graph(frozen_graph_filename):
 
 def encoder(loadmodel, input_path, refer_path, outputfolder):
     graph = load_graph(loadmodel)
+    print("graph",graph)
+    print(type(graph))
     prefix = 'import/build_towers/tower_0/train_net_inference_one_pass/train_net/'
 
     Res = graph.get_tensor_by_name(prefix + 'Residual_Feature:0')
+    print("Res",Res)
+    print(type(Res))
+    print(Res.shape)
+
+
     inputImage = graph.get_tensor_by_name('import/input_image:0')
+    print("inputImage",inputImage)
+    print(type(inputImage))
+    print(inputImage.shape)
+
     previousImage = graph.get_tensor_by_name('import/input_image_ref:0')
+    print("previousImage",previousImage)
+
     Res_prior = graph.get_tensor_by_name(prefix + 'Residual_Prior_Feature:0')
+    print("Res_prior",Res_prior)
+
     motion = graph.get_tensor_by_name(prefix + 'Motion_Feature:0')
+    print("motion",motion)
+
     bpp = graph.get_tensor_by_name(prefix + 'rate/Estimated_Bpp:0')
+    print("bpp",bpp)
+
     psnr = graph.get_tensor_by_name(prefix + 'distortion/PSNR:0')
+    print("psnr",psnr)
+
     # reconstructed frame
     reconframe = graph.get_tensor_by_name(prefix + 'ReconFrame:0')
 
