@@ -11,7 +11,7 @@ git --version
 sudo yum install -y python3-pip
 python3 --version
 pip3 --version
-#Set 'WORKING_DIRECTORY' and 'MODULE_NAME' variables 
+#Set variable values 
 WORKING_DIRECTORY="/home/ssm-user"
 GIT_BRANCH=$1
 MODULE_NAME=$2

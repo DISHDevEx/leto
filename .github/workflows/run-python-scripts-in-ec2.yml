@@ -38,7 +38,7 @@ jobs:
        role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
        role-session-name: ${{ secrets.SAMPLE_ROLE_SESSION }}
        aws-region: ${{ env.AWS_REGION }}
-    #Run python file in EC2 instance in target AWS EC2 instance
+    #Run python file in target AWS EC2 instance
     - name: Run python file in EC2 instance
       run: |
         sudo apt-get -y install expect-dev

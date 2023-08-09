@@ -53,7 +53,7 @@ jobs:
         --parameters '{"command": ["curl -o /home/ssm-user/deploy-reduction-modules-in-ec2.sh https://raw.githubusercontent.com/DISHDevEx/leto/main/deployment_scripts/deploy-reduction-modules-in-ec2.sh"]}' \
         --target ${{ github.event.inputs.instance_id }}
 
-    - name: Cheking parameters being passed to the shell script
+    - name: Checking parameters being passed to the shell script
       run: |
         echo ${{ github.event.inputs.git_branch }}
         echo ${{ github.event.inputs.module }}
