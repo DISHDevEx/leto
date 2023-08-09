@@ -27,7 +27,7 @@ def pipeline(input_video, model, output_video, save_video=False):
     Returns
     ---------
         output_data: list
-        The average confidence of each frame    
+        The average confidence of each frame
     """
 
     cap = cv2.VideoCapture(input_video)
@@ -51,7 +51,9 @@ def pipeline(input_video, model, output_video, save_video=False):
             detection_result = model.predict_(im2, verbose=False, device=None)
 
             copy_image = frame.copy()
-            annotated_image, average_confidence = visualize_yolo(copy_image, detection_result)
+            annotated_image, average_confidence = visualize_yolo(
+                copy_image, detection_result
+            )
             if save_video:
                 out.write(annotated_image)
 

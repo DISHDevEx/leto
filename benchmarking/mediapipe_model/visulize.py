@@ -1,3 +1,7 @@
+"""
+Draw bounding boxes.
+"""
+
 import cv2
 import numpy as np
 
@@ -19,7 +23,7 @@ def visualize(image, detection_result):
         Image with bounding boxes.
 
       average_confidence : float
-            The average confidence of all the labels detected by the model  
+            The average confidence of all the labels detected by the model
 
     """
     for detection in detection_result.detections:
@@ -33,9 +37,8 @@ def visualize(image, detection_result):
         category = detection.categories[0]
         category_name = category.category_name
         probability = round(category.score, 2)
-        sum_confidence += probability  
-        # Calculate the average confidence of all labels in the frame 
+        sum_confidence += probability
+        # Calculate the average confidence of all labels in the frame
     if len(detection_result[0]):
-      average_confidence = sum_confidence/len(detection_result[0])
+        average_confidence = sum_confidence / len(detection_result[0])
     return image, average_confidence
-        

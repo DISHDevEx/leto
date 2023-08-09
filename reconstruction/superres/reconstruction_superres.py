@@ -1,5 +1,5 @@
 """
-Module that enhances video resolution using Deep Neural Networks.
+Module that enhances video resolution using pretained models: edsr_x4,espcn_x4,fsrcnn_x4,lapsrn_x4.
 """
 import os
 import sys
@@ -22,6 +22,20 @@ from utilities import parse_recon_args
 
 
 def create_model_name(model_prefix_s3):
+    """
+    Method that super resolves videos using pretrained using pretained models: edsr_x4,espcn_x4,fsrcnn_x4,lapsrn_x4.
+
+    Parameters
+    ----------
+        model_prefix_s3: string
+            the prefix of the pretrained model as stored in s3.
+
+    Returns
+    ----------
+        split_on_scaling: string
+            defines which model to use for cv2.dnn_superres as parsed from the model_prefix_s3
+    """
+
     split_on_file_name = model_prefix_s3.split("/")
     split_on_file_extension = split_on_file_name[1].split(".")
     split_on_scaling = split_on_file_extension[0].split("_")
@@ -30,7 +44,14 @@ def create_model_name(model_prefix_s3):
 
 def superres_video(args):
     """
-    Function that enhances video resolution using Deep Neural Networks.
+    Method that super resolves videos using pretrained using pretained models: edsr_x4,espcn_x4,fsrcnn_x4,lapsrn_x4.
+
+    Parameters
+    ----------
+        args: argparse.Namespace
+            Object contains: input_bucket_s3, input_prefix_s3, output_bucket_s3,
+                             output_prefix_s3, download_model, model_bucket_s3,
+                             model_prefix_s3, local_model_path, clean_model, resolution.
     """
 
     for i in range(len(os.listdir("reduced_videos"))):

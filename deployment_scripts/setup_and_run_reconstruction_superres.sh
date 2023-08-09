@@ -34,7 +34,7 @@ cd leto
 git checkout ankita/update_superres
 git pull
 rm -rf .github
-rm -rf downstream_model
+rm -rf benchmarking
 rm -rf reconstruction/opencv_resolution_upscaler
 rm -rf reconstruction/realbasicvsr
 rm -rf reduction

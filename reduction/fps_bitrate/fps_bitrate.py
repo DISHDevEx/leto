@@ -1,5 +1,74 @@
+"""
+Script to change the fps and bitrate of a video via ffmpeg.
+"""
+
+from aEye import Video
 from aEye import Labeler
+from aEye import Aux
+import sys
 import logging
+import argparse
+
+
+def parse_args():
+    """
+    Parses the arguments needed for fps bitrate based reduction module.
+    Catalogues: input s3 bucket, input s3 prefix, output s3 bucket and output s3 prefix.
+
+
+    Returns
+    -------
+        args: argparse.Namespace object
+            Returns an object with the relevent input s3 bucket, input s3 prefix, output s3 bucket and output s3 prefix, fps, and bitrate.
+    """
+
+    parser = argparse.ArgumentParser(
+        description="Inference script of ffmpeg resolution downsampler"
+    )
+    parser.add_argument(
+        "--input_bucket_s3",
+        type=str,
+        default="leto-dish",
+        help="s3 bucket of the input video",
+    )
+
+    parser.add_argument(
+        "--input_prefix_s3",
+        type=str,
+        default="original-videos/benchmark/car/",
+        help="s3 prefix of the input video",
+    )
+
+    parser.add_argument(
+        "--output_bucket_s3",
+        type=str,
+        default="leto-dish",
+        help="s3 bucket of the input video",
+    )
+
+    parser.add_argument(
+        "--output_prefix_s3",
+        type=str,
+        default="reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/",
+        help="s3 prefix of the output video",
+    )
+
+    parser.add_argument(
+        "--fps",
+        type=int,
+        default=30,
+        help="fps modification to make to the video",
+    )
+    parser.add_argument(
+        "--bitrate",
+        type=int,
+        default="0",
+        help="desired bitrate for the videos.",
+    )
+
+    args = parser.parse_args()
+
+    return args
 
 
 def fps_bitrate(video_list, fps=30, bitrate=0):
@@ -25,8 +94,6 @@ def fps_bitrate(video_list, fps=30, bitrate=0):
 
             Default Setting: Setting to 0 will do a 10x bitrate reduction
 
-
-
     Returns
     ----------
         video_list: list
@@ -51,3 +118,47 @@ def fps_bitrate(video_list, fps=30, bitrate=0):
         logging.exception("unable to process with given bitrate; must be >= 0")
 
     return video_list
+
+
+def main():
+    """
+    Runner method for fps_bitrate.fps_bitrate().  This method abstracts some of the
+    interaction with S3 and AWS away from fps_bitrate.
+
+    Parameters
+    ----------
+        None: runner method
+
+
+    Returns
+    ----------
+        None: however, results in a list of processed videos being stored to the
+                output video S3 path.
+    """
+
+    args = parse_args()
+
+    logging.info("successfully loaded function")
+
+    aux = Aux()
+
+    try:
+        video_list = aux.load_s3(
+            bucket=args.input_bucket_s3, prefix=args.input_prefix_s3
+        )
+    except Exception as e:
+        print(e)
+        logging.warning(
+            f"unable to load video list from s3; ensure AWS credentials have been provided."
+        )
+
+    fps_bitrate(video_list, args.fps, args.bitrate)
+    out = aux.execute_label_and_write_local(video_list)
+    aux.upload_s3(video_list, args.output_bucket_s3, args.output_prefix_s3)
+    aux.clean()
+
+    return logging.info("video reduction completed on " + sys.version + ".")
+
+
+if __name__ == "__main__":
+    main()

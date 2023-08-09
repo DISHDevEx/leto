@@ -28,6 +28,7 @@ from utilities import parse_recon_args
 
 VIDEO_EXTENSIONS = (".mp4", ".mov")
 
+
 def init_model(config, checkpoint=None):
     """
     Initialize a model from config file.
@@ -65,6 +66,16 @@ def init_model(config, checkpoint=None):
 
 
 def realbasicvsr_runner(args):
+    """
+    Method that super resolves videos using pretrained RealBasicVSR model (GAN based).
+
+    Parameters
+    ----------
+        args: argparse.Namespace
+            Object contains: input_bucket_s3, input_prefix_s3, output_bucket_s3,
+                             output_prefix_s3, download_model, model_bucket_s3,
+                             model_prefix_s3, local_model_path, clean_model, resolution.
+    """
 
     input_dir_og = "reduced_videos"
     output_dir_og = "reconstructed_videos"
@@ -76,9 +87,7 @@ def realbasicvsr_runner(args):
     # Read frames from video and create an array of frames.
 
     for i in range(len(os.listdir("reduced_videos"))):
-        input_dir= os.path.join(
-            "./reduced_videos/", os.listdir("reduced_videos")[i]
-        )
+        input_dir = os.path.join("./reduced_videos/", os.listdir("reduced_videos")[i])
 
         output_dir = os.path.join(
             "./reconstructed_videos/", os.listdir("reduced_videos")[i]
@@ -112,7 +121,6 @@ def realbasicvsr_runner(args):
 
         # Apply super resolution to all of the frames.
         with torch.no_grad():
-
             if cuda_flag:
                 inputs = inputs.cuda()
             outputs = model(inputs, test_mode=True)["output"].cpu()

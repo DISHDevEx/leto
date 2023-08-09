@@ -14,7 +14,7 @@
 2. Install the necessary requirements
 
 ```console
-!pip install -r downstream_model/yolo/requirements_yolo.txt
+!pip install -r benchmarking/yolo/requirements_yolo.txt
 ```
 
 3. Import all utlity
@@ -24,8 +24,8 @@ import boto3
 import cv2
 from aEye import Video
 from aEye import Aux
-from downstream_model.yolo import Yolo
-from downstream_model.yolo import pipeline
+from benchmarking.yolo import Yolo
+from benchmarking.yolo import pipeline
 ```
 
 4. Import video from s3
