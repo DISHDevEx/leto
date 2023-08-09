@@ -26,26 +26,27 @@ import re
 def calculate_psnr(original_path, compressed_path):
     """
     This will help to calculate PSNR for video having any resolution
-        PSNR is Peak Signal to Noise ratio  which is used o measure the quality of a reconstructed or compressed image or video signal
-        compared to its original, uncompressed version.
-        It provides a quantitative measure of the fidelity of
-        the reconstructed signal by calculating the ratio
-        between the maximum possible signal power (peak signal)
-        and the power of the distortion or noise introduced
-        during the compression or reconstruction process.
-      Parameters
-    ----------------------
+    PSNR is Peak Signal to Noise ratio  which is used o measure the quality of a reconstructed or compressed image or video signal
+    compared to its original, uncompressed version.
+    It provides a quantitative measure of the fidelity of
+    the reconstructed signal by calculating the ratio
+    between the maximum possible signal power (peak signal)
+    and the power of the distortion or noise introduced
+    during the compression or reconstruction process.
+
+    Parameters
+    ----------
         original_video: Video file in any format(mp4, avi etc)
         compressed_video : Video file after reduction/ reconstruction (mp4, avi etc)
 
      Returns
-     ----------
+    ----------
     average_psnr : float
         It gives Peak to signal ratio between 2 videos
-         range :Excellent: Above 40 dB
-                Good: 30 to 40 dB
-                Fair: 20 to 30 dB
-                Poor: Below 20 dB
+        range :Excellent: Above 40 dB
+        Good: 30 to 40 dB
+        Fair: 20 to 30 dB
+        Poor: Below 20 dB
     """
     # Read videos
     original_video = cv2.VideoCapture(original_path)
@@ -100,25 +101,26 @@ def calculate_psnr(original_path, compressed_path):
 
 
 def calculate_video_ssim(original_path, compressed_path):
-    """This works with video of any resolution
-           SSIM is is a perceptual metric that quantifies image quality
-           degradation* caused by processing such as data compression or by losses in data transmission.
-           It is a full reference metric that requires two images
-           from the same image capture— a reference image and a processed image
+    """
+    This works with video of any resolution
+    SSIM is is a perceptual metric that quantifies image quality
+    degradation* caused by processing such as data compression or by losses in data transmission.
+    It is a full reference metric that requires two images
+    from the same image capture— a reference image and a processed image
 
 
-           Parameters
-        ----------------------
-            original_video: Video file in any format(mp4, avi etc)
-            compressed_video : Video file after reduction/ reconstruction (mp4, avi etc)
+    Parameters
+    ----------
+        original_video: Video file in any format(mp4, avi etc)
+        compressed_video : Video file after reduction/ reconstruction (mp4, avi etc)
 
-         Returns
+    Returns
     ----------
         average_ssim : float
             It gives structural similarity value between 2 videos
-             range : -1 to +1
-             -1 -> no similarity
-             +1 -> perfect similarity
+            range : -1 to +1
+            -1 -> no similarity
+            +1 -> perfect similarity
 
 
     """
@@ -167,18 +169,19 @@ def calculate_video_ssim(original_path, compressed_path):
 
 def calculateMAC_yolo(video, model):
     """
-    Calculates average confidence of a video by calculating average confidence of each frame
+    Calculates average confidence of a video by calculating average confidence of each frame.
 
     Parameters
     ----------
-    video : string
-    The input video
-    model : model with weights
-    The yolo model with appropriate weights
+        video : string
+            The input video
+        model : model with weights
+            The yolo model with appropriate weights
+
     Returns
-    ---------
+    ----------
     mean_average_confidence: float
-    The calculated  mean average confidence(MAC) of the video
+        The calculated  mean average confidence(MAC) of the video
     """
     mean_average_confidence = 0
     # Get object detection parameters from pipeline method
@@ -195,18 +198,18 @@ def calculateMAC_yolo(video, model):
 
 def calculateMAC_mp(video, model):
     """
-    Calculates average confidence of a video by calculating average confidence of each frame
+    Calculates average confidence of a video by calculating average confidence of each frame.
 
     Parameters
     ----------
-    video : string
-    The input video
-    model : model with weights
-    The mediapipe model with appropriate weights
+        video : string
+            The input video
+        model : model with weights
+            The mediapipe model with appropriate weights
     Returns
-    ---------
-    mean_average_confidence: float
-    The calculated  mean average confidence(MAC) of the video
+    ----------
+        mean_average_confidence: float
+            The calculated  mean average confidence(MAC) of the video
     """
     mean_average_confidence = 0
     # Get object detection parameters from object_detection method
@@ -224,15 +227,19 @@ def calculateMAC_mp(video, model):
 def read_files_and_store_locally(
     bucket_name, prefix_orginal_files, prefix_reduced_files
 ):
-    """Function to read file from S3 using aEye
+    """
+    Function to read file from S3 using aEye.
+
     Parameters:
-    bucket_name = S3 bucket name
-    prefix_orginal_file : path where original buckets are stored
-    prefix_reduced_file : path where reduced buckets are stored
+    ----------
+        bucket_name = S3 bucket name
+        prefix_orginal_file : path where original buckets are stored
+        prefix_reduced_file : path where reduced buckets are stored
 
     Returns:
-    after matching return orginal
-    video file path and reduced video file path of same video
+    ----------
+        after matching return orginal
+        video file path and reduced video file path of same video
     """
 
     aux = Aux()
@@ -255,13 +262,17 @@ def read_files_and_store_locally(
 
 
 def match_files(original_folder, modified_folder):
-    """Function to match original video to reduced/reconstructed video
+    """
+    Function to match original video to reduced/reconstructed video.
+
     Parameters:
-    original_folder :str name of original_folder location
-    modified_folder : str original folder location
+    ----------
+        original_folder :str name of original_folder location
+        modified_folder : str original folder location
 
     Return:
-    video_path_pair_list : list -> consisting of tuple between original_video_path and reduced filepath
+    ----------
+        video_path_pair_list : list -> consisting of tuple between original_video_path and reduced filepath
     """
     video_path_pair_list = []
     for i in range(len(os.listdir(original_folder))):
@@ -284,11 +295,14 @@ def match_files(original_folder, modified_folder):
 def create_scores_dict(video_path_list):
     """
     Function gives list of dictionaries with ssim and PSNR calculated
+
     Parameters:
-    video_path_list = list of tuple of pair of original and reconstructed/reduced videos
+    ----------
+        video_path_list = list of tuple of pair of original and reconstructed/reduced videos
 
     Returns:
-    list_scores : a list of dictionaries containing scores
+    ----------
+        list_scores : a list of dictionaries containing scores
 
 
     """
@@ -310,7 +324,9 @@ def create_scores_dict(video_path_list):
 
 
 def clean_files(path_to_orginal_folder, path_to_modified_folder):
-    """delete local files"""
+    """
+    delete local files
+    """
     aux = Aux()
     aux.set_local_path(path_to_orginal_folder)
     aux.clean()
