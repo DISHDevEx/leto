@@ -22,6 +22,7 @@ a)Enter EC2 instance id: "Enter respective EC2 instance id" #Instance id entry i
 b)Enter Git branch name: "Enter desired branch name" #This entry is optional and default branch value is 'main'
 
 c)Enter reduction module name: "Enter respective reduction module name" #Reduction module name entry is required
+  Note: This reduction module 'name' should be the same as the respective module 'folder name' under the 'reduction' directory in the GitHub - leto repository.
 
 4.The workflow will do the following steps in the EC2,
 
