@@ -27,7 +27,7 @@ else
     git clone https://github.com/DISHDevEx/leto.git
     echo "Git clone is completed successfully."
 fi
-#Switch git branch if 'GIT_BRANCH' is not null
+#Switch git branch if 'GIT_BRANCH' is not equal to 'main'
 if [ "$GIT_BRANCH" != "main" ]; then
     cd $WORKING_DIRECTORY/leto
     echo "Switching branch to $GIT_BRANCH"
@@ -42,7 +42,7 @@ else
     echo "Branch switched to $GIT_BRANCH"
     cd ..
 fi
-#Deploy the requirements for selected module
+#Deploy the requirements for module in EC2
 echo "Installing requirements for $MODULE_NAME module."
 #Install requirements
 #Find the requirements file of the module

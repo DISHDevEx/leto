@@ -16,21 +16,16 @@ on:
       git_branch:
         # Description to be shown in the UI
         description: Enter Git branch name
-        #Branch entry is not mandatory
+        #Branch name entry is not mandatory
         required: false
         type: string
         default: main
       module:
         # Description to be shown in the UI
-        description: Select reduction module name
-        #Input selection is mandatory
+        description: Enter reduction module name
+        #Module name entry is mandatory
         required: true
-        type: choice
-        options:
-          - Select module name
-          - cv2_jpg_reduction
-          - ffmpeg_resolution_downsampler
-          - fps_bitrate
+        type: string
 
 env:
   AWS_REGION : ${{ secrets.AWS_REGION }}
