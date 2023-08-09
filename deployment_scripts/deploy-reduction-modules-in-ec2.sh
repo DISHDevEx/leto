@@ -1,4 +1,3 @@
-
 #Shell script to deploy the Leto - Reduction modules in the target AWS EC2 instance
 #Version: v1.0.0
 #
