@@ -22,7 +22,8 @@
 │           ├── Dockerfile_yolo
 │           ├──lambda_function_yolo.py
 │           ├── requirements_yolo.txt
-│       ├── video_quality_functions.py
+│       ├── video_quality
+│           ├── video_quality_functions.py
 │
 │   ├── reduction
 │       ├── ffmpeg_resolution_downsampler
