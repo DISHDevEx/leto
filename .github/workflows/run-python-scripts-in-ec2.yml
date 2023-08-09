@@ -13,13 +13,6 @@ on:
         #Instance id entry is mandatory
         required: true
         type: string
-      git_branch:
-        # Description to be shown in the UI
-        description: Enter Git branch name
-        #Branch name entry is not mandatory
-        required: false
-        type: string
-        default: main
       python_file_path:
         # Description to be shown in the UI
         description: Enter python file path in leto repository
