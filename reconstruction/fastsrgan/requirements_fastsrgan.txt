@@ -1,2 +1,2 @@
 tensorflow
-aEye>=1.2.1
+aEye>=1.2.2
