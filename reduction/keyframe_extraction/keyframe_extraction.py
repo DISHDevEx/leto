@@ -63,6 +63,7 @@ def parse_args():
 
 
 def extract_frame_features(frame):
+    
     transform = transforms.Compose([
         transforms.ToPILImage(),
         transforms.Resize((224, 224)),
