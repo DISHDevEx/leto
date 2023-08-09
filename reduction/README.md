@@ -13,7 +13,7 @@ b)Enter AMI id for the EC2: ami-0f34c5ae932e6f0e4
 c)Enter EC2 instance type: t3.small
 
 2.Login to the EC2 using the Session Manager to ensure it is up and running as expected. 
-  Also, copy the respective EC2 instance id for passing it as a parameter in next step.
+  Also, copy the respective EC2 instance id as we have to pass it as a parameter in the next step.
 
 3.Then execute the 'deploy-reduction-modules-in-ec2' workflow in the leto repository with following parameters,
 
