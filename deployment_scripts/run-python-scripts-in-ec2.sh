@@ -4,5 +4,6 @@
 #!/bin/bash
 #Run the python script
 WORKING_DIRECTORY="/home/ec2-user/leto"
+FILE_PATH=$1
 cd $WORKING_DIRECTORY
-python3 /home/ec2-user/leto/reduction/ffmpeg_resolution_downsampler/ffmpeg_resolution_downsampler.py
+python3 $WORKING_DIRECTORY/$1
