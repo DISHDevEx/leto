@@ -48,6 +48,6 @@ jobs:
         # --target ${{ github.event.inputs.instance_id }}
         aws ssm send-command \
         --document-name "AWS-RunShellScript" \
-        --instance-ids "$${{ github.event.inputs.instance_id }}" \
+        --instance-ids "${{ github.event.inputs.instance_id }}" \
         --max-concurrency "1" --max-errors "1" \
-        --parameters '{"commands": ["runuser -l ec2-user -c 'python3 /home/ec2-user/leto/${{ github.event.inputs.python_file_path }}'"]}'
+        --parameters '{"commands": ["python3 /home/ec2-user/leto/${{ github.event.inputs.python_file_path }}"]}'
