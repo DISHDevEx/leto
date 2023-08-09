@@ -16,7 +16,7 @@ cnn_model = cnn_model.eval()
 
 def parse_args():
     """
-    Parses the arguments needed for fps bitrate based reduction module.
+    Parses the arguments needed for keyframe extraction reduction module.
     Catalogues: input s3 bucket, input s3 prefix, output s3 bucket and output s3 prefix.
 
 
@@ -53,7 +53,7 @@ def parse_args():
     parser.add_argument(
         "--output_prefix_s3",
         type=str,
-        default="reduced-videos/benchmark/ffmpeg-resolution-downsampler/car/",
+        default="reduced-videos/benchmark/keyframe-extraction/car/",
         help="s3 prefix of the output video",
     )
 
