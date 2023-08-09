@@ -40,5 +40,5 @@ jobs:
             --security-group-ids ${{ secrets.SECURITY_GROUP_ID }} \
             --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=github_wf_${{ github.event.inputs.ec2_name }}}]' \
             --iam-instance-profile Name=${{ secrets.IAM_INSTANCE_PROFILE }} \
-            --block-device-mappings 'DeviceName=/dev/xvda,Ebs={VolumeSize=30}' \
-            --count 1 &>/dev/null
+            --count 1 \
+            --no-verify-ssl &>/dev/null
