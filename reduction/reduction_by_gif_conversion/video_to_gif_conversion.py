@@ -11,15 +11,15 @@ import time
 
 def parse_args():
     """
-    Parses the arguments needed for Super Resolution reconstruction module.
+    Parses the arguments needed for Video to Gif conversion.
     Catalogues: input s3 bucket, input s3 prefix, output s3 bucket, output s3 prefix,
-            quality, crf, and temp path.
+    
 
     Returns
     -------
         args: argparse.Namespace object
             Returns an object with the relevent input s3 bucket, input s3 prefix, output s3 bucket,
-            output s3 prefix, quality, crf, and temp path.
+            output s3 prefix
     """
 
     parser = argparse.ArgumentParser(description="A script of opencv jpg reduction")
