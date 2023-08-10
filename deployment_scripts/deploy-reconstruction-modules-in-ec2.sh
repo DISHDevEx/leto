@@ -3,11 +3,11 @@
 #
 #!/bin/bash
 #Install the prerequisite packages
-sudo yum update -y
-sudo yum install -y mesa-libGL
-sudo yum install -y git
-git --version
-sudo yum install -y python3-pip
+# sudo yum update -y
+# sudo yum install -y mesa-libGL
+# sudo yum install -y git
+# git --version
+# sudo yum install -y python3-pip
 python3 --version
 pip3 --version
 #Set variable values 
