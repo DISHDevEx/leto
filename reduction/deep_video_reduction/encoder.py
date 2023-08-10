@@ -23,26 +23,46 @@ def encoder(loadmodel, input_path, refer_path, outputfolder):
 
     Res = graph.get_tensor_by_name(prefix + 'Residual_Feature:0')
     print("Res",Res)
-    print(type(Res))
+    print("type", type(Res))
+    print("shape", Res.shape)
+    # print(np.unique(Res))
 
     inputImage = graph.get_tensor_by_name('import/input_image:0')
     print("inputImage",inputImage)
-    print(type(inputImage))
+    print("type", type(inputImage))
+    print("shape",inputImage.shape)
+    # print(np.unique(inputImage))
 
     previousImage = graph.get_tensor_by_name('import/input_image_ref:0')
     print("previousImage",previousImage)
+    print("type", type(previousImage))
+    print("shape",previousImage.shape)
+    # print(np.unique(previousImage))
 
     Res_prior = graph.get_tensor_by_name(prefix + 'Residual_Prior_Feature:0')
     print("Res_prior",Res_prior)
+    print("type", type(Res_prior))
+    print("shape",Res_prior.shape)
+    # print(np.unique(Res_prior))
 
     motion = graph.get_tensor_by_name(prefix + 'Motion_Feature:0')
     print("motion",motion)
+    print("type", type(motion))
+    print("shape",motion.shape)
+    # print(np.unique(motion))
 
     bpp = graph.get_tensor_by_name(prefix + 'rate/Estimated_Bpp:0')
     print("bpp",bpp)
+    print("type", type(bpp))
+    print("shape",bpp.shape)
+    # print(np.unique(bpp))
 
     psnr = graph.get_tensor_by_name(prefix + 'distortion/PSNR:0')
     print("psnr",psnr)
+    print("type", type(psnr))
+    print("shape",psnr.shape)
+    # print(np.unique(psnr))
+    print('---------------------------')
 
     # reconstructed frame
     reconframe = graph.get_tensor_by_name(prefix + 'ReconFrame:0')
@@ -82,8 +102,8 @@ def encoder(loadmodel, input_path, refer_path, outputfolder):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument('--EncoderModel', type=str, dest="loadmodel", default='./model/L512/frozen_model_E.pb', help="encoder model")
-    parser.add_argument('--input_frame', type=str, dest="input_path", default='./frames/frame0002.png', help="input image path")
-    parser.add_argument('--refer_frame', type=str, dest="refer_path", default='./frames/frame0001.png', help="refer image path")
+    parser.add_argument('--input_frame', type=str, dest="input_path", default='./image/im002.png', help="input image path")
+    parser.add_argument('--refer_frame', type=str, dest="refer_path", default='./image/im001.png', help="refer image path")
     parser.add_argument('--outputpath', type=str, dest="outputfolder", default='./testpkl/', help="output pkl folder")
 
     args = parser.parse_args()
