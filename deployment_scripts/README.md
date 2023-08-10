@@ -18,7 +18,7 @@ The module is deployed using shell scripts in AWS EC2 instance as per the below 
 
 a)Enter name of the EC2: "Enter desired name for EC2 instance"
 
-b)Enter AMI id for the EC2: {e.g. ami-0f34c5ae932e6f0e4} #Recommended ami id for reduction moudles: ami-0f598ecd07418eba2
+b)Enter AMI id for the EC2: {e.g. ami-0f34c5ae932e6f0e4} #Recommended AMI id for reduction moudles: ami-0f598ecd07418eba2
 
 c)Enter EC2 instance type: {e.g. t3.small}
 
