@@ -85,7 +85,7 @@ def main():
 
     try:
         video_list = aux.load_s3(
-            bucket= s3['input_bucket_s3'], prefix=method['input_prefix_s3']
+            bucket = s3['input_bucket_s3'], prefix=method['input_prefix_s3']
         )
     except Exception as e:
         print(e)
