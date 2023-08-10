@@ -2,13 +2,23 @@ Reduction modules deployment in AWS EC2 instance with shell scripts:
 --------------------------------------------------------------------
 The [reduction](https://github.com/DISHDevEx/leto/tree/main/reduction/) modules are used to take the input video file from the source S3 path, reduce the resolution, label it, and then upload the processed video to the destination S3 path.
 
-The module is deployed using shell scripts in AWS EC2 instance as per the below steps,
+Prerequisite:
+-------------
+In order to run the ssm commands in GitHub workflow as 'ec2-user', you need to configure your AWS Session Manager to run as 'ec2-user' by following below steps:
+
+a)Open AWS Systems Manager > Go to Session Manager page > Got to Preferences tab > Click Edit and select checkbox for 'Enable Run As support for Linux instances'
+
+b)Now, enter 'ec2-user' as value for 'Operating system user name'
+
+c)Scroll down and update 'ssm-user' as 'ec2-user' in the 'Linux shell profile' section > Scroll down and click 'Save' button.
+
+The module is deployed using shell scripts in AWS EC2 instance as per the below steps:
 
 1.Create an AWS EC2 Amazon Linux instance using 'Create new EC2 instance' workflow in the leto repository with the following parameters:
 
 a)Enter name of the EC2: "Enter desired name for EC2 instance"
 
-b)Enter AMI id for the EC2: {e.g. ami-0f34c5ae932e6f0e4}
+b)Enter AMI id for the EC2: {e.g. ami-0f34c5ae932e6f0e4} #Recommended ami id for reduction moudles: ami-0f598ecd07418eba2
 
 c)Enter EC2 instance type: {e.g. t3.small}
 
