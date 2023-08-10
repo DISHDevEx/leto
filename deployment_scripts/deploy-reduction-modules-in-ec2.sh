@@ -45,6 +45,7 @@ fi
 echo "Installing requirements for $MODULE_NAME module."
 #Install requirements
 #Find the requirements file of the module
+WORKING_DIRECTORY="/home/ec2-user"
 cd $WORKING_DIRECTORY/leto/reduction/$MODULE_NAME && fVar=$(find -type f -name 'requirements*.txt');
 FILE_NAME=${fVar:2}
 if python3 -m pip install -r $WORKING_DIRECTORY/leto/reduction/$MODULE_NAME/$FILE_NAME; then
