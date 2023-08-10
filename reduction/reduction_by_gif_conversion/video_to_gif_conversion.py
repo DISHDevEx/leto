@@ -1,14 +1,12 @@
 import ffmpeg
 import subprocess
-
-from aEye import Video
-from aEye import Labeler
 from aEye import Aux
 import sys
 import logging
 import argparse
 import os
 from pathlib import Path
+import time
 
 
 def parse_args():
@@ -104,7 +102,10 @@ def main():
     aux.upload_s3(out_video_list, bucket = args.output_bucket_s3, prefix = args.output_prefix_s3)
 
 
-    
+if __name__ == "__main__":
+    start_time = time.time()
+    main()
+    print("--- %s seconds ---" % (time.time() - start_time))
     
 
 
