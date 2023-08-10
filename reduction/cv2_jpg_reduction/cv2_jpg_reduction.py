@@ -3,7 +3,7 @@ Module contains the cv2 jpg quality reduction method and reencode cv2 video usin
 
 """
 import subprocess
-import argparse
+import configparser
 import static_ffmpeg
 import cv2
 import os
@@ -18,75 +18,6 @@ root_path = subprocess.run(
 
 # add git repo path to use all libraries
 sys.path.append(root_path)
-
-
-def parse_args():
-    """
-    Parses the arguments needed for Super Resolution reconstruction module.
-    Catalogues: input s3 bucket, input s3 prefix, output s3 bucket, output s3 prefix,
-            quality, crf, and temp path.
-
-    Returns
-    -------
-        args: argparse.Namespace object
-            Returns an object with the relevent input s3 bucket, input s3 prefix, output s3 bucket,
-            output s3 prefix, quality, crf, and temp path.
-    """
-
-    parser = argparse.ArgumentParser(description="A script of opencv jpg reduction")
-
-    parser.add_argument(
-        "--input_bucket_s3",
-        type=str,
-        help="s3 bucket of the input video",
-        default="leto-dish",
-    )
-
-    parser.add_argument(
-        "--input_prefix_s3",
-        type=str,
-        help="s3 prefix of the input video",
-        default="original-videos/benchmark/car/",
-    )
-
-    parser.add_argument(
-        "--output_bucket_s3",
-        type=str,
-        default="leto-dish",
-        help="s3 bucket of the output video",
-    )
-
-    parser.add_argument(
-        "--output_prefix_s3",
-        type=str,
-        default="reduced-videos/benchmark/cv2_reduction/car/",
-        help="s3 prefix of the output video",
-    )
-
-    parser.add_argument(
-        "--temp_path",
-        type=str,
-        default="temp",
-        help="A temp folder to store video from uploading to s3",
-    )
-
-    parser.add_argument(
-        "--quality",
-        type=int,
-        default=15,
-        help="The compression rate for cv2 to apply, 100 is for best video quality, 0 is for the worse video quality ",
-    )
-
-    parser.add_argument(
-        "--crf",
-        type=int,
-        default=28,
-        help="the constant rate factor for ffmpeg to encode the video, the lower value results in higher quality. The range is 0-51",
-    )
-
-    args = parser.parse_args()
-
-    return args
 
 
 def cv2_jpg_reduction(video, path="temp", quality=15, crf=28):
@@ -147,24 +78,36 @@ def cv2_jpg_reduction(video, path="temp", quality=15, crf=28):
 
 
 def main():
-    args = parse_args()
+    # load and allocate config file
+    config = configparser.ConfigParser(inline_comment_prefixes=';')
+    config.read('../../config.ini')
+    s3 = config['DEFAULT']
+    method = config['reduction.cv2_jpg_reduction']
+    logging.info("successfully loaded config file")
+
     aux = Aux()
 
-    os.mkdir(args.temp_path)
+    os.mkdir(method['temp_path'])
 
-    video_list = aux.load_s3(args.input_bucket_s3, args.input_prefix_s3)
+    video_list = aux.load_s3(s3['input_bucket_s3'], method['input_prefix_s3'])
     # reduce each and store in temp_path
     for video in video_list:
-        cv2_jpg_reduction(video, args.temp_path, args.quality, args.crf)
+        cv2_jpg_reduction(video, method['temp_path'], method.getint('quality'), method.getint('crf'))
 
     # use Aux to easily load, upload and clean up
     aux = Aux()
 
-    result = aux.load_local(args.temp_path)
-    aux.upload_s3(result, bucket=args.output_bucket_s3, prefix=args.output_prefix_s3)
+    result = aux.load_local(method['temp_path'])
+    aux.upload_s3(result, bucket=s3['output_bucket_s3'], prefix=method['output_prefix_s3'])
 
     aux.clean()
 
 
 if __name__ == "__main__":
     main()
+
+
+#TODO
+# __del__
+# deal with temp directories 
+# or implement AUX functionality to deal with temps.

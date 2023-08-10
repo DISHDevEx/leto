@@ -75,7 +75,7 @@ def main():
                 output video S3 path.
     """
     # load and allocate config file
-    config = configparser.ConfigParser()
+    config = configparser.ConfigParser(inline_comment_prefixes=';')
     config.read('../../config.ini')
     s3 = config['DEFAULT']
     method = config['reduction.fps_bitrate']

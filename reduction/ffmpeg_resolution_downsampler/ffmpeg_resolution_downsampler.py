@@ -33,7 +33,8 @@ def main():
 
     logging.info("running reduction module")
 
-    config = configparser.ConfigParser()
+    # load and allocate config file
+    config = configparser.ConfigParser(inline_comment_prefixes=';')
     config.read('../../config.ini')
     s3 = config['DEFAULT']
     method = config['reduction.ffmpeg_resolution_downsampler']
