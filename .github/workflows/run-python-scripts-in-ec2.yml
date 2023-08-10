@@ -47,7 +47,6 @@ jobs:
         --parameters '{"command": ["curl -o /home/ec2-user/run-python-scripts-in-ec2.sh https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/reduction-deployment-patch/deployment_scripts/run-python-scripts-in-ec2.sh"]}' \
         --target ${{ github.event.inputs.instance_id }}
 
-    #Execute shell script to run python script in target AWS EC2 instance
     - name: Run python script in EC2 instance
       run: |
         unbuffer aws ssm start-session \

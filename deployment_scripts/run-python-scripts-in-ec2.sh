@@ -2,7 +2,7 @@
 #Version: v1.0.0
 #
 #!/bin/bash
-#Run the python script
+#Set variable values and run the python script
 WORKING_DIRECTORY="/home/ec2-user/leto"
 FILE_PATH=$1
 cd $WORKING_DIRECTORY
