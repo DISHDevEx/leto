@@ -28,8 +28,8 @@ permissions:
     id-token: write
 
 jobs:
-  deploy:
-    name: Deploy
+  run:
+    name: Run
     runs-on: ubuntu-latest
     steps:
     - name: Configure AWS credentials
