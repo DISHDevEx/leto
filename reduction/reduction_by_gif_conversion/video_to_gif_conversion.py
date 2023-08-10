@@ -54,13 +54,6 @@ def parse_args():
         help="s3 prefix of the output video",
     )
 
-    parser.add_argument(
-        "--temp_path",
-        type=str,
-        default="temp",
-        help="A temp folder to store video from uploading to s3",
-    )
-
     args = parser.parse_args()
 
     return args
@@ -81,14 +74,14 @@ def video_to_gif(input_video_path, output_path):
 
     # Run the command
     subprocess.run(command)
-    return print("File converted to gif")
+    return print("Check gif directory for conversion")
 
 
 def main():
     args = parse_args()
     aux = Aux()
     video_list_s3_original_video = aux.load_s3(
-        bucket=args.input_bucket_s3 , prefix=args.input_prefix_s3e
+        bucket=args.input_bucket_s3 , prefix=args.input_prefix_s3
     )
     
     if not os.path.exists("original_videos"):
@@ -100,10 +93,16 @@ def main():
         os.mkdir("./gif_folder")
     
     for file in os.listdir('original_videos'):
+        print(file)
         video_name  = Path(file).stem
-        video_to_gif(file, os.path.join('./gif_folder', video_name, '.gif'))
-    
-    ## upload to s3 
+        filepath = os.path.join('./original_videos', file)
+        print(filepath)
+        output_filename = video_name + '.gif'
+        outfilepath = os.path.join('./gif_folder', output_filename)
+        video_to_gif(filepath,outfilepath )
+    out_video_list = os.listdir('gif_folder')
+    aux.upload_s3(out_video_list, bucket = args.output_bucket_s3, prefix = args.output_prefix_s3)
+
 
     
     
