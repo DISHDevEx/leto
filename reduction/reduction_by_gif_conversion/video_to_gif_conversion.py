@@ -8,6 +8,7 @@ import sys
 import logging
 import argparse
 import os
+from pathlib import Path
 
 
 def parse_args():
@@ -99,9 +100,12 @@ def main():
         os.mkdir("./gif_folder")
     
     for file in os.listdir('original_videos'):
-        video_to_gif(file, 'gif_folder')
+        video_name  = Path(file).stem
+        video_to_gif(file, os.path.join('./gif_folder', video_name, '.gif'))
     
     ## upload to s3 
+
+    
     
 
 
