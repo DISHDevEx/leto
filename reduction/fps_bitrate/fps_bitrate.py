@@ -76,16 +76,16 @@ def main():
     """
     # load and allocate config file
     config = configparser.ConfigParser()
-    config.read('config.ini')
+    config.read('../../config.ini')
     s3 = config['DEFAULT']
-    method = config['method']
+    method = config['reduction.fps_bitrate']
     logging.info("successfully loaded config file")
 
     aux = Aux()
 
     try:
         video_list = aux.load_s3(
-            bucket= s3['input_bucket_s3'], prefix=s3['input_prefix_s3']
+            bucket= s3['input_bucket_s3'], prefix=method['input_prefix_s3']
         )
     except Exception as e:
         print(e)
@@ -95,7 +95,7 @@ def main():
 
     fps_bitrate(video_list, method.getint('fps'), method.getint('bitrate'))
     aux.execute_label_and_write_local(video_list)
-    aux.upload_s3(video_list, s3['output_bucket_s3'], s3['output_prefix_s3'])
+    aux.upload_s3(video_list, s3['output_bucket_s3'], method['output_prefix_s3'])
     aux.clean()
 
     return logging.info("video reduction completed on " + sys.version + ".")
