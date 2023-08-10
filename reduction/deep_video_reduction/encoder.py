@@ -24,13 +24,10 @@ def encoder(loadmodel, input_path, refer_path, outputfolder):
     Res = graph.get_tensor_by_name(prefix + 'Residual_Feature:0')
     print("Res",Res)
     print(type(Res))
-    print(Res.shape)
-
 
     inputImage = graph.get_tensor_by_name('import/input_image:0')
     print("inputImage",inputImage)
     print(type(inputImage))
-    print(inputImage.shape)
 
     previousImage = graph.get_tensor_by_name('import/input_image_ref:0')
     print("previousImage",previousImage)
@@ -65,9 +62,9 @@ def encoder(loadmodel, input_path, refer_path, outputfolder):
                 previousImage: im2
             })
     print('---------------------------')
-    print(recon_val)
-    print(bpp_est)
-    print(psnr_val)
+    print('recon_val', recon_val)
+    print('bpp_est', bpp_est)
+    print('psnr_val', psnr_val)
     print('---------------------------')
     if not os.path.exists(outputfolder):
         os.mkdir(outputfolder)
@@ -84,9 +81,9 @@ def encoder(loadmodel, input_path, refer_path, outputfolder):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument('--EncoderModel', type=str, dest="loadmodel", default='./model/L2048/frozen_model_E.pb', help="encoder model")
-    parser.add_argument('--input_frame', type=str, dest="input_path", default='./image/im003.png', help="input image path")
-    parser.add_argument('--refer_frame', type=str, dest="refer_path", default='./image/im001.png', help="refer image path")
+    parser.add_argument('--EncoderModel', type=str, dest="loadmodel", default='./model/L512/frozen_model_E.pb', help="encoder model")
+    parser.add_argument('--input_frame', type=str, dest="input_path", default='./frames/frame0002.png', help="input image path")
+    parser.add_argument('--refer_frame', type=str, dest="refer_path", default='./frames/frame0001.png', help="refer image path")
     parser.add_argument('--outputpath', type=str, dest="outputfolder", default='./testpkl/', help="output pkl folder")
 
     args = parser.parse_args()
