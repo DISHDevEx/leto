@@ -5,8 +5,8 @@ name: deploy-reconstruction-modules-in-ec2
 
 on:
   push:
-      branches:
-        - sriharsha/reconstruction-deployment
+    branches:
+        - sriharsha/reduction-deployment
 
 # on:
 #   workflow_dispatch:
@@ -32,23 +32,23 @@ on:
 #         required: true
 #         type: string
 
-# env:
-#   AWS_REGION : ${{ secrets.AWS_REGION }}
-# #Permission for fetching an OpenId Connect (OIDC) token
-# permissions:
-#     id-token: write
+env:
+  AWS_REGION : ${{ secrets.AWS_REGION }}
+#Permission for fetching an OpenId Connect (OIDC) token
+permissions:
+    id-token: write
 
-# jobs:
-#   deploy:
-#     name: Deploy
-#     runs-on: ubuntu-latest
-#     steps:
-#     - name: Configure AWS credentials
-#       uses: aws-actions/configure-aws-credentials@v2
-#       with:
-#        role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
-#        role-session-name: ${{ secrets.SAMPLE_ROLE_SESSION }}
-#        aws-region: ${{ env.AWS_REGION }}
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+       role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
+       role-session-name: ${{ secrets.SAMPLE_ROLE_SESSION }}
+       aws-region: ${{ env.AWS_REGION }}
 #     #Download deployment shell script from github to '/home/ec2-user' path in target AWS EC2 instance
 #     - name: Download deployment script from github to EC2 instance
 #       run: |
