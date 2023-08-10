@@ -4,33 +4,28 @@
 name: deploy-reconstruction-modules-in-ec2
 
 on:
-  push:
-    branches:
-        - sriharsha/reconstruction-deployment
-
-# on:
-#   workflow_dispatch:
-#     #Inputs for workflow
-#     inputs:
-#       instance_id:
-#         # Description to be shown in the UI
-#         description: Enter EC2 instance id
-#         #Instance id entry is mandatory
-#         required: true
-#         type: string
-#       git_branch:
-#         # Description to be shown in the UI
-#         description: Enter Git branch name
-#         #Branch name entry is not mandatory
-#         required: false
-#         type: string
-#         default: main
-#       module:
-#         # Description to be shown in the UI
-#         description: Enter reconstruction module name
-#         #Module name entry is mandatory
-#         required: true
-#         type: string
+  workflow_dispatch:
+    #Inputs for workflow
+    inputs:
+      instance_id:
+        # Description to be shown in the UI
+        description: Enter EC2 instance id
+        #Instance id entry is mandatory
+        required: true
+        type: string
+      git_branch:
+        # Description to be shown in the UI
+        description: Enter Git branch name
+        #Branch name entry is not mandatory
+        required: false
+        type: string
+        default: main
+      module:
+        # Description to be shown in the UI
+        description: Enter reconstruction module name
+        #Module name entry is mandatory
+        required: true
+        type: string
 
 env:
   AWS_REGION : ${{ secrets.AWS_REGION }}
@@ -49,24 +44,24 @@ jobs:
        role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
        role-session-name: ${{ secrets.SAMPLE_ROLE_SESSION }}
        aws-region: ${{ env.AWS_REGION }}
-    # #Download deployment shell script from github to '/home/ec2-user' path in target AWS EC2 instance
-    # - name: Download deployment script from github to EC2 instance
-    #   run: |
-    #     sudo apt-get -y install expect-dev
-    #     unbuffer aws ssm start-session \
-    #     --document-name 'AWS-StartNonInteractiveCommand' \
-    #     --parameters '{"command": ["curl -o /home/ec2-user/deploy-reconstruction-modules-in-ec2.sh https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/reconstruction-deployment/deployment_scripts/deploy-reconstruction-modules-in-ec2.sh"]}' \
-    #     --target ${{ github.event.inputs.instance_id }}
+    #Download deployment shell script from github to '/home/ec2-user' path in target AWS EC2 instance
+    - name: Download deployment script from github to EC2 instance
+      run: |
+        sudo apt-get -y install expect-dev
+        unbuffer aws ssm start-session \
+        --document-name 'AWS-StartNonInteractiveCommand' \
+        --parameters '{"command": ["curl -o /home/ec2-user/deploy-reconstruction-modules-in-ec2.sh https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/reconstruction-deployment/deployment_scripts/deploy-reconstruction-modules-in-ec2.sh"]}' \
+        --target ${{ github.event.inputs.instance_id }}
 
-    # - name: Checking parameters being passed to the shell script
-    #   run: |
-    #     echo ${{ github.event.inputs.git_branch }}
-    #     echo ${{ github.event.inputs.module }}
+    - name: Checking parameters being passed to the shell script
+      run: |
+        echo ${{ github.event.inputs.git_branch }}
+        echo ${{ github.event.inputs.module }}
         
-    # #Execute shell script to deploy module in target AWS EC2 instance
-    # - name: Deploy module in EC2 instance
-    #   run: |
-    #     unbuffer aws ssm start-session \
-    #     --document-name 'AWS-StartNonInteractiveCommand' \
-    #     --parameters '{"command": ["bash /home/ec2-user/deploy-reconstruction-modules-in-ec2.sh ${{ github.event.inputs.git_branch }} ${{ github.event.inputs.module }}"]}' \
-    #     --target ${{ github.event.inputs.instance_id }}
+    #Execute shell script to deploy module in target AWS EC2 instance
+    - name: Deploy module in EC2 instance
+      run: |
+        unbuffer aws ssm start-session \
+        --document-name 'AWS-StartNonInteractiveCommand' \
+        --parameters '{"command": ["bash /home/ec2-user/deploy-reconstruction-modules-in-ec2.sh ${{ github.event.inputs.git_branch }} ${{ github.event.inputs.module }}"]}' \
+        --target ${{ github.event.inputs.instance_id }}
