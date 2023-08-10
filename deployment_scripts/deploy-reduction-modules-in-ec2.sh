@@ -11,7 +11,7 @@ sudo yum install -y python3-pip
 python3 --version
 pip3 --version
 #Set variable values 
-WORKING_DIRECTORY="/home/ssm-user"
+WORKING_DIRECTORY="/home/ec2-user"
 GIT_BRANCH=$1
 MODULE_NAME=$2
 #If the leto directory exists, then do git pull else do git clone
@@ -51,23 +51,5 @@ if python3 -m pip install -r $WORKING_DIRECTORY/leto/reduction/$MODULE_NAME/$FIL
     echo "Successfully installed requirements for $MODULE_NAME module."
 else
     echo "Requirements installation failed for $MODULE_NAME module."
-fi
-#Add libraries path to the environment variable PATH temporarily
-if [ "$(tail -1 ~/.bashrc)" != "unset rc" ]; then
-    echo "Libraries path is already added permanently to the environment variable PATH to support recurring execution of python script."
-    source ~/.bashrc
-else
-if export PATH=/home/ssm-user/.local/bin:$PATH; then
-    echo "Libraries are temporarily added to the PATH temporarily."
-else
-    echo "Failed to add the Libraries to the PATH temporarily."
-fi
-#Add libraries path to the environment variable 'PATH' permanently
-if echo "export PATH=/home/ssm-user/.local/bin:$PATH;" >> ~/.bashrc; then
-    echo "Libraries path is permanently added to the environment variable PATH to support recurring execution of python script."
-    source ~/.bashrc
-else
-    echo "Failed to permanently add Libraries path to the environment variable PATH to support recurring execution of python script."
-fi
 fi
 

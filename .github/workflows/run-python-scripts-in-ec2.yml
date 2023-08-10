@@ -28,8 +28,8 @@ permissions:
     id-token: write
 
 jobs:
-  deploy:
-    name: Deploy
+  run:
+    name: Run
     runs-on: ubuntu-latest
     steps:
     - name: Configure AWS credentials
@@ -39,10 +39,17 @@ jobs:
        role-session-name: ${{ secrets.SAMPLE_ROLE_SESSION }}
        aws-region: ${{ env.AWS_REGION }}
     #Run python file in target AWS EC2 instance
-    - name: Run python file in EC2 instance
+    - name: Download shell script from github to EC2 instance
       run: |
         sudo apt-get -y install expect-dev
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
-        --parameters '{"command": ["python3 /home/ssm-user/leto/${{ github.event.inputs.python_file_path }}"]}' \
+        --parameters '{"command": ["curl -o /home/ec2-user/run-python-scripts-in-ec2.sh https://raw.githubusercontent.com/DISHDevEx/leto/main/deployment_scripts/run-python-scripts-in-ec2.sh"]}' \
+        --target ${{ github.event.inputs.instance_id }}
+
+    - name: Run python script in EC2 instance using shell script
+      run: |
+        unbuffer aws ssm start-session \
+        --document-name 'AWS-StartNonInteractiveCommand' \
+        --parameters '{"command": ["bash /home/ec2-user/run-python-scripts-in-ec2.sh ${{ github.event.inputs.python_file_path }}"]}' \
         --target ${{ github.event.inputs.instance_id }}
