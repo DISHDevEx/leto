@@ -47,7 +47,8 @@ echo "Installing requirements for $MODULE_NAME module."
 #Find the requirements file of the module
 cd $WORKING_DIRECTORY/leto/reconstruction/$MODULE_NAME && fVar=$(find -type f -name 'requirements*.txt');
 FILE_NAME=${fVar:2}
-#'umask 022' command will set permissions to write data to root folders 
+#'umask 022' command will set permissions to write data to root folders
+#This is required to support reconstruction modules execution as they are trying to access some packages in root path
 if umask 022 && sudo python3 -m pip install -r $WORKING_DIRECTORY/leto/reconstruction/$MODULE_NAME/$FILE_NAME; then
     echo "Successfully installed requirements for $MODULE_NAME module."
 else
