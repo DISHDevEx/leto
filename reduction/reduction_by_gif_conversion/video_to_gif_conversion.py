@@ -56,16 +56,16 @@ def parse_args():
 
     return args
 
-def video_to_gif(input_video_path, output_path):
-
+def video_to_gif(input_video_path, output_path,fps,resolution="480x270"):
 # Replace these with your actual input and output file paths
     input_video_path = input_video_path
     output_gif_path = output_path
+    resolution = resolution
     # Run the ffmpeg command to convert video to GIF
     command = [
         "static_ffmpeg",
         "-i", input_video_path,
-        "-vf", "fps=10,scale=640:-1:flags=lanczos",
+        "-vf", f"fps={fps},scale={resolution}:flags=lanczos",
         "-c:v", "gif",
         output_gif_path
     ]
@@ -73,7 +73,6 @@ def video_to_gif(input_video_path, output_path):
     # Run the command
     subprocess.run(command)
     return print("Check gif directory for conversion")
-
 
 def main():
     args = parse_args()
