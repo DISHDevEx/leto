@@ -2,6 +2,8 @@
 #Version: v1.0.0
 #
 #!/bin/bash
+#Activate leto environment
+conda activate leto
 #Set variable values and run the python script
 WORKING_DIRECTORY="/home/ec2-user/leto"
 FILE_PATH=$1

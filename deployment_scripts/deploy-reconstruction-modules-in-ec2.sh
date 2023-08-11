@@ -3,13 +3,25 @@
 #
 #!/bin/bash
 #Install the prerequisite packages
-# sudo yum update -y
-# sudo yum install -y mesa-libGL
-# sudo yum install -y git
-# git --version
-# sudo yum install -y python3-pip
-python3 --version
-pip3 --version
+sudo yum update -y
+sudo yum install -y mesa-libGL
+sudo yum install -y git
+git --version
+#Insall Miniconda3 to create a virtual conda environment
+cd /home/ec2-user
+curl -sL "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh" > "Miniconda3.sh"
+bash Miniconda3.sh -b -p $HOME/miniconda3
+echo 'export PATH="$HOME/miniconda3/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+conda update conda -y
+rm -rf Miniconda3.sh
+#Create new virtual conda environment
+conda create --name leto python=3.10.12 -y
+#Activate & deactivate base before activating leto, so that system will recognize the 'conda activate' command
+source activate base
+conda deactivate
+#Activate leto environment
+conda activate leto
 #Set variable values 
 WORKING_DIRECTORY="/home/ec2-user"
 GIT_BRANCH=$1
