@@ -23,7 +23,7 @@ conda deactivate
 #Activate leto environment
 conda activate leto
 #Install mesa-libGL to import cv2
-sudo yum install -y mesa-libGL
+conda install -c conda-forge mesalib
 #Set variable values 
 WORKING_DIRECTORY="/home/ec2-user"
 GIT_BRANCH=$1
