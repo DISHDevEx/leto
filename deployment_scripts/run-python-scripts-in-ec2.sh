@@ -2,8 +2,7 @@
 #Version: v1.0.0
 #
 #!/bin/bash
-#Update conda and set variable values
-conda update conda -y
+#Set variable values
 source ~/.bashrc
 WORKING_DIRECTORY="/home/ec2-user/leto"
 FILE_PATH=$1
