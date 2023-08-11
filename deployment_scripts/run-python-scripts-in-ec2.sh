@@ -2,13 +2,14 @@
 #Version: v1.0.0
 #
 #!/bin/bash
+#Set variable values
+WORKING_DIRECTORY="/home/ec2-user/leto"
+FILE_PATH=$1
+cd $WORKING_DIRECTORY
 #Activate & deactivate base before activating leto, so that system will recognize the 'conda activate' command
 source activate base
 conda deactivate
 #Activate leto environment
 conda activate leto
-#Set variable values and run the python script
-WORKING_DIRECTORY="/home/ec2-user/leto"
-FILE_PATH=$1
-cd $WORKING_DIRECTORY
+#Run the python script
 python3 $WORKING_DIRECTORY/$1
