@@ -1,8 +1,6 @@
 """
 Module to contain the reconstruction technique based off of RealBasicVSR. 4x reconstruction of videos.
 """
-import argparse
-import glob
 import os
 import subprocess
 import sys
@@ -12,6 +10,8 @@ import numpy as np
 import torch
 from mmcv.runner import load_checkpoint
 from mmedit.core import tensor2img
+import logging
+import configparser
 
 from builder import Builder
 
@@ -24,7 +24,6 @@ root_path = subprocess.run(
 sys.path.append(root_path)
 
 from utilities import CloudFunctionality
-from utilities import parse_recon_args
 
 VIDEO_EXTENSIONS = (".mp4", ".mov")
 
@@ -65,7 +64,7 @@ def init_model(config, checkpoint=None):
     return model
 
 
-def realbasicvsr_runner(args):
+def realbasicvsr_runner(method_args):
     """
     Method that super resolves videos using pretrained RealBasicVSR model (GAN based).
 
@@ -77,12 +76,8 @@ def realbasicvsr_runner(args):
                              model_prefix_s3, local_model_path, clean_model, resolution.
     """
 
-    input_dir_og = "reduced_videos"
-    output_dir_og = "reconstructed_videos"
-    fps = 25
-
     # Initialize the model.
-    model = init_model("realbasicvsr_x4.py", args.local_model_path)
+    model = init_model("realbasicvsr_x4.py", method_args['local_model_path'])
 
     # Read frames from video and create an array of frames.
 
@@ -131,7 +126,7 @@ def realbasicvsr_runner(args):
 
         h, w = outputs.shape[-2:]
         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-        video_writer = cv2.VideoWriter(output_dir, fourcc, fps, (w, h))
+        video_writer = cv2.VideoWriter(output_dir, fourcc, method_args['fps'], (w, h))
         for i in range(0, outputs.size(1)):
             img = tensor2img(outputs[:, i, :, :, :])
             video_writer.write(img.astype(np.uint8))
@@ -141,10 +136,15 @@ def realbasicvsr_runner(args):
 if __name__ == "__main__":
     cloud_functionality = CloudFunctionality()
 
-    args = parse_recon_args()
+    # load and allocate config file
+    config = configparser.ConfigParser(inline_comment_prefixes=';')
+    config.read('../../config.ini')
+    s3_args = config['DEFAULT']
+    method_args = config['reconstruction.recon_args']
+    logging.info("successfully loaded config file")
 
-    cloud_functionality.preprocess(args)
+    cloud_functionality.preprocess(method_args, s3_args)
 
-    realbasicvsr_runner(args)
+    realbasicvsr_runner(method_args, s3_args)
 
-    cloud_functionality.postprocess(args)
+    cloud_functionality.postprocess(method_args, s3_args)
