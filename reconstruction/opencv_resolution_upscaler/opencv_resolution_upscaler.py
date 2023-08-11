@@ -29,10 +29,9 @@ def upscale_video(method_args):
 
     Parameters
     ----------
-        args: argparse.Namespace
-            Object contains: input_bucket_s3, input_prefix_s3, output_bucket_s3,
-                             output_prefix_s3, download_model, model_bucket_s3,
-                             model_prefix_s3, local_model_path, clean_model, resolution.
+        method_args:
+            configparser object.  Parameters defined in ~/config.ini
+       
     """
 
     for i in range(len(os.listdir("reduced_videos"))):

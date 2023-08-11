@@ -70,10 +70,8 @@ def realbasicvsr_runner(method_args):
 
     Parameters
     ----------
-        args: argparse.Namespace
-            Object contains: input_bucket_s3, input_prefix_s3, output_bucket_s3,
-                             output_prefix_s3, download_model, model_bucket_s3,
-                             model_prefix_s3, local_model_path, clean_model, resolution.
+        method_args:
+            configparser object.  Parameters defined in ~/config.ini
     """
 
     # Initialize the model.
@@ -125,7 +123,7 @@ def realbasicvsr_runner(method_args):
         mmcv.mkdir_or_exist(output_dir)
 
         h, w = outputs.shape[-2:]
-        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+        fourcc = cv2.VideoWriter_fourcc(*method_args['codec'])
         video_writer = cv2.VideoWriter(output_dir, fourcc, method_args['fps'], (w, h))
         for i in range(0, outputs.size(1)):
             img = tensor2img(outputs[:, i, :, :, :])
