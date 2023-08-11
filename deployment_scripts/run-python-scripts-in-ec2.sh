@@ -2,6 +2,9 @@
 #Version: v1.0.0
 #
 #!/bin/bash
+#Activate & deactivate base before activating leto, so that system will recognize the 'conda activate' command
+source activate base
+conda deactivate
 #Activate leto environment
 conda activate leto
 #Set variable values and run the python script
