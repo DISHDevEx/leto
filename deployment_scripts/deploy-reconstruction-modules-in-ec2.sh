@@ -13,6 +13,7 @@ bash Miniconda3.sh -b -p $HOME/miniconda3
 echo 'export PATH="$HOME/miniconda3/bin:$PATH"' >> ~/.bashrc
 source ~/.bashrc
 conda update conda -y
+source ~/.bashrc
 rm -rf Miniconda3.sh
 #Create new virtual conda environment
 conda create --name leto python=3.10.12 -y
