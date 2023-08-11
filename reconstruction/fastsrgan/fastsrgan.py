@@ -51,8 +51,10 @@ def super_resolve_video(args):
         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
 
         fps = input_video.get(cv2.CAP_PROP_FPS)
-
-        superres_video = cv2.VideoWriter(superres_video_path, fourcc, fps,args.resolution)
+        
+        resized_width = int(4 * input_video.get(cv2.CAP_PROP_FRAME_WIDTH))
+        resized_height = int(4 * input_video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        superres_video = cv2.VideoWriter(superres_video_path, fourcc, fps, (resized_width,resized_height))
 
         # Create an instance of fastsrgan model
         model = keras.models.load_model("fastsrgan.h5")
@@ -73,7 +75,7 @@ def super_resolve_video(args):
 
             sr_frame = cv2.cvtColor(sr_frame, cv2.COLOR_RGB2BGR)
 
-            sr_frame = cv2.resize(sr_frame, args.resolution)
+            sr_frame = cv2.resize(sr_frame, (resized_width,resized_height))
 
             superres_video.write(sr_frame)
 
@@ -91,4 +93,4 @@ if __name__ == "__main__":
 
     super_resolve_video(args)
 
-    cloud_functionality.postprocess(args)
+    # cloud_functionality.postprocess(args)
