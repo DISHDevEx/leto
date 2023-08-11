@@ -93,4 +93,4 @@ if __name__ == "__main__":
 
     super_resolve_video(args)
 
-    # cloud_functionality.postprocess(args)
+    cloud_functionality.postprocess(args)
