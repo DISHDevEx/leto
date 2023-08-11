@@ -43,36 +43,39 @@ def super_resolve_video(args):
         superres_video_path = os.path.join(
             "./reconstructed_videos/", os.listdir("reduced_videos")[i]
         )
+        
 
         input_video = cv2.VideoCapture(input_video_path)
 
         # Create a variable to store the choice codec for the output video.
-        fourcc = cv2.VideoWriter_fourcc(*args.codec)
+        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
 
         fps = input_video.get(cv2.CAP_PROP_FPS)
 
-        superres_video = cv2.VideoWriter(superres_video_path, fourcc, fps, (1440, 1920))
+        superres_video = cv2.VideoWriter(superres_video_path, fourcc, fps,args.resolution)
 
         # Create an instance of fastsrgan model
         model = keras.models.load_model("fastsrgan.h5")
 
         while input_video.isOpened():
             ret, frame = input_video.read()
-            if ret is True:
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-                # Rescale to 0-1.
-                frame = frame / 255.0
-
-                sr_frame = model.predict(np.expand_dims(frame, axis=0))[0]
-
-                sr_frame = (((sr_frame + 1) / 2.0) * 255).astype(np.uint8)
-
-                sr_frame = cv2.cvtColor(sr_frame, cv2.COLOR_RGB2BGR)
-
-                superres_video.write(sr_frame)
-            else:
+            if not ret:
                 break
+                
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+            # Rescale to 0-1.
+            frame = frame / 255.0
+
+            sr_frame = model.predict(np.expand_dims(frame, axis=0))[0]
+
+            sr_frame = (((sr_frame + 1) / 2.0) * 255).astype(np.uint8)
+
+            sr_frame = cv2.cvtColor(sr_frame, cv2.COLOR_RGB2BGR)
+
+            sr_frame = cv2.resize(sr_frame, args.resolution)
+
+            superres_video.write(sr_frame)
 
         # Release video capture and writer objects
         input_video.release()
