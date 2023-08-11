@@ -4,11 +4,12 @@ Module that enhances video resolution using the pretrained FastSRGAN.
 import os
 import sys
 import cv2
-import boto3
 import subprocess
 import tensorflow as tf
 from tensorflow import keras
 import numpy as np
+import configparser
+import logging
 
 
 # get git repo root level
@@ -20,10 +21,9 @@ root_path = subprocess.run(
 sys.path.append(root_path)
 
 from utilities import CloudFunctionality
-from utilities import parse_recon_args
 
 
-def super_resolve_video(args):
+def super_resolve_video(method_args):
     """
     Super resolve's videos using a pretained "FastSRGAN".
 
@@ -47,7 +47,7 @@ def super_resolve_video(args):
         input_video = cv2.VideoCapture(input_video_path)
 
         # Create a variable to store the choice codec for the output video.
-        fourcc = cv2.VideoWriter_fourcc(*args.codec)
+        fourcc = cv2.VideoWriter_fourcc(*method_args['codec'])
 
         fps = input_video.get(cv2.CAP_PROP_FPS)
 
@@ -82,10 +82,15 @@ def super_resolve_video(args):
 if __name__ == "__main__":
     cloud_functionality = CloudFunctionality()
 
-    args = parse_recon_args()
+    # load and allocate config file
+    config = configparser.ConfigParser(inline_comment_prefixes=';')
+    config.read('../../config.ini')
+    s3_args = config['DEFAULT']
+    method_args = config['reconstruction.recon_args']
+    logging.info("successfully loaded config file")
 
-    cloud_functionality.preprocess(args)
+    cloud_functionality.preprocess(method_args, s3_args)
 
-    super_resolve_video(args)
+    super_resolve_video(method_args)
 
-    cloud_functionality.postprocess(args)
+    cloud_functionality.postprocess(method_args, s3_args)
