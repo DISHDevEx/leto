@@ -4,7 +4,6 @@
 #!/bin/bash
 #Install the prerequisite packages
 sudo yum update -y
-sudo yum install -y mesa-libGL
 sudo yum install -y git
 git --version
 #Insall Miniconda3 to create a virtual conda environment
@@ -22,6 +21,8 @@ source activate base
 conda deactivate
 #Activate leto environment
 conda activate leto
+#Install mesa-libGL to import cv2
+sudo yum install -y mesa-libGL
 #Set variable values 
 WORKING_DIRECTORY="/home/ec2-user"
 GIT_BRANCH=$1
