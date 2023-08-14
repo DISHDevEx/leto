@@ -2,12 +2,24 @@
 #Version: v1.0.0
 #
 #!/bin/bash
-#Install the prerequisite packages
+#Update yum 
 sudo yum update -y
-sudo yum install -y git
-git --version
+#Install git
+if which git &> /dev/null || sudo yum install -y git; then
+    echo "Successfully installed git";git --version
+else
+    echo "Git already exists";git --version
+fi
 #Insall Miniconda3 to create a virtual conda environment
+#Check if the miniconda3 is already installed
 cd /home/ec2-user
+if [ -d "/home/ec2-user/miniconda3/envs/leto" ]; then
+    echo "conda enviornment named 'leto' already exist"
+    echo "Activating leto environment"
+    conda activate leto
+    conda env list
+else
+echo "Installing Miniconda3"
 curl -sL "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh" > "Miniconda3.sh"
 bash Miniconda3.sh -b -p $HOME/miniconda3
 source ~/.bashrc
@@ -17,11 +29,12 @@ source ~/.bashrc
 rm -rf Miniconda3.sh
 #Create new virtual conda environment
 conda create --name leto python=3.10.12 -y
-#Adding command to ~/.bashrc file for auto activation of leto environment in terminal
-echo "conda activate leto" >> ~/.bashrc
-source ~/.bashrc
+#Activate leto environment
+conda activate leto
+conda env list
 #Install mesa-libGL to import cv2
 conda install -c conda-forge mesalib -y
+fi
 #Set variable values 
 WORKING_DIRECTORY="/home/ec2-user"
 GIT_BRANCH=$1
