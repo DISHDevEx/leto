@@ -44,7 +44,7 @@ jobs:
         sudo apt-get -y install expect-dev
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
-        --parameters '{"command": ["curl -o /home/ec2-user/run-python-scripts-in-ec2.sh https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/reconstruction-deployment/deployment_scripts/run-python-scripts-in-ec2.sh"]}' \
+        --parameters '{"command": ["curl -o /home/ec2-user/run-python-scripts-in-ec2.sh https://raw.githubusercontent.com/DISHDevEx/leto/main/deployment_scripts/run-python-scripts-in-ec2.sh"]}' \
         --target ${{ github.event.inputs.instance_id }}
 
     - name: Checking parameters being passed to the shell script
