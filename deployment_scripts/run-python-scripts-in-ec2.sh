@@ -3,10 +3,11 @@
 #
 #!/bin/bash
 #Set variable values
-conda activate leto
-conda env list
+source ~/.bashrc
 WORKING_DIRECTORY="/home/ec2-user/leto"
 FILE_PATH=$1
 cd $WORKING_DIRECTORY
+conda activate leto
+conda env list
 #Run the python script
 python $WORKING_DIRECTORY/$FILE_PATH
