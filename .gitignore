@@ -171,3 +171,13 @@ cython_debug/
 
 # temp folders:
 **/tmp*
+
+# all reconstructed and reduced videos
+**/reconstructed_videos/
+**/reduced_videos/
+
+# pre-trained models
+*.h5
+*.pb
+*.pth
+*.pt

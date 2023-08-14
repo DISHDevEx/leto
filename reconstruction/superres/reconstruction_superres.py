@@ -4,11 +4,11 @@ Module that enhances video resolution using pretained models: edsr_x4,espcn_x4,f
 import os
 import sys
 import cv2
-import boto3
-import argparse
 import subprocess
 from cv2 import dnn_superres
 from aEye import Aux
+import logging 
+import configparser
 
 # get git repo root level
 root_path = subprocess.run(
@@ -18,7 +18,6 @@ root_path = subprocess.run(
 sys.path.append(root_path)
 
 from utilities import CloudFunctionality
-from utilities import parse_recon_args
 
 
 def create_model_name(model_prefix_s3):
@@ -42,16 +41,15 @@ def create_model_name(model_prefix_s3):
     return split_on_scaling[0]
 
 
-def superres_video(args):
+def superres_video(method_args, s3_args):
     """
     Method that super resolves videos using pretrained using pretained models: edsr_x4,espcn_x4,fsrcnn_x4,lapsrn_x4.
 
     Parameters
     ----------
-        args: argparse.Namespace
-            Object contains: input_bucket_s3, input_prefix_s3, output_bucket_s3,
-                             output_prefix_s3, download_model, model_bucket_s3,
-                             model_prefix_s3, local_model_path, clean_model, resolution.
+        method_args:
+            configparser object.  Parameters defined in ~/config.ini
+
     """
 
     for i in range(len(os.listdir("reduced_videos"))):
@@ -62,17 +60,22 @@ def superres_video(args):
             "./reconstructed_videos/", os.listdir("reduced_videos")[i]
         )
         input_video = cv2.VideoCapture(input_video_path)
-        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+        fourcc = cv2.VideoWriter_fourcc(*method_args['codec'])
+
+        height = method_args.getint('height')
+        width = method_args.getint('width')
+        resolution = (width, height)
+
         fps = input_video.get(cv2.CAP_PROP_FPS)
         superres_video = cv2.VideoWriter(
-            superres_video_path, fourcc, fps, args.resolution
+            superres_video_path, fourcc, fps, resolution
         )
 
         # Create an instance of DNN Super Resolution implementation class
         model = dnn_superres.DnnSuperResImpl_create()
-        model.readModel(args.local_model_path)
+        model.readModel(method_args['local_model_path'])
 
-        model.setModel(create_model_name(args.model_prefix_s3), 4)
+        model.setModel(create_model_name(method_args['model_prefix_s3']), 4)
 
         while input_video.isOpened():
             ret, frame = input_video.read()
@@ -83,7 +86,7 @@ def superres_video(args):
 
             # Resize frame
             resized = cv2.resize(
-                result, args.resolution, interpolation=cv2.INTER_LANCZOS4
+                result, resolution, interpolation=cv2.INTER_LANCZOS4
             )
 
             # Write resized frame to the output video file
@@ -97,10 +100,15 @@ def superres_video(args):
 if __name__ == "__main__":
     cloud_functionality = CloudFunctionality()
 
-    args = parse_recon_args()
+    # load and allocate config file
+    config = configparser.ConfigParser(inline_comment_prefixes=';')
+    config.read('../../config.ini')
+    s3_args = config['DEFAULT']
+    method_args = config['reconstruction.recon_args']
+    logging.info("successfully loaded config file")
 
-    cloud_functionality.preprocess(args)
+    cloud_functionality.preprocess(method_args, s3_args)
 
-    superres_video(args)
+    superres_video(method_args, s3_args)
 
-    cloud_functionality.postprocess(args)
+    cloud_functionality.postprocess(method_args, s3_args)
