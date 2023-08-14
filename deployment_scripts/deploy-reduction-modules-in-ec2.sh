@@ -1,15 +1,43 @@
 #Shell script to deploy the Leto - Reduction modules in the target AWS EC2 instance
-#Version: v1.0.0
+#Version: v2.0.0
 #
 #!/bin/bash
-#Install the prerequisite packages
+#Update yum 
 sudo yum update -y
-sudo yum install -y mesa-libGL
-sudo yum install -y git
-git --version
-sudo yum install -y python3-pip
-python3 --version
-pip3 --version
+#Install git
+if which git &> /dev/null || sudo yum install -y git; then
+    echo "Successfully installed git";git --version
+else
+    echo "Git already exists";git --version
+fi
+#Insall Miniconda3 to create a virtual conda environment
+#Check if the miniconda3 is already installed
+cd /home/ec2-user
+if [ -d "/home/ec2-user/miniconda3/envs/leto" ]; then
+    echo "conda environment named 'leto' already exist"
+    echo "Activating leto environment"
+    conda activate leto
+    conda env list
+else
+echo "Installing Miniconda3"
+curl -sL "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh" > "Miniconda3.sh"
+bash Miniconda3.sh -b -p $HOME/miniconda3
+echo 'export PATH="$HOME/miniconda3/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+conda update conda -y
+source ~/.bashrc
+conda init
+source ~/.bashrc
+rm -rf Miniconda3.sh
+#Create new virtual conda environment
+conda create --name leto python=3.10.12 -y
+conda env list
+#Activate leto environment
+conda activate leto
+conda env list
+#Install mesa-libGL to import cv2
+conda install -c conda-forge mesalib -y
+fi
 #Set variable values 
 WORKING_DIRECTORY="/home/ec2-user"
 GIT_BRANCH=$1
@@ -52,4 +80,6 @@ if python3 -m pip install -r $WORKING_DIRECTORY/leto/reduction/$MODULE_NAME/$FIL
 else
     echo "Requirements installation failed for $MODULE_NAME module."
 fi
-
+# #Add conda lib PATH to ~/.bashrc file
+# echo "export PATH="$HOME/miniconda3/bin:$PATH"" >> ~/.bashrc
+# source ~/.bashrc
