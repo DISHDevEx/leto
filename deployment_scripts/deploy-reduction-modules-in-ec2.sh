@@ -14,6 +14,7 @@ fi
 #Check if the miniconda3 is already installed
 cd /home/ec2-user
 if [ -d "/home/ec2-user/miniconda3/envs/leto" ]; then
+    source ~/.bashrc
     echo "conda environment named 'leto' already exist"
     echo "Activating leto environment"
     conda activate leto
