@@ -56,7 +56,7 @@ def super_resolve_video(method_args):
         superres_video = cv2.VideoWriter(superres_video_path, fourcc, fps, (resized_width,resized_height))
 
         # Create an instance of fastsrgan model
-        model = keras.models.load_model("fastsrgan.h5")
+        model = keras.models.load_model(method_args['local_model_path'])
 
         while input_video.isOpened():
             ret, frame = input_video.read()
