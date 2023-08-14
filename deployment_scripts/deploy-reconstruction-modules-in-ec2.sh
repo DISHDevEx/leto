@@ -10,20 +10,19 @@ git --version
 cd /home/ec2-user
 curl -sL "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh" > "Miniconda3.sh"
 bash Miniconda3.sh -b -p $HOME/miniconda3
-echo 'export PATH="$HOME/miniconda3/bin:$PATH"' >> ~/.bashrc
 source ~/.bashrc
 conda update conda -y
+conda config --set auto_activate_base false
+conda init
+echo "conda activate leto" >> ~/.bashrc
 source ~/.bashrc
 rm -rf Miniconda3.sh
 #Create new virtual conda environment
 conda create --name leto python=3.10.12 -y
-#Activate & deactivate base before activating leto, so that system will recognize the 'conda activate' command
-source activate base
-conda deactivate
 #Activate leto environment
 conda activate leto
 #Install mesa-libGL to import cv2
-conda install -c conda-forge mesalib
+conda install -c conda-forge mesalib -y
 #Set variable values 
 WORKING_DIRECTORY="/home/ec2-user"
 GIT_BRANCH=$1
