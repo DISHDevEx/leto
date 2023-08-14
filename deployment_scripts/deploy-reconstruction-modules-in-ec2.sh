@@ -22,13 +22,14 @@ else
 echo "Installing Miniconda3"
 curl -sL "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh" > "Miniconda3.sh"
 bash Miniconda3.sh -b -p $HOME/miniconda3
+conda init
 source ~/.bashrc
 conda update conda -y
-conda init
 source ~/.bashrc
 rm -rf Miniconda3.sh
 #Create new virtual conda environment
 conda create --name leto python=3.10.12 -y
+conda env list
 #Activate leto environment
 conda activate leto
 conda env list
