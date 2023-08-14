@@ -12,15 +12,14 @@ curl -sL "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
 bash Miniconda3.sh -b -p $HOME/miniconda3
 source ~/.bashrc
 conda update conda -y
-conda config --set auto_activate_base false
 conda init
-echo "conda activate leto" >> ~/.bashrc
 source ~/.bashrc
 rm -rf Miniconda3.sh
 #Create new virtual conda environment
 conda create --name leto python=3.10.12 -y
-#Activate leto environment
-conda activate leto
+#Adding command to ~/.bashrc file for auto activation of leto environment in terminal
+echo "conda activate leto" >> ~/.bashrc
+source ~/.bashrc
 #Install mesa-libGL to import cv2
 conda install -c conda-forge mesalib -y
 #Set variable values 
