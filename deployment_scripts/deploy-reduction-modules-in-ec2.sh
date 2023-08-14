@@ -76,11 +76,9 @@ echo "Installing requirements for $MODULE_NAME module."
 #Find the requirements file of the module
 cd $WORKING_DIRECTORY/leto/reduction/$MODULE_NAME && fVar=$(find -type f -name 'requirements*.txt');
 FILE_NAME=${fVar:2}
-if python3 -m pip install -r $WORKING_DIRECTORY/leto/reduction/$MODULE_NAME/$FILE_NAME; then
+if python -m pip install -r $WORKING_DIRECTORY/leto/reduction/$MODULE_NAME/$FILE_NAME; then
+    pip list
     echo "Successfully installed requirements for $MODULE_NAME module."
 else
     echo "Requirements installation failed for $MODULE_NAME module."
 fi
-# #Add conda lib PATH to ~/.bashrc file
-# echo "export PATH="$HOME/miniconda3/bin:$PATH"" >> ~/.bashrc
-# source ~/.bashrc
