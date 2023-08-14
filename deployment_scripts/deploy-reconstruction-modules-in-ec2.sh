@@ -22,9 +22,11 @@ else
 echo "Installing Miniconda3"
 curl -sL "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh" > "Miniconda3.sh"
 bash Miniconda3.sh -b -p $HOME/miniconda3
-conda init
+echo 'export PATH="$HOME/miniconda3/bin:$PATH"' >> ~/.bashrc
 source ~/.bashrc
 conda update conda -y
+source ~/.bashrc
+conda init
 source ~/.bashrc
 rm -rf Miniconda3.sh
 #Create new virtual conda environment
