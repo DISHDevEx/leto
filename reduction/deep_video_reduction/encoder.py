@@ -17,8 +17,9 @@ def load_graph(frozen_graph_filename):
 
 def encoder(loadmodel, input_path, refer_path, outputfolder):
     graph = load_graph(loadmodel)
+    print('---------------------------')
     print("graph",graph)
-    print(type(graph))
+    print("type", type(graph))
     prefix = 'import/build_towers/tower_0/train_net_inference_one_pass/train_net/'
 
     Res = graph.get_tensor_by_name(prefix + 'Residual_Feature:0')
@@ -75,9 +76,19 @@ def encoder(loadmodel, input_path, refer_path, outputfolder):
         im2 = im2 / 255.0
         im1 = np.expand_dims(im1, axis=0)
         im2 = np.expand_dims(im2, axis=0)
+        print('---------------------------')
+        print("im1 shape", im1.shape)
+        print("im2 shape", im2.shape)
+        print('---------------------------')
 
         bpp_est, Res_q, Res_prior_q, motion_q, psnr_val, recon_val = sess.run(
-            [bpp, Res, Res_prior, motion, psnr, reconframe], feed_dict={
+        # A = sess.run(
+            [bpp, Res,
+            Res_prior,
+            motion,
+            psnr,
+            reconframe],
+            feed_dict={
                 inputImage: im1,
                 previousImage: im2
             })
@@ -101,9 +112,9 @@ def encoder(loadmodel, input_path, refer_path, outputfolder):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument('--EncoderModel', type=str, dest="loadmodel", default='./model/L512/frozen_model_E.pb', help="encoder model")
-    parser.add_argument('--input_frame', type=str, dest="input_path", default='./image/im002.png', help="input image path")
-    parser.add_argument('--refer_frame', type=str, dest="refer_path", default='./image/im001.png', help="refer image path")
+    parser.add_argument('--EncoderModel', type=str, dest="loadmodel", default='./model/L256/frozen_model_E.pb', help="encoder model")
+    parser.add_argument('--input_frame', type=str, dest="input_path", default='./frames/frame0003.png', help="input image path")
+    parser.add_argument('--refer_frame', type=str, dest="refer_path", default='./frames/frame0002.png', help="refer image path")
     parser.add_argument('--outputpath', type=str, dest="outputfolder", default='./testpkl/', help="output pkl folder")
 
     args = parser.parse_args()

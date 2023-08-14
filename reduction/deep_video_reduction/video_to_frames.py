@@ -1,6 +1,6 @@
 import subprocess
 
-input_video_path = 'collision00.mp4'  # Update with your input video path
+input_video_path = 'resized_480x360_Video_Benchmark_Car.mp4'  # Update with your input video path
 output_frames_folder = 'frames'  # Update with your output frames folder
 
 # Create the output frames folder if it doesn't exist
