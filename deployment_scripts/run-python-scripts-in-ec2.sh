@@ -3,8 +3,6 @@
 #
 #!/bin/bash
 #Set variable values
-export PATH="$HOME/miniconda3/bin:$PATH"
-source activate base
 conda activate leto
 conda env list
 WORKING_DIRECTORY="/home/ec2-user/leto"

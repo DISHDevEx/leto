@@ -81,4 +81,7 @@ if python -m pip install -r $WORKING_DIRECTORY/leto/reconstruction/$MODULE_NAME/
 else
     echo "Requirements installation failed for $MODULE_NAME module."
 fi
+#Add conda lib PATH to ~/.bashrc file
+echo "export PATH="$HOME/miniconda3/bin:$PATH"" >> ~/.bashrc
+source ~/.bashrc
 
