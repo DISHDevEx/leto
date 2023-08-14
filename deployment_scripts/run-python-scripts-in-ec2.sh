@@ -3,6 +3,7 @@
 #
 #!/bin/bash
 #Set variable values
+source activate base
 conda activate leto
 conda env list
 WORKING_DIRECTORY="/home/ec2-user/leto"
