@@ -9,6 +9,8 @@ import boto3
 import static_ffmpeg
 import sys
 from aEye import Aux
+import configparser
+import logging
 
 # get git repo root level
 root_path = subprocess.run(
@@ -19,19 +21,17 @@ root_path = subprocess.run(
 sys.path.append(root_path)
 
 from utilities import CloudFunctionality
-from utilities import parse_recon_args
 
 
-def upscale_video(args):
+def upscale_video(method_args):
     """
     Method that upscales video using opencv and merges audio with the upscaled video.
 
     Parameters
     ----------
-        args: argparse.Namespace
-            Object contains: input_bucket_s3, input_prefix_s3, output_bucket_s3,
-                             output_prefix_s3, download_model, model_bucket_s3,
-                             model_prefix_s3, local_model_path, clean_model, resolution.
+        method_args:
+            configparser object.  Parameters defined in ~/config.ini
+       
     """
 
     for i in range(len(os.listdir("reduced_videos"))):
@@ -43,16 +43,19 @@ def upscale_video(args):
         )
         input_video = cv2.VideoCapture(input_video_path)
         fps = input_video.get(cv2.CAP_PROP_FPS)
-        codec = cv2.VideoWriter_fourcc(*"mp4v")
+        codec = cv2.VideoWriter_fourcc(*method_args['codec'])
+        height = method_args.getint('height')
+        width = method_args.getint('width')
+        resolution = (width, height)
 
         upscaled_video = cv2.VideoWriter(
-            upscaled_video_path, codec, fps, tuple(args.resolution)
+            upscaled_video_path, codec, fps, resolution
         )
         while input_video.isOpened():
             ret, frame = input_video.read()
             if ret is True:
                 resized_frame = cv2.resize(
-                    frame, args.resolution, fx=0, fy=0, interpolation=cv2.INTER_LANCZOS4
+                    frame, resolution, fx=0, fy=0, interpolation=cv2.INTER_LANCZOS4
                 )
                 upscaled_video.write(resized_frame)
             else:
@@ -102,10 +105,15 @@ def upscale_video(args):
 if __name__ == "__main__":
     cloud_functionality = CloudFunctionality()
 
-    args = parse_recon_args()
+    # load and allocate config file
+    config = configparser.ConfigParser(inline_comment_prefixes=';')
+    config.read('../../config.ini')
+    s3_args = config['DEFAULT']
+    method_args = config['reconstruction.recon_args']
+    logging.info("successfully loaded config file")
 
-    cloud_functionality.preprocess(args)
+    cloud_functionality.preprocess(method_args, s3_args)
 
-    upscale_video(args)
+    upscale_video(method_args)
 
-    cloud_functionality.postprocess(args)
+    cloud_functionality.postprocess(method_args, s3_args)
