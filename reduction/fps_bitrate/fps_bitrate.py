@@ -2,12 +2,24 @@
 Script to change the fps and bitrate of a video via ffmpeg.
 """
 
+from pathlib import Path
+import subprocess
 from aEye import Video
 from aEye import Labeler
 from aEye import Aux
 import sys
 import logging
 import configparser
+
+# get git repo root level
+root_path = subprocess.run(
+    ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=False
+).stdout.rstrip("\n")
+
+# add git repo path to use all libraries
+sys.path.append(root_path)
+
+from utilities import ConfigHandler
 
 
 def fps_bitrate(video_list, fps=30, bitrate=0):
@@ -74,12 +86,9 @@ def main():
         None: however, results in a list of processed videos being stored to the
                 output video S3 path.
     """
-    # load and allocate config file
-    config = configparser.ConfigParser(inline_comment_prefixes=';')
-    config.read('../../config.ini')
-    s3 = config['DEFAULT']
-    method = config['reduction.fps_bitrate']
-    logging.info("successfully loaded config file")
+    config = ConfigHandler('reduction.fps_bitrate')
+    s3 = config.s3
+    method = config.method
 
     aux = Aux()
 
