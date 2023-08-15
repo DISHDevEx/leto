@@ -12,15 +12,13 @@ root_path = subprocess.run(
 ).stdout.rstrip("\n")
 # add git repo path to use all libraries
 sys.path.append(root_path)
-from benchmarking.yolo import pipeline
+from benchmarking.yolo import pipeline 
 from benchmarking.mediapipe_model import object_detection
 
 import cv2
-import numpy as np
 import logging
 from skimage.metrics import structural_similarity as compare_ssim
 import os
-import re
 
 
 def calculate_psnr(original_path, modified_path):
@@ -61,7 +59,7 @@ def calculate_psnr(original_path, modified_path):
     
     if fps_og != fps_mod:
         logging.warning(
-            f"Frame rate mismatch. Cannot calculate PSNR"
+            "Frame rate mismatch. Cannot calculate PSNR"
         )
         return -1
     #Resolution
@@ -73,7 +71,7 @@ def calculate_psnr(original_path, modified_path):
     
     if height_og != height_mod and width_og != width_mod:
         logging.warning(
-            f"Resolution mismatch. Cannot calculate PSNR"
+            "Resolution mismatch. Cannot calculate PSNR"
         )
         return -1
 
@@ -136,7 +134,7 @@ def calculate_video_ssim(original_path, modified_path):
     
     if fps_og != fps_mod:
         logging.warning(
-            f"Frame rate mismatch. Cannot calculate PSNR"
+            "Frame rate mismatch. Cannot calculate PSNR"
         )
         return -1
     #Resolution
@@ -148,7 +146,7 @@ def calculate_video_ssim(original_path, modified_path):
     
     if height_og != height_mod and width_og != width_mod:
         logging.warning(
-            f"Resolution mismatch. Cannot calculate PSNR"
+            "Resolution mismatch. Cannot calculate PSNR"
         )
         return -1
 
@@ -301,8 +299,7 @@ def match_files(original_folder, modified_folder):
                 video_path_pair_list.append(video_tuple)
     if len(video_path_pair_list) == 0:
         return "No videos match"
-    else:
-        return video_path_pair_list
+    return video_path_pair_list
 
 
 def create_scores_dict(video_path_list):
@@ -320,7 +317,7 @@ def create_scores_dict(video_path_list):
 
     """
     list_scores = []
-    for i in range(0, len(video_path_list)):
+    for i in range(len(video_path_list)):
         dict_1 = {}
         original_file_path = video_path_list[i][0]
         reconstructed_file_path = video_path_list[i][1]
