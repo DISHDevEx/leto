@@ -5,21 +5,21 @@
 #Update yum 
 sudo yum update -y
 #Install git
-GIT_CHECK=$(sudo yum list --installed | grep git.x86_64 | wc -l)
+GIT_CHECK=$(sudo yum list installed git.x86_64 | grep git.x86_64 | wc -l)
 if [ "$GIT_CHECK" -gt 0 ];then
     echo "git package is already installed";git --version
 else
     sudo yum install -y git
-    sudo yum list --installed | grep git.x86_64
+    sudo yum list installed git.x86_64 | grep git.x86_64
     echo "Successfully installed git";git --version
 fi
 #Install mesa-libGL
-MESA_CHECK=$(sudo yum list --installed | grep mesa-libGL.x86_64 | wc -l)
+MESA_CHECK=$(sudo yum list installed mesa-libGL.x86_64 | grep mesa-libGL.x86_64 | wc -l)
 if [ "$MESA_CHECK" -gt 0 ];then
     echo "mesa-libGL package is already installed"
 else
     sudo yum install -y mesa-libGL
-    sudo yum list --installed | grep mesa-libGL.x86_64
+    sudo yum list installed mesa-libGL.x86_64 | grep mesa-libGL.x86_64
     echo "Successfully installed mesa-libGL"
 fi
 #Insall Miniconda3 to create a virtual conda environment
