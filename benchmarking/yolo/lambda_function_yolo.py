@@ -37,11 +37,12 @@ def handler(event, context):
             "/tmp", os.path.basename("yolo_" + video.get_title())
         )
 
-        pipeline(video.get_file().strip("'"), yolo_model, yolo_output_video)
+        mAC = pipeline(video.get_file().strip("'"), yolo_model, yolo_output_video)
 
-        s3_client.upload_file(
-            yolo_output_video, "leto-dish", f"object_detection/yolo_{video.get_title()}"
-        )
+        video_location = f's3://{bucket}/{key}'
+
+        return {video_location : mAC }
+        
 
     except Exception as e:
         print(e)
