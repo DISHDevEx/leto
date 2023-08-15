@@ -37,7 +37,7 @@ conda env list
 conda activate leto
 conda env list
 #Install mesa-libGL to import cv2
-conda install -c conda-forge mesalib -y
+conda install -c conda-forge mesa-libgl-cos7-x86_64 -y
 fi
 #Set variable values 
 WORKING_DIRECTORY="/home/ec2-user"
