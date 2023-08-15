@@ -7,7 +7,7 @@ import cv2
 import subprocess
 from cv2 import dnn_superres
 from aEye import Aux
-import logging 
+import logging
 import configparser
 
 # get git repo root level
@@ -43,7 +43,7 @@ def create_model_name(model_prefix_s3):
 
 def superres_video(method_args, s3_args):
     """
-    Method that super resolves videos using pretrained using pretained models: edsr_x4,espcn_x4,fsrcnn_x4,lapsrn_x4.
+    Method that super resolves videos 4x using pretrained using pretained models: edsr_x4,espcn_x4,fsrcnn_x4,lapsrn_x4.
 
     Parameters
     ----------
@@ -62,9 +62,9 @@ def superres_video(method_args, s3_args):
         input_video = cv2.VideoCapture(input_video_path)
         fourcc = cv2.VideoWriter_fourcc(*method_args['codec'])
 
-        height = method_args.getint('height')
-        width = method_args.getint('width')
-        resolution = (width, height)
+        resized_width = int(4 * input_video.get(cv2.CAP_PROP_FRAME_WIDTH))
+        resized_height = int(4 * input_video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        resolution = (resized_width, resized_height)
 
         fps = input_video.get(cv2.CAP_PROP_FPS)
         superres_video = cv2.VideoWriter(
