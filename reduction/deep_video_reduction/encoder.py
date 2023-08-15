@@ -5,6 +5,9 @@ from imageio import imread
 import numpy as np
 from argparse import ArgumentParser
 
+# Enable eager execution
+tf.config.experimental_run_functions_eagerly(True)
+
 def load_graph(frozen_graph_filename):
     with tf.io.gfile.GFile(frozen_graph_filename, "rb") as f: # GFile is tensorflow's file reader. Similar to I/O objects.
         graph_def = tf.compat.v1.GraphDef() # tf.compat.v1.GraphDef A protobuf containing the graph of operations.
@@ -70,27 +73,69 @@ def encoder(loadmodel, input_path, refer_path, outputfolder):
 
     with tf.compat.v1.Session(graph=graph) as sess:
 
-        im1 = imread(input_path)
-        im2 = imread(refer_path)
-        im1 = im1 / 255.0
-        im2 = im2 / 255.0
-        im1 = np.expand_dims(im1, axis=0)
-        im2 = np.expand_dims(im2, axis=0)
-        print('---------------------------')
-        print("im1 shape", im1.shape)
-        print("im2 shape", im2.shape)
+        # im1 = imread(input_path)
+        # im2 = imread(refer_path)
+        # im1 = im1 / 255.0
+        # im2 = im2 / 255.0
+        # im1 = np.expand_dims(im1, axis=0)
+        # im2 = np.expand_dims(im2, axis=0)
         print('---------------------------')
 
+        # Load and preprocess the images
+        image_path1 = "path_to_image1.jpg"
+        image_path2 = "path_to_image2.jpg"
+
+        im1 = tf.io.read_file(image_path1)
+        im1 = tf.image.decode_image(im1, channels=3)
+        im1 = tf.image.convert_image_dtype(im1, tf.float32)
+
+        im2 = tf.io.read_file(image_path2)
+        im2 = tf.image.decode_image(im2, channels=3)
+        im2 = tf.image.convert_image_dtype(im2, tf.float32)
+
+        # Expand dimensions to simulate a batch
+        im1_batch = tf.expand_dims(im1, axis=0)
+        im2_batch = tf.expand_dims(im2, axis=0)
+
+        # im1 = tf.image.convert_image_dtype(im1, tf.float32)
+        # im1 = im1 / 255.0  # Normalize pixel values to [0, 1]
+        # im2 = tf.image.convert_image_dtype(im2, tf.float32)
+        # im2 = im2 / 255.0 # Normalize pixel values to [0, 1]
+
+        print("im1 type", type(im1))
+        print("im1 shape", tf.shape(im1))
+        print("im2 type", type(im2))
+        print("im2 shape", tf.shape(im2))
+        print('---------------------------')
+
+        # # Run your operations directly on the tensors
+        # bpp_est, Res_q, Res_prior_q, motion_q, psnr_val, recon_val = [
+        #     op.eval() for op in
+        #     [bpp, Res, Res_prior, motion, psnr, reconframe]
+        # ]
+
+        # Define placeholders
+        inputImage = tf.compat.v1.placeholder(tf.float32, shape=[1, None, None, 3], name='input_image')
+        previousImage = tf.compat.v1.placeholder(tf.float32, shape=[1, None, None, 3], name='previous_image')
+
+        # Define operations using placeholders
         bpp_est, Res_q, Res_prior_q, motion_q, psnr_val, recon_val = sess.run(
-            [bpp, Res,
-            Res_prior,
-            motion,
-            psnr,
-            reconframe],
+            [bpp, Res, Res_prior, motion, psnr, reconframe],
             feed_dict={
-                inputImage: im1,
-                previousImage: im2
+                inputImage: im1_batch,
+                previousImage: im2_batch
             })
+
+        # bpp_est, Res_q, Res_prior_q, motion_q, psnr_val, recon_val = sess.run(
+        #     [bpp, Res,
+        #     Res_prior,
+        #     motion,
+        #     psnr,
+        #     reconframe],
+        #     feed_dict={
+        #         inputImage: im1,
+        #         previousImage: im2
+        #     })
     print('---------------------------')
     print('recon_val', recon_val)
     print('bpp_est', bpp_est)
