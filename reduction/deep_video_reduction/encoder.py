@@ -82,7 +82,6 @@ def encoder(loadmodel, input_path, refer_path, outputfolder):
         print('---------------------------')
 
         bpp_est, Res_q, Res_prior_q, motion_q, psnr_val, recon_val = sess.run(
-        # A = sess.run(
             [bpp, Res,
             Res_prior,
             motion,
@@ -113,8 +112,8 @@ def encoder(loadmodel, input_path, refer_path, outputfolder):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument('--EncoderModel', type=str, dest="loadmodel", default='./model/L256/frozen_model_E.pb', help="encoder model")
-    parser.add_argument('--input_frame', type=str, dest="input_path", default='./frames/frame0003.png', help="input image path")
-    parser.add_argument('--refer_frame', type=str, dest="refer_path", default='./frames/frame0002.png', help="refer image path")
+    parser.add_argument('--input_frame', type=str, dest="input_path", default='./image/im002.jpg', help="input image path")
+    parser.add_argument('--refer_frame', type=str, dest="refer_path", default='./image/im001.jpg', help="refer image path")
     parser.add_argument('--outputpath', type=str, dest="outputfolder", default='./testpkl/', help="output pkl folder")
 
     args = parser.parse_args()

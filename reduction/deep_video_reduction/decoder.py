@@ -70,12 +70,12 @@ def decoder(loadmodel, refer_path, outputfolder):
             })
         print('recon_d', recon_d)
         reconstructed_image = np.squeeze(recon_d)
-        cv2.imwrite(outputfolder + 'output.png', 255*reconstructed_image)
+        cv2.imwrite(outputfolder + 'output.jpg', 255*reconstructed_image)
 
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument('--DecoderModel', type=str, dest="loadmodel", default='./model/L512/frozen_model_D.pb', help="decoder model")
-    parser.add_argument('--refer_frame', type=str, dest="refer_path", default='./image/im002.png', help="refer image path")
+    parser.add_argument('--refer_frame', type=str, dest="refer_path", default='./image/im001.jpg', help="refer image path")
     parser.add_argument('--loadpath', type=str, dest="outputfolder", default='./testpkl/', help="saved pkl file")
 
     args = parser.parse_args()
