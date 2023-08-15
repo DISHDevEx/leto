@@ -5,37 +5,16 @@ import numpy
 import torch
 import model.m2m as m2m
 
-##########################################################
-"""Options/Args"""
+# get git repo root level
+root_path = subprocess.run(
+    ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=False
+).stdout.rstrip("\n")
 
-parser = argparse.ArgumentParser()
+# add git repo path to use all libraries
+sys.path.append(root_path)
 
-parser.add_argument('input', type=str, help="Input video name (e.g. input.mp4)")
-parser.add_argument('output', type=str, help="Output video name (e.g. output.mp4)")
-parser.add_argument('-f', '--factor', type=int, default=2, help="Interpolation factor. 2 means double frame rate")
-parser.add_argument('--fps', type=float, default=24, help="FPS of output video")
+from utilities import CloudFunctionality
 
-args = parser.parse_args()
-
-if args.factor < 2:
-    raise ValueError('Factor must be an integer more than or equal to 2.')
-
-##########################################################
-"""Load M2M Model"""
-
-if not torch.cuda.is_available():
-    raise Exception("CUDA GPU not detected. CUDA is required.")
-
-torch.set_grad_enabled(False)
-
-torch.backends.cudnn.enabled = True
-torch.backends.cudnn.benchmark = True
-
-netNetwork = m2m.M2M_PWC().cuda().eval()
-
-netNetwork.load_state_dict(torch.load('./model.pkl'))
-
-##########################################################
 
 
 def interpolate_frame(frame1, frame2):
@@ -46,16 +25,16 @@ def interpolate_frame(frame1, frame2):
     frame1_tensor = torch.FloatTensor(numpy.ascontiguousarray(frame1_np.transpose(2, 0, 1)[None, :, :, :])).cuda()
     frame2_tensor = torch.FloatTensor(numpy.ascontiguousarray(frame2_np.transpose(2, 0, 1)[None, :, :, :])).cuda()
 
-    if args.factor == 2:
+    if method_args['factor'] == 2:
         interpolated_frame_tensor = \
             netNetwork(frame1_tensor, frame2_tensor, [torch.FloatTensor([0.5]).view(1, 1, 1, 1).cuda()])[0]
         interpolated_frame_np = (interpolated_frame_tensor.detach().cpu().numpy()[0, :, :, :].
                                  transpose(1, 2, 0)[:, :, ::-1] * 255.0).clip(0.0, 255.0).round().astype(numpy.uint8)
         return interpolated_frame_np
-    elif args.factor > 2:
-        interpolated_frames_tensor = [torch.FloatTensor([step / args.factor]).view(1, 1, 1, 1).cuda()
-                                      for step in range(1, args.factor)]
-        interpolated_frames = netNetwork(frame1_tensor, frame2_tensor, interpolated_frames_tensor, args.factor)
+    elif method_args['factor'] > 2:
+        interpolated_frames_tensor = [torch.FloatTensor([step / method_args['factor']]).view(1, 1, 1, 1).cuda()
+                                      for step in range(1, method_args['factor'])]
+        interpolated_frames = netNetwork(frame1_tensor, frame2_tensor, interpolated_frames_tensor, method_args['factor'])
         interpolated_frames_np = [(frame.detach().cpu().numpy()[0, :, :, :].transpose(1, 2, 0)[:, :, ::-1] * 255.0).
                                   clip(0.0, 255.0).round().astype(numpy.uint8) for frame in interpolated_frames]
         return interpolated_frames_np
@@ -83,7 +62,7 @@ def start_ffmpeg_process_output(out_filename, width, height):
     process_args = (
         ffmpeg
         .input('pipe:', format='rawvideo', pix_fmt='rgb24', s='{}x{}'.format(width, height))
-        .filter('fps', fps=args.fps, round='up')
+        .filter('fps', fps=method_args['fps'], round='up')
         .output(out_filename, pix_fmt='yuv420p')
         .overwrite_output()
         .compile()
@@ -127,10 +106,10 @@ def run(in_filename, out_filename):
         current_frame = read_frame(process_input, width, height)
         if current_frame is None:
             break
-        if args.factor == 2:
+        if method_args['factor'] == 2:
             interpolated_frame = interpolate_frame(previous_frame, current_frame)
             write_frame(process_output, interpolated_frame)
-        elif args.factor > 2:
+        elif method_args['factor'] > 2:
             for interpolated_frame in interpolate_frame(previous_frame, current_frame):
                 write_frame(process_output, interpolated_frame)
         previous_frame = current_frame
@@ -141,4 +120,51 @@ def run(in_filename, out_filename):
 
 
 if __name__ == '__main__':
-    run(args.input, args.output)
+
+    cloud_functionality = CloudFunctionality()
+
+    # load and allocate config file
+    config = configparser.ConfigParser(inline_comment_prefixes=';')
+    config.read('../../config.ini')
+    s3_args = config['DEFAULT']
+    method_args = config['reconstruction.recon_args']
+    logging.info("successfully loaded config file")
+
+    cloud_functionality.preprocess(method_args, s3_args)
+
+    ##########################################################
+    """Options/Args"""
+    if method_args['factor'] < 2:
+        raise ValueError('Factor must be an integer more than or equal to 2.')
+
+    ##########################################################
+    """Load M2M Model"""
+
+    if not torch.cuda.is_available():
+        raise Exception("CUDA GPU not detected. CUDA is required.")
+
+    torch.set_grad_enabled(False)
+
+    torch.backends.cudnn.enabled = True
+    torch.backends.cudnn.benchmark = True
+
+    netNetwork = m2m.M2M_PWC().cuda().eval()
+
+    netNetwork.load_state_dict(torch.load('./smooth.pkl'))
+
+    ##########################################################
+
+    # Loop through all videos that need to be reduced.
+    for i in range(len(os.listdir("reduced_videos"))):
+        input_video_path = os.path.join(
+            "./reduced_videos/", os.listdir("reduced_videos")[i]
+        )
+
+        output_video_path = os.path.join(
+            "./reconstructed_videos/", os.listdir("reduced_videos")[i]
+        )
+
+        run(input_video_path, output_video_path)
+
+    ##########################################################
+    cloud_functionality.postprocess(method_args, s3_args)

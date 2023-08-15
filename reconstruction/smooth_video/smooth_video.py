@@ -141,4 +141,3 @@ def run(in_filename, out_filename):
 
 
 if __name__ == '__main__':
-    run(args.input, args.output)
