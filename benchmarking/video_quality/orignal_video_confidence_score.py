@@ -1,9 +1,13 @@
 import boto3
 import json
-# Initialize the Boto3 Step Functions client
-client = boto3.client('stepfunctions')
 
-# Define your payload
+# Create a Lambda client
+lambda_client = boto3.client('lambda', region_name='your_region')
+
+# Lambda function name
+function_name = 'your_lambda_function_name'
+
+# Payload data
 payload = {
     "bucket_name": "leto-dish",
     "folder_path": "reduced-videos/ffmpeg-resolution-downsampler-480p-lanczos",
@@ -11,11 +15,13 @@ payload = {
     # Add any other payload data your Step Function expects
 }
 
-# Start the execution of the Step Function with the payload
-response = client.start_execution(
-    stateMachineArn='arn:aws:states:us-east-1:064047601590:stateMachine:leto_downstream_model_scores',
-    input=json.dumps(payload)
+# Call the Lambda function
+response = lambda_client.invoke(
+    FunctionName=function_name,
+    InvocationType='RequestResponse',  # Use 'Event' for asynchronous invocation
+    Payload=json.dumps(payload)
 )
 
-# Print the execution ARN
-print("Execution ARN:", response['executionArn'])
+# Process the response
+response_payload = json.loads(response['Payload'].read().decode('utf-8'))
+print("Lambda Response:", response_payload)

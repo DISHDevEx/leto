@@ -6,9 +6,10 @@ from object_detection import object_detection
 
 import boto3
 import os
-from aEye import Video
+
 import urllib.parse
 
+s3_client = boto3.client("s3")
 
 def handler(event, context):
     """
@@ -21,33 +22,50 @@ def handler(event, context):
     """
     print("Loading function")
     print(os.system("ls"))
-    s3_client = boto3.client("s3")
 
+    score = {}
     mp_model = os.path.basename("efficientdet_lite0.tflite")
 
-    bucket = event["Records"][0]["s3"]["bucket"]["name"]
-    key = urllib.parse.unquote_plus(
-        event["Records"][0]["s3"]["object"]["key"], encoding="utf-8"
-    )
+    bucket_name = event["bucket_name"]
+    folder_path = event["folder_path"]
+    dynamodb_table = event["dynamodb_table"]
 
     try:
-        video = Video(bucket=bucket, key=key)
+        # Retrieve the list of object keys from the specified bucket
+        s3_keys = list_object_keys(bucket_name, folder_path)
 
-        mp_output_video = os.path.join(
-            "/tmp", os.path.basename("mp_" + video.get_title())
-        )
+        for key in s3_keys:
+            # Download the video from S3 to Lambda's /tmp directory
+            local_filename = '/tmp/' + os.path.basename(key)
+            s3_client.download_file(bucket_name, key, local_filename)
 
-        object_detection(mp_model, video.get_file().strip("'"), mp_output_video)
+            # Process the downloaded video
 
-        s3_client.upload_file(
-            mp_output_video, "leto-dish", f"object_detection/mp_{video.get_title()}"
-        )
+            mAC = object_detection(mp_model,local_filename, "")
+            video_location = f's3://{bucket_name}/{key}'
+            # Optionally, you can delete the local file to save space
+            os.remove(local_filename)
+
+            score.update({video_location: mAC})
+        return score
+
+
+
+
 
     except Exception as e:
         print(e)
         print(
             "Error getting object {} from bucket {}. Make sure they exist and your bucket is in the same region as this function.".format(
-                key, bucket
+                folder_path, bucket_name
             )
         )
         raise e
+
+def list_object_keys(bucket_name, folder_path):
+    keys = []
+    response = s3_client.list_objects_v2(Bucket=bucket_name,Prefix=folder_path)
+    if 'Contents' in response:
+        for obj in response['Contents']:
+            keys.append(obj['Key'])
+    return keys[1:-1]
