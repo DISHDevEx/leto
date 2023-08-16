@@ -13,14 +13,13 @@ root_path = subprocess.run(
 # add git repo path to use all libraries
 sys.path.append(root_path)
 from benchmarking.yolo import pipeline
-from benchmarking.mediapipe_model import object_detection
+from mediapipe_model import object_detection
 
 import cv2
 import numpy as np
 from skimage.metrics import structural_similarity as compare_ssim
 from aEye.auxiliary import Aux
 import os
-import re
 
 
 def calculate_psnr(original_path, compressed_path):
