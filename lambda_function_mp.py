@@ -53,10 +53,9 @@ def handler(event, context):
 
             table_name = dynamodb_table
 
-            item = {'video_location':  video_location, 'score': mean_average_confidence}
-
+            table = dynamodb.Table(table_name)
             try:
-                response = dynamodb.put_item(TableName=table_name, Item=item)
+                response = table.put_item(Item={'video_location':  video_location, 'score': mean_average_confidence})
                 print('Uploaded location:', video_location)
             except Exception as e:
                 print('Error uploading metric:', mean_average_confidence, e)
