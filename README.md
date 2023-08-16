@@ -1,6 +1,10 @@
 # **Leto**
 ----------------------------------
-# Project Structure
+## Running Reduction and Reconstruction Methods Using ***config.ini***:
+
+## Modify ***config.ini*** for New Reduction and Reconstruction Methods:
+
+## Project Structure
 
 ```
 ├──  leto				contains all modules that facilites all functionality to achieve leto's goal
@@ -59,7 +63,7 @@
 |
 │   ├── utilities
 |       ├──cloud_functionality.py
-|       ├──recon_args.py
+|       ├──config_handler.py
 |
 │
 ├──  tests				contains unit tests
@@ -71,14 +75,14 @@
 ```
 ----------------------------------
 
-# Reduction to Reconstruction Mapping:
+## Reduction to Reconstruction Mapping:
 
 ffmpeg resolution downsampler(240p,360p,420p,720p,1080p)(lanczos,bicubic) --> fastsrgan, superres(edsr_x4,espcn_x4,fsrcnn_x4,lapsrn_x4), opencv_resoltion_upscaler, realbasicvser(very slow).
 
 fps_bitrate --> Parings with frame interpolation coming soon!
 
 
-# Reduction Modules
+## Reduction Modules
 
 - **Reccomended EC2 Image image-id ami-0f598ecd07418eba2**
 
