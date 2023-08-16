@@ -26,6 +26,7 @@ def visualize(image, detection_result):
             The average confidence of all the labels detected by the model
 
     """
+    sum_confidence = 0
     for detection in detection_result.detections:
         # Draw bounding_box
         bbox = detection.bounding_box
