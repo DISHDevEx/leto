@@ -113,6 +113,7 @@ def main():
     method = config.method
     aux = Aux()
     try:
+        video_list_s3_original_video = []
         video_list_s3_original_video = aux.load_s3(
             bucket= s3['input_bucket_s3'] , prefix=method['input_prefix_s3']
         )
