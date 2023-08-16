@@ -51,11 +51,10 @@ def handler(event, context):
             if len(mAC):
                 mean_average_confidence = sum(mAC) / len(mAC)
         
-            video_location = f's3://{bucket}/{key}'
 
             os.remove(local_filename)
-            score.update({video_location: mean_average_confidence})
-            print({video_location: mean_average_confidence})
+            score.update({key: mean_average_confidence})
+            print({key: mean_average_confidence})
         
         return score
 
@@ -74,4 +73,4 @@ def list_object_keys(bucket_name, folder_path):
     if 'Contents' in response:
         for obj in response['Contents']:
             keys.append(obj['Key'])
-    return keys[1:-1]
+    return keys[1:]
