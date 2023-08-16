@@ -73,6 +73,7 @@ def object_detection(model_path, input_video, output_video, save_video=False):
                 detection_result = detector.detect_for_video(
                     mp_image, frame_timestamp_ms
                 )
+                #print(len(detection_result.detections))
                 image_copy = np.copy(mp_image.numpy_view())
                 annotated_image, average_confidence = visualize(
                     image_copy, detection_result
