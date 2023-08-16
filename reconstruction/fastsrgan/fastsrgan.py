@@ -8,8 +8,6 @@ import subprocess
 import tensorflow as tf
 from tensorflow import keras
 import numpy as np
-import configparser
-import logging
 
 
 # get git repo root level
