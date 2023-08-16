@@ -70,9 +70,40 @@ def background_subtractor(input_folder, output_folder):
         cmd = f"static_ffmpeg -y -i {out} -c:v libx264  -crf 34 -preset veryfast {out}.mp4"
         subprocess.run(cmd, shell=True)
 
+def background_subtractor_absdiff(input_folder,output_folder):
+    os.makedirs(output_folder, exist_ok=True)
 
-    cv2.destroyAllWindows()
-    print("Background_subtracted_videos have been saved in", output_folder)
+    # Initialize video capture
+    for video in os.listdir(input_folder):
+        video_path = os.path.join(input_folder, video)
+        capture = cv2.VideoCapture(video_path)
+        success, ref_img = video.read()
+        if not success:
+            print("Error: Unable to read video.")
+            return
+
+        # Get the video's frame width, height, and frames per second
+        frame_width = int(capture.get(3))
+        frame_height = int(capture.get(4))
+        fps = int(capture.get(cv2.CAP_PROP_FPS))
+        video_name = Path(video).stem
+        
+        output_video_path = os.path.join(output_folder, video_name + "_absdiff_masked.mp4")
+        video_clip = VideoFileClip(video)
+        output_video = video_clip.fl_image(remove_background)
+        output_video.write_videofile(output_video_path, codec='libx264', fps=fps)
+
+    # Define a function to remove the static background from each frame
+    def remove_background(frame):
+        diff = cv2.absdiff(frame, ref_img)
+        gray = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
+        _, mask = cv2.threshold(gray, 30, 255, cv2.THRESH_BINARY)
+        foreground = cv2.bitwise_and(frame, frame, mask=mask)
+        return foreground
+    
+        
+
+
 
 def main():
     config = ConfigHandler('reduction.background_subtractor')
@@ -96,7 +127,8 @@ def main():
     
     aux.execute_label_and_write_local(video_list_s3_original_video, "original_videos")
     background_subtractor('original_videos','background_subtraction')
-    out_video_list = os.listdir('gif_folder')
+    background_subtractor_absdiff('original_videos','background_subtraction'))
+    out_video_list = os.listdir('background_subtraction')
     aux.upload_s3(out_video_list, bucket = s3['output_bucket_s3'], prefix = s3['output_prefix_s3'])
 
     aux.set_local_path('original_videos')
