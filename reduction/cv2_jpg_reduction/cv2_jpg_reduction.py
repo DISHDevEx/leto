@@ -3,8 +3,6 @@ Module contains the cv2 jpg quality reduction method and reencode cv2 video usin
 
 """
 import subprocess
-import configparser
-import static_ffmpeg
 import cv2
 import os
 import logging
@@ -18,6 +16,8 @@ root_path = subprocess.run(
 
 # add git repo path to use all libraries
 sys.path.append(root_path)
+
+from utilities import ConfigHandler
 
 
 def cv2_jpg_reduction(video, path="temp", quality=15, crf=28):
@@ -78,12 +78,10 @@ def cv2_jpg_reduction(video, path="temp", quality=15, crf=28):
 
 
 def main():
-    # load and allocate config file
-    config = configparser.ConfigParser(inline_comment_prefixes=';')
-    config.read('../../config.ini')
-    s3 = config['DEFAULT']
-    method = config['reduction.cv2_jpg_reduction']
-    logging.info("successfully loaded config file")
+   
+    config = ConfigHandler('reduction.cv2_jpg_reduction')
+    s3 = config.s3
+    method = config.method
 
     aux = Aux()
 

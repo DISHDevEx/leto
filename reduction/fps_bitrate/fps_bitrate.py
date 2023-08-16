@@ -4,12 +4,10 @@ Script to change the fps and bitrate of a video via ffmpeg.
 
 from pathlib import Path
 import subprocess
-from aEye import Video
 from aEye import Labeler
 from aEye import Aux
 import sys
 import logging
-import configparser
 
 # get git repo root level
 root_path = subprocess.run(

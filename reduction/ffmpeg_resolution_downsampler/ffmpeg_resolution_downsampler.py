@@ -2,16 +2,22 @@
 Script to change the resolution of a video via ffmpeg.
 """
 
-import configparser
 import logging
+import subprocess
+import sys
 
-from aEye import Video
 from aEye import Labeler
 from aEye import Aux
 
+# get git repo root level
+root_path = subprocess.run(
+    ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=False
+).stdout.rstrip("\n")
 
-import os
+# add git repo path to use all libraries
+sys.path.append(root_path)
 
+from utilities import ConfigHandler
 
 
 
@@ -33,12 +39,9 @@ def main():
 
     logging.info("running reduction module")
 
-    # load and allocate config file
-    config = configparser.ConfigParser(inline_comment_prefixes=';')
-    config.read('../../config.ini')
-    s3 = config['DEFAULT']
-    method = config['reduction.ffmpeg_resolution_downsampler']
-    logging.info("successfully loaded config file")
+    config = ConfigHandler('reduction.ffmpeg_resolution_downsampler')
+    s3 = config.s3
+    method = config.method
 
     aux = Aux()
 
