@@ -10,6 +10,7 @@ import os
 import urllib.parse
 
 s3_client = boto3.client("s3")
+dynamodb = boto3.resource('dynamodb')
 
 def handler(event, context):
     """
@@ -48,12 +49,20 @@ def handler(event, context):
             video_location = f's3://{bucket_name}/{key}'
             # Optionally, you can delete the local file to save space
             os.remove(local_filename)
-
             score.update({video_location: mean_average_confidence})
+
+            table_name = dynamodb_table
+
+            item = {'video_location':  video_location, 'score': mean_average_confidence}
+
+            try:
+                response = dynamodb.put_item(TableName=table_name, Item=item)
+                print('Uploaded location:', video_location)
+            except Exception as e:
+                print('Error uploading metric:', mean_average_confidence, e)
+
+            print({video_location: mean_average_confidence})
         return score
-
-
-
 
 
     except Exception as e:
