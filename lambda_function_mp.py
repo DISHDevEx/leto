@@ -46,21 +46,21 @@ def handler(event, context):
             if len(mAC):
                 mean_average_confidence = sum(mAC) / len(
                     mAC)
-            video_location = f's3://{bucket_name}/{key}'
+
             # Optionally, you can delete the local file to save space
             os.remove(local_filename)
-            score.update({video_location: mean_average_confidence})
+            score.update({key: mean_average_confidence})
 
             table_name = dynamodb_table
 
             table = dynamodb.Table(table_name)
             try:
-                response = table.put_item(Item={'video_location':  video_location, 'score': str(mean_average_confidence)})
-                print('Uploaded location:', video_location)
+                response = table.put_item(Item={'video_location':  key, 'score': str(mean_average_confidence)})
+                print('Uploaded location:', key)
             except Exception as e:
                 print('Error uploading metric:', mean_average_confidence, e)
 
-            print({video_location: mean_average_confidence})
+            print({key: mean_average_confidence})
         return score
 
 
@@ -79,4 +79,4 @@ def list_object_keys(bucket_name, folder_path):
     if 'Contents' in response:
         for obj in response['Contents']:
             keys.append(obj['Key'])
-    return keys[1:-1]
+    return keys[1:]
