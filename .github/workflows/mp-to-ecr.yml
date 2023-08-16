@@ -43,5 +43,3 @@ jobs:
         echo "pushing image to ECR ..."
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:v0.0.13
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:v0.0.13"
-#    - name: create wheel file from source code
-#      run: python setup.py bdist_wheel
