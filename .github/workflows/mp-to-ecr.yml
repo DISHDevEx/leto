@@ -37,6 +37,8 @@ jobs:
         ls
         cd benchmarking
         cd mediapipe_model
+        ls
+        pwd
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:v0.0.13 .
         echo "pushing image to ECR ..."
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:v0.0.13
