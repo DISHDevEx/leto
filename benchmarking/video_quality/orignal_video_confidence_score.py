@@ -10,9 +10,8 @@ function_name = 'your_lambda_function_name'
 # Payload data
 payload = {
     "bucket_name": "leto-dish",
-    "folder_path": "reduced-videos/ffmpeg-resolution-downsampler-480p-lanczos",
+    "folder_path": "og-videos/benchmark/violencedetection/",
     "dynamodb_table" : "test_table"
-    # Add any other payload data your Step Function expects
 }
 
 # Call the Lambda function
