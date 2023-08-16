@@ -42,11 +42,14 @@ def handler(event, context):
             # Process the downloaded video
 
             mAC = object_detection(mp_model,local_filename, "")
+            if len(mAC):
+                mean_average_confidence = sum(mAC) / len(
+                    mAC)
             video_location = f's3://{bucket_name}/{key}'
             # Optionally, you can delete the local file to save space
             os.remove(local_filename)
-
-            score.update({video_location: mAC})
+            score.update({video_location: mean_average_confidence})
+            print({video_location: mean_average_confidence})
         return score
 
 
