@@ -6,6 +6,8 @@ from pathlib import Path
 from utilities import ConfigHandler
 import subprocess
 import time
+import sys
+from moviepy.editor import VideoFileClip
 
 root_path = subprocess.run(
     ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=False
@@ -127,7 +129,7 @@ def main():
     
     aux.execute_label_and_write_local(video_list_s3_original_video, "original_videos")
     background_subtractor('original_videos','background_subtraction')
-    background_subtractor_absdiff('original_videos','background_subtraction'))
+    background_subtractor_absdiff('original_videos','background_subtraction')
     out_video_list = os.listdir('background_subtraction')
     aux.upload_s3(out_video_list, bucket = s3['output_bucket_s3'], prefix = s3['output_prefix_s3'])
 
