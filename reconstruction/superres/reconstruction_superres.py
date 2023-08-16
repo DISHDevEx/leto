@@ -7,8 +7,6 @@ import cv2
 import subprocess
 from cv2 import dnn_superres
 from aEye import Aux
-import logging 
-import configparser
 
 # get git repo root level
 root_path = subprocess.run(
@@ -18,6 +16,7 @@ root_path = subprocess.run(
 sys.path.append(root_path)
 
 from utilities import CloudFunctionality
+from utilities import ConfigHandler
 
 
 def create_model_name(model_prefix_s3):
@@ -100,12 +99,9 @@ def superres_video(method_args, s3_args):
 if __name__ == "__main__":
     cloud_functionality = CloudFunctionality()
 
-    # load and allocate config file
-    config = configparser.ConfigParser(inline_comment_prefixes=';')
-    config.read('../../config.ini')
-    s3_args = config['DEFAULT']
-    method_args = config['reconstruction.recon_args']
-    logging.info("successfully loaded config file")
+    config = ConfigHandler('reconstruction.superres')
+    s3_args = config.s3
+    method_args = config.method
 
     cloud_functionality.preprocess(method_args, s3_args)
 
