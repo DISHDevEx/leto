@@ -1,3 +1,10 @@
+"""
+ConfigHandler acts as a wrapper for implementing the use of configparser in the Leto repo.
+All reconstruction and reduction methods implement this class to handle configuration input 
+from the config.ini file.  The class also allows for method execution from any level of the 
+leto directory hierarchy.  
+"""
+
 from pathlib import Path
 import logging
 import configparser
