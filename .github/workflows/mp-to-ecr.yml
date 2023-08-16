@@ -1,9 +1,7 @@
 name: publish-to-ecr
 on:
-  push:
-    tags:
-    - '*'
-    - '**'
+  pull_request:
+    branches: [main]
 env:
   BUCKET_NAME : ${{ secrets.EKS_BUCKET_NAME }}
   AWS_REGION : ${{ secrets.AWS_REGION }}
