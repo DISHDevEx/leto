@@ -3,7 +3,7 @@ from aEye import Aux
 import logging
 import os
 from pathlib import Path
-from utilities import ConfigHandler
+
 import subprocess
 import time
 import sys
@@ -16,7 +16,7 @@ root_path = subprocess.run(
 # add git repo path to use all libraries
 sys.path.append(root_path)
 
-
+from utilities import ConfigHandler
 def background_subtractor(input_folder, output_folder):
     ''' This code helps to extract background from the video 
     Video works usually well on the videos with static background '''
