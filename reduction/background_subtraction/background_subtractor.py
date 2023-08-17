@@ -17,6 +17,11 @@ root_path = subprocess.run(
 sys.path.append(root_path)
 
 from utilities import ConfigHandler
+import os
+import cv2
+import subprocess
+from pathlib import Path
+
 def background_subtractor(input_folder, output_folder):
     ''' This code helps to extract background from the video 
     Video works usually well on the videos with static background '''
@@ -43,6 +48,9 @@ def background_subtractor(input_folder, output_folder):
         # Create background subtraction object
         backSub = cv2.createBackgroundSubtractorMOG2()
 
+        # Variable to store the background image
+        background_img = None
+
         while True:
             ret, frame = capture.read()
             if frame is None:
@@ -50,6 +58,10 @@ def background_subtractor(input_folder, output_folder):
 
             # Update the background model
             fgMask = backSub.apply(frame)
+
+            # Capture the initial frame as the background
+            if background_img is None:
+                background_img = frame.copy()
 
             # Get the frame number and write it on the current frame
             cv2.rectangle(frame, (10, 2), (100, 20), (255, 255, 255), -1)
@@ -66,11 +78,18 @@ def background_subtractor(input_folder, output_folder):
             if keyboard == ord('q') or keyboard == 27:
                 break
 
+        # Save the background image as a JPG file
+        background_img_filename = os.path.join(output_folder, video_name + "_background.jpg")
+        cv2.imwrite(background_img_filename, background_img)
+
         # Release video capture and writer objects
         capture.release()
         out.release()
-        cmd = f"static_ffmpeg -y -i {out} -c:v libx264  -crf 34 -preset veryfast {out}.mp4"
+
+        cmd = f"static_ffmpeg -y -i {output_filename} -c:v libx264  -crf 34 -preset veryfast {output_filename}.mp4"
         subprocess.run(cmd, shell=True)
+
+
 
 def background_subtractor_absdiff(input_folder,output_folder):
     os.makedirs(output_folder, exist_ok=True)
