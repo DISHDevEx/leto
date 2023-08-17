@@ -31,11 +31,6 @@ def handler(event, context):
     folder_path = event["folder_path"]
     dynamodb_table = event["dynamodb_table"]
 
-    bucket = event["Records"][0]["s3"]["bucket"]["name"]
-    key = urllib.parse.unquote_plus(
-        event["Records"][0]["s3"]["object"]["key"], encoding="utf-8"
-    )
-
     try:
         # Retrieve the list of object keys from the specified bucket
         s3_keys = list_object_keys(bucket_name, folder_path)
