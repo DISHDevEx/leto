@@ -36,6 +36,7 @@ def handler(event, context):
         s3_keys = list_object_keys(bucket_name, folder_path)
 
         for key in s3_keys:
+            
             # Download the video from S3 to Lambda's /tmp directory
             local_filename = '/tmp/' + os.path.basename(key)
             s3_client.download_file(bucket_name, key, local_filename)
@@ -43,6 +44,7 @@ def handler(event, context):
             # Process the downloaded video
 
             mAC = pipeline(local_filename, yolo_model, "")
+            print(mAC)
             if len(mAC):
                 mean_average_confidence = sum(mAC) / len(mAC)
         
