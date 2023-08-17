@@ -100,6 +100,21 @@ def background_subtractor(input_folder, output_folder):
 
 
 def main():
+    '''
+      """
+    Runner method for background_subtractor().  This method abstracts some of the
+    interaction with S3 and AWS away from fps_bitrate.
+
+    Parameters
+    ----------
+        None: runner method
+
+
+    Returns
+    ----------
+        None: however, results in a list of processed videos being stored to the
+                output video S3 path.'''
+    
     config = ConfigHandler('reduction.background_subtractor')
     s3 = config.s3
     method = config.method
