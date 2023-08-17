@@ -8,7 +8,7 @@ COPY __init__.py "${LAMBDA_TASK_ROOT}"
 COPY pipeline.py "${LAMBDA_TASK_ROOT}"
 COPY visualize.py "${LAMBDA_TASK_ROOT}"
 COPY yolo.py "${LAMBDA_TASK_ROOT}"
-COPY lambda_function_yolo.py ${LAMBDA_TASK_ROOT}
+COPY lambda_function_yolo.py "${LAMBDA_TASK_ROOT}"
 
 # Install the specified packages
 RUN pip install -r requirements_yolo.txt
