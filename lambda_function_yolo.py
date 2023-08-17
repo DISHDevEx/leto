@@ -44,9 +44,8 @@ def handler(event, context):
             # Process the downloaded video
 
             mAC = pipeline(local_filename, yolo_model, "")
-            print(mAC)
             if len(mAC):
-                mean_average_confidence = sum(mAC) / len(mAC)
+                mean_average_confidence = sum(mAC.values()) / len(mAC)
         
 
             os.remove(local_filename)
