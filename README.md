@@ -1,5 +1,19 @@
 # **Leto**
 ----------------------------------
+
+## Mapping Between Compatible Reduction and Reconstruction Methods
+
+
+| Reduction Method         | Applicable Reconstruction Method(s)    |
+|--------------|-----------|
+| [ffmpeg_resolution_downsampler](./reduction/ffmpeg_resolution_downsampler/) (360p,420p,640p,720p) | [opencv_resolution_upscaler](./reconstruction/opencv_resolution_upscaler/) <br> [superres](./reconstruction/superres/) (4 different configurations) <br> [fastsrgan](./reconstruction/fastsrgan/) <br> [realbasicvsr](./reconstruction/realbasicvsr/) (small sample size, takes a long time)     |
+| [fps_bitrate](./reduction/fps_bitrate/)      | Linear Frame interpolation <br> NN based frame interpolation   |
+| NN Codec                   |  NN Codec |
+| [cv2_jpg_reduction](./reduction/cv2_jpg_reduction/)                   |  N/A  |
+|Background Subtraction  |  Background Addition  |
+
+
+
 ## Running Reduction and Reconstruction Methods Using ***config.ini***:
 
 For existing Reduction and Reconstruction Methods, use the following guide to modify the [***config.ini***](config.ini) file prior to method execution.  If you have a new method you would like to get working with the ***config.ini***, then follow the instructions outlined in the [next section](#using-configini-with-new-reduction-and-reconstruction-methods) to do so.
@@ -109,17 +123,6 @@ pip install -r <REQUIREMENTS.TXT>
 ```
 
 The name of the requirements.txt file may vary slightly.
-
-## Mapping Between Compatible Reduction and Reconstruction Methods
-
-
-| Reduction Method         | Applicable Reconstruction Method(s)    |
-|--------------|-----------|
-| [ffmpeg_resolution_downsampler](./reduction/ffmpeg_resolution_downsampler/) (360p,420p,640p,720p) | [opencv_resolution_upscaler](./reconstruction/opencv_resolution_upscaler/) <br> [superres](./reconstruction/superres/) (4 different configurations) <br> [fastsrgan](./reconstruction/fastsrgan/) <br> [realbasicvsr](./reconstruction/realbasicvsr/) (small sample size, takes a long time)     |
-| [fps_bitrate](./reduction/fps_bitrate/)      | Linear Frame interpolation <br> NN based frame interpolation   |
-| NN Codec                   |  NN Codec |
-| [cv2_jpg_reduction](./reduction/cv2_jpg_reduction/)                   |  N/A  |
-|Background Subtraction  |  Background Addition  |
 
 
 ## Project Structure
