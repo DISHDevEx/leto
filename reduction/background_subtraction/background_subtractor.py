@@ -31,7 +31,7 @@ def background_subtractor(input_folder, output_folder):
     output_folder: name of output folder
 
     Returns:
-    videos with background encoded 
+    videos with background masked 
     
      '''
     
