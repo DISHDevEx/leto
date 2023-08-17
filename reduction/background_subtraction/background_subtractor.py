@@ -97,6 +97,35 @@ def background_subtractor(input_folder, output_folder):
         encoded_video_name = os.path.join(output_folder, video_name + "_masked_encoded")
         cmd = f"static_ffmpeg -y -i {output_filename} -c:v libx264  -crf 34 -preset veryfast {encoded_video_name}.mp4"
         subprocess.run(cmd, shell=True)
+def background_subtractor_absdiff(input_folder,output_folder):
+    os.makedirs(output_folder, exist_ok=True)
+     # Define a function to remove the static background from each frame
+    def remove_background(frame):
+        diff = cv2.absdiff(frame, ref_img)
+        gray = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
+        _, mask = cv2.threshold(gray, 30, 255, cv2.THRESH_BINARY)
+        foreground = cv2.bitwise_and(frame, frame, mask=mask)
+        return foreground
+
+    # Initialize video capture
+    for video in os.listdir(input_folder):
+        video_path = os.path.join(input_folder, video)
+        capture = cv2.VideoCapture(video_path)
+        success, ref_img = capture.read()
+        if not success:
+            print("Error: Unable to read video.")
+            return
+
+        # Get the video's frame width, height, and frames per second
+        frame_width = int(capture.get(3))
+        frame_height = int(capture.get(4))
+        fps = int(capture.get(cv2.CAP_PROP_FPS))
+        video_name = Path(video).stem
+
+        output_video_path = os.path.join(output_folder, video_name + "_absdiff_masked.mp4")
+        video_clip = VideoFileClip(video_path)
+        output_video = video_clip.fl_image(remove_background)
+        output_video.write_videofile(output_video_path, codec='libx264', fps=fps)
 
 
 def main():
@@ -138,6 +167,8 @@ def main():
     aux.execute_label_and_write_local(video_list_s3_original_video, "original_videos")
     background_subtractor('original_videos','background_subtraction')
     out_video_list = aux.load_local("./background_subtraction")
+    if ".ipynb_checkpoints" in out_video_list:
+        out_video_list.remove(".ipynb_checkpoints")
     aux.upload_s3(out_video_list, bucket = s3['output_bucket_s3'], prefix = method['output_prefix_s3'])
 
     aux.set_local_path('original_videos')
