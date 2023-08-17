@@ -26,6 +26,8 @@ def visualize(image, detection_result):
             The average confidence of all the labels detected by the model
 
     """
+    sum_confidence =0
+    
     for detection in detection_result.detections:
         # Draw bounding_box
         bbox = detection.bounding_box
@@ -37,8 +39,12 @@ def visualize(image, detection_result):
         category = detection.categories[0]
         category_name = category.category_name
         probability = round(category.score, 2)
+        #print('score', category.score)
+        #print('probability',probability)
         sum_confidence += probability
+    #print(sum_confidence)
         # Calculate the average confidence of all labels in the frame
-    if len(detection_result[0]):
-        average_confidence = sum_confidence / len(detection_result[0])
+    if len(detection_result.detections):
+        average_confidence = sum_confidence / len(detection_result.detections)
+        average_confidence = round(average_confidence,2)
     return image, average_confidence
