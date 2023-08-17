@@ -9,6 +9,7 @@ from pipeline import pipeline
 import urllib.parse
 
 s3_client = boto3.client("s3")
+dynamodb = boto3.resource('dynamodb')
 
 def handler(event, context):
     """
@@ -50,6 +51,14 @@ def handler(event, context):
 
             os.remove(local_filename)
             score.update({key: mean_average_confidence})
+            table_name = dynamodb_table
+
+            table = dynamodb.Table(table_name)
+            try:
+                response = table.put_item(Item={'video_location':  key, 'score': str(mean_average_confidence)})
+                print('Uploaded location:', key)
+            except Exception as e:
+                print('Error uploading metric:', mean_average_confidence, e)
             print({key: mean_average_confidence})
         
         return score
