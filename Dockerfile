@@ -4,11 +4,13 @@ FROM public.ecr.aws/lambda/python:3.10
 COPY requirements_yolo.txt ${LAMBDA_TASK_ROOT}
 
 # Copy function code
+COPY lambda_function_yolo.py ${LAMBDA_TASK_ROOT}
+
 COPY __init__.py "${LAMBDA_TASK_ROOT}"
 COPY pipeline.py "${LAMBDA_TASK_ROOT}"
 COPY visualize.py "${LAMBDA_TASK_ROOT}"
 COPY yolo.py "${LAMBDA_TASK_ROOT}"
-COPY lambda_function_yolo.py "${LAMBDA_TASK_ROOT}"
+
 
 # Install the specified packages
 RUN pip install -r requirements_yolo.txt
