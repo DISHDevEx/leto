@@ -98,7 +98,7 @@ def background_subtractor_absdiff(input_folder,output_folder):
     for video in os.listdir(input_folder):
         video_path = os.path.join(input_folder, video)
         capture = cv2.VideoCapture(video_path)
-        success, ref_img = video.read()
+        success, ref_img = capture.read()
         if not success:
             print("Error: Unable to read video.")
             return
@@ -110,7 +110,7 @@ def background_subtractor_absdiff(input_folder,output_folder):
         video_name = Path(video).stem
         
         output_video_path = os.path.join(output_folder, video_name + "_absdiff_masked.mp4")
-        video_clip = VideoFileClip(video)
+        video_clip = VideoFileClip(video_path)
         output_video = video_clip.fl_image(remove_background)
         output_video.write_videofile(output_video_path, codec='libx264', fps=fps)
 
