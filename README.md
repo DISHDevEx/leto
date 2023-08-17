@@ -352,3 +352,32 @@ python reconstruction_realbasicvsr.py \
 --local_model_path realbasicvsr_x4.pth
 --clean_model True
 ```
+
+### Running Background subtraction using Opencv2 Background subtraction
+1. Change current working directory
+``` console
+cd reduction/background_subtraction
+```
+2. Install dependencies
+```python
+pip install -r requirements_background_subtraction.txt
+```
+
+3. Update your bucket in config ini file for input videos
+
+ex of adding in config.ini file
+[reduction.background_subtractor]
+; method specific parameters:
+
+; s3 prefixs for input/output:
+method_name = background_subtractor
+input_prefix_s3 = original-videos/
+output_prefix_s3 = reduced-videos/%(method_name)s/
+
+4. Run the python file 
+``` console
+python background_subtraction.py
+```
+
+
+
