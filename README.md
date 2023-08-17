@@ -366,6 +366,7 @@ pip install -r requirements_background_subtraction.txt
 3. Update your bucket in config ini file for input videos
 
 ex of adding in config.ini file
+```
 [reduction.background_subtractor]
 ; method specific parameters:
 
@@ -373,7 +374,7 @@ ex of adding in config.ini file
 method_name = background_subtractor
 input_prefix_s3 = original-videos/
 output_prefix_s3 = reduced-videos/%(method_name)s/
-
+````
 4. Run the python file 
 ``` console
 python background_subtraction.py
