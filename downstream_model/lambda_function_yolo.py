@@ -3,9 +3,9 @@ Module to contain the handler function for the YOLO lambda function. This file i
 """
 import boto3
 import os
-from yolo import Yolo
+from downstream_model.yolo import Yolo
 
-from pipeline import pipeline
+from downstream_model.pipeline import pipeline
 import urllib.parse
 
 s3_client = boto3.client("s3")
