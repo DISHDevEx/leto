@@ -24,7 +24,16 @@ from pathlib import Path
 
 def background_subtractor(input_folder, output_folder):
     ''' This code helps to extract background from the video 
-    Video works usually well on the videos with static background '''
+    Video works usually well on the videos with static background. It will take first frame as static
+    
+    Parameters:
+    input_folder : name of local input folder
+    output_folder: name of output folder
+
+    Returns:
+    videos with background encoded 
+    
+     '''
     
     # Create the output folder if it doesn't exist
     os.makedirs(output_folder, exist_ok=True)
