@@ -5,7 +5,7 @@
 #Set variable values 
 WORKING_DIRECTORY="/home/ec2-user"
 GIT_BRANCH=$1
-MODULE_DIRECTORY_NAME=$2
+MODULE_TYPE=$2
 MODULE_NAME=$3
 #Functions used for Reduction/Reconstruction modules deployment in AWS EC2 instance
 install_common_packages(){
@@ -93,10 +93,9 @@ install_module_requirements(){
     echo "Installing requirements for $MODULE_NAME module."
     #Install requirements
     #Find the requirements file of the module
-    cd $WORKING_DIRECTORY/leto/reduction/$MODULE_NAME && fVar=$(find -type f -name 'requirements*.txt');
+    cd $WORKING_DIRECTORY/leto/$MODULE_TYPE/$MODULE_NAME && fVar=$(find -type f -name 'requirements*.txt');
     FILE_NAME=${fVar:2}
-    sleep 10
-    if python -m pip install -r $WORKING_DIRECTORY/leto/$MODULE_DIRECTORY_NAME/$MODULE_NAME/$FILE_NAME; then
+    if python -m pip install -r $WORKING_DIRECTORY/leto/$MODULE_TYPE/$MODULE_NAME/$FILE_NAME; then
         pip list
         echo "Successfully installed requirements for $MODULE_NAME module."
     else
@@ -116,7 +115,7 @@ deploy_fastsrgan_module(){
         fi
         #Install module requirements
         deploy_leto_repository
-        sleep 40
+        sleep 60
         install_module_requirements
     elif [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
@@ -143,7 +142,7 @@ deploy_realbasicvsr_module(){
         fi
         #Install module requirements
         deploy_leto_repository
-        sleep 40
+        sleep 60
         install_module_requirements
     elif [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
