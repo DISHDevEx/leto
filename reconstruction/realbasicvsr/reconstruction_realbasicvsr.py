@@ -10,8 +10,7 @@ import numpy as np
 import torch
 from mmcv.runner import load_checkpoint
 from mmedit.core import tensor2img
-import logging
-import configparser
+from pathlib import Path
 
 from builder import Builder
 
@@ -76,7 +75,7 @@ def realbasicvsr_runner(method_args):
     """
 
     # Initialize the model.
-    model = init_model("realbasicvsr_x4.py", method_args['local_model_path'])
+    model = init_model(absolute_path_getter("realbasicvsr_x4.py"), method_args['local_model_path'])
 
     # Read frames from video and create an array of frames.
 
@@ -130,6 +129,23 @@ def realbasicvsr_runner(method_args):
             img = tensor2img(outputs[:, i, :, :, :])
             video_writer.write(img.astype(np.uint8))
         video_writer.release()
+
+
+def absolute_path_getter(file_name):
+    """
+    Takes in file name, in the same working directory as the 'running' python file (__file__)
+
+    Arguments:
+        String: file_name
+            name of subject file
+    Returns:
+        PosixPath: py_path
+             Absolute path of file_name
+    """
+    method_path = Path(__file__)
+    abs_path_parent = method_path.parent.absolute()
+    py_path = abs_path_parent.joinpath(file_name)
+    return(py_path)
 
 
 if __name__ == "__main__":
