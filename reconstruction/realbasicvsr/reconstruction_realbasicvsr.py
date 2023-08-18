@@ -141,6 +141,6 @@ if __name__ == "__main__":
 
     cloud_functionality.preprocess(method_args, s3_args)
 
-    realbasicvsr_runner(method_args, s3_args)
+    realbasicvsr_runner(method_args)
 
     cloud_functionality.postprocess(method_args, s3_args)
