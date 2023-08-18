@@ -115,7 +115,6 @@ deploy_fastsrgan_module(){
         fi
         #Install module requirements
         deploy_leto_repository
-        sleep 60
         install_module_requirements
     elif [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
@@ -142,7 +141,6 @@ deploy_realbasicvsr_module(){
         fi
         #Install module requirements
         deploy_leto_repository
-        sleep 60
         install_module_requirements
     elif [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
