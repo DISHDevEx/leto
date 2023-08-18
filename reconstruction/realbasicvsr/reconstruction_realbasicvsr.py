@@ -144,7 +144,7 @@ def absolute_path_getter(file_name):
     """
     method_path = Path(__file__)
     abs_path_parent = method_path.parent.absolute()
-    py_path = abs_path_parent.joinpath(file_name)
+    py_path = str(abs_path_parent.joinpath(file_name))
     return(py_path)
 
 
