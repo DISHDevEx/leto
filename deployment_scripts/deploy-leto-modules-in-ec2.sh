@@ -5,7 +5,8 @@
 #Set variable values 
 WORKING_DIRECTORY="/home/ec2-user"
 GIT_BRANCH=$1
-MODULE_NAME=$2
+MODULE_DIRECTORY_NAME=$2
+MODULE_NAME=$3
 #Functions used for Reduction/Reconstruction modules deployment in AWS EC2 instance
 install_common_packages(){
     #Update yum 
@@ -29,7 +30,7 @@ install_common_packages(){
         echo "Successfully installed mesa-libGL"
     fi
 }
-create_or_activate_virtual_env(){
+setup_virtual_env(){
     #Insall Miniconda3 to create a virtual conda environment
     #Check if the miniconda3 is already installed
     cd /home/ec2-user
@@ -58,7 +59,7 @@ create_or_activate_virtual_env(){
         conda env list
     fi
 }
-clone_or_pull_leto_repo(){
+deploy_leto_repository(){
     #If the leto directory exists, then do git pull else do git clone
     if [ -d "$WORKING_DIRECTORY/leto" ]; then
         echo "Doing 'git pull' as the leto directory already exists." 
@@ -87,14 +88,15 @@ clone_or_pull_leto_repo(){
         cd ..
     fi
 }
-deploy_module_requirements(){
+install_module_requirements(){
     #Deploy the requirements for module in EC2
     echo "Installing requirements for $MODULE_NAME module."
     #Install requirements
     #Find the requirements file of the module
     cd $WORKING_DIRECTORY/leto/reduction/$MODULE_NAME && fVar=$(find -type f -name 'requirements*.txt');
     FILE_NAME=${fVar:2}
-    if python -m pip install -r $WORKING_DIRECTORY/leto/reduction/$MODULE_NAME/$FILE_NAME; then
+    sleep 10
+    if python -m pip install -r $WORKING_DIRECTORY/leto/$MODULE_DIRECTORY_NAME/$MODULE_NAME/$FILE_NAME; then
         pip list
         echo "Successfully installed requirements for $MODULE_NAME module."
     else
@@ -108,19 +110,24 @@ deploy_fastsrgan_module(){
         conda deactivate #To deactivate conda - 'base' environment
         TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
         if [ $TENSORFLOW_CHECK -gt 0 ]; then #Check for tensorflow availability in the base ami
+            echo "Activating tensorflow"
             source activate tensorflow
             python -c "import tensorflow as tf; print(tf.__version__)"
         fi
         #Install module requirements
-        deploy_module_requirements
+        deploy_leto_repository
+        sleep 40
+        install_module_requirements
     elif [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
         if [ $TENSORFLOW_CHECK -gt 0 ]; then #Check for tensorflow availability in the base ami
+            echo "Activating tensorflow"
             source activate tensorflow
             python -c "import tensorflow as tf; print(tf.__version__)"
         fi
         #Install module requirements
-        deploy_module_requirements
+        deploy_leto_repository
+        install_module_requirements
     fi
 }
 deploy_realbasicvsr_module(){
@@ -130,24 +137,25 @@ deploy_realbasicvsr_module(){
         conda deactivate #To deactivate conda - 'base' environment
         PYTORCH_CHECK=$(pip list | grep torch | wc -l)
         if [ $PYTORCH_CHECK -gt 0 ]; then #Check for pytorch availability in the base ami
+            echo "Activating pytorch"
             source activate pytorch
             python -c "import torch; print(torch.__version__)"
         fi
         #Install module requirements
-        pause 'Press [Enter] key to continue...'
-        deploy_module_requirements
+        deploy_leto_repository
+        sleep 40
+        install_module_requirements
     elif [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
         if [ $TENSORFLOW_CHECK -gt 0 ]; then #Check for pytorch availability in the base ami
+            echo "Activating pytorch"
             source activate pytorch
             python -c "import torch; print(torch.__version__)"
         fi
         #Install module requirements
-        deploy_module_requirements
+        deploy_leto_repository
+        install_module_requirements
     fi
-}
-pause(){
-   read -p "$*"
 }
 #Check the MODULE_NAME and proceed further accordingly
 if [ "$MODULE_NAME" = "fastsrgan" ] || [ "$MODULE_NAME" = "realbasicvsr" ]; then
@@ -158,7 +166,7 @@ if [ "$MODULE_NAME" = "fastsrgan" ] || [ "$MODULE_NAME" = "realbasicvsr" ]; then
     fi
 else
     install_common_packages
-    create_or_activate_virtual_env
-    clone_or_pull_leto_repo
-    deploy_module_requirements
+    setup_virtual_env
+    deploy_leto_repository
+    install_module_requirements
 fi
