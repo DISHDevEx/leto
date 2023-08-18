@@ -3,7 +3,11 @@ import argparse
 import ffmpeg
 import numpy
 import torch
+import sys
 import model.m2m as m2m
+import configparser
+import logging
+import os
 
 # get git repo root level
 root_path = subprocess.run(
@@ -25,16 +29,16 @@ def interpolate_frame(frame1, frame2):
     frame1_tensor = torch.FloatTensor(numpy.ascontiguousarray(frame1_np.transpose(2, 0, 1)[None, :, :, :])).cuda()
     frame2_tensor = torch.FloatTensor(numpy.ascontiguousarray(frame2_np.transpose(2, 0, 1)[None, :, :, :])).cuda()
 
-    if method_args['factor'] == 2:
+    if int(method_args['factor']) == 2:
         interpolated_frame_tensor = \
             netNetwork(frame1_tensor, frame2_tensor, [torch.FloatTensor([0.5]).view(1, 1, 1, 1).cuda()])[0]
         interpolated_frame_np = (interpolated_frame_tensor.detach().cpu().numpy()[0, :, :, :].
                                  transpose(1, 2, 0)[:, :, ::-1] * 255.0).clip(0.0, 255.0).round().astype(numpy.uint8)
         return interpolated_frame_np
-    elif method_args['factor'] > 2:
-        interpolated_frames_tensor = [torch.FloatTensor([step / method_args['factor']]).view(1, 1, 1, 1).cuda()
-                                      for step in range(1, method_args['factor'])]
-        interpolated_frames = netNetwork(frame1_tensor, frame2_tensor, interpolated_frames_tensor, method_args['factor'])
+    elif int(method_args['factor']) > 2:
+        interpolated_frames_tensor = [torch.FloatTensor([step / int(method_args['factor'])]).view(1, 1, 1, 1).cuda()
+                                      for step in range(1, int(method_args['factor']))]
+        interpolated_frames = netNetwork(frame1_tensor, frame2_tensor, interpolated_frames_tensor, int(method_args['factor']))
         interpolated_frames_np = [(frame.detach().cpu().numpy()[0, :, :, :].transpose(1, 2, 0)[:, :, ::-1] * 255.0).
                                   clip(0.0, 255.0).round().astype(numpy.uint8) for frame in interpolated_frames]
         return interpolated_frames_np
@@ -106,10 +110,10 @@ def run(in_filename, out_filename):
         current_frame = read_frame(process_input, width, height)
         if current_frame is None:
             break
-        if method_args['factor'] == 2:
+        if int(method_args['factor']) == 2:
             interpolated_frame = interpolate_frame(previous_frame, current_frame)
             write_frame(process_output, interpolated_frame)
-        elif method_args['factor'] > 2:
+        elif int(method_args['factor']) > 2:
             for interpolated_frame in interpolate_frame(previous_frame, current_frame):
                 write_frame(process_output, interpolated_frame)
         previous_frame = current_frame
@@ -134,7 +138,7 @@ if __name__ == '__main__':
 
     ##########################################################
     """Options/Args"""
-    if method_args['factor'] < 2:
+    if int(method_args['factor']) < 2:
         raise ValueError('Factor must be an integer more than or equal to 2.')
 
     ##########################################################
