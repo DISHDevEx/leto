@@ -130,11 +130,10 @@ deploy_fastsrgan_module(){
 }
 deploy_realbasicvsr_module(){
     install_common_packages
-    alias pip='pip3'
     if [ -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         conda deactivate #To deactivate conda - 'leto' environment
         conda deactivate #To deactivate conda - 'base' environment
-        PYTORCH_CHECK=$(pip list | grep torch | wc -l)
+        PYTORCH_CHECK=$(pip3 list | grep torch | wc -l)
         if [ $PYTORCH_CHECK -gt 0 ]; then #Check for pytorch availability in the base ami
             echo "Activating pytorch"
             source activate pytorch
@@ -144,7 +143,7 @@ deploy_realbasicvsr_module(){
         deploy_leto_repository
         install_module_requirements
     elif [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
-        TENSORFLOW_CHECK=$(pip list | grep torch | wc -l)
+        TENSORFLOW_CHECK=$(pip3 list | grep torch | wc -l)
         if [ $TENSORFLOW_CHECK -gt 0 ]; then #Check for pytorch availability in the base ami
             echo "Activating pytorch"
             source activate pytorch
