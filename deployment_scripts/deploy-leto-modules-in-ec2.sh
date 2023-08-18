@@ -6,19 +6,6 @@
 WORKING_DIRECTORY="/home/ec2-user"
 GIT_BRANCH=$1
 MODULE_NAME=$2
-#Check the MODULE_NAME and proceed further accordingly
-if [ "$MODULE_NAME" = "fastsrgan" ] || [ "$MODULE_NAME" = "realbasicvsr" ]; then
-    if [ "$MODULE_NAME" = "fastsrgan" ]; then
-        deploy_fastsrgan_module
-    elif [ "$MODULE_NAME" = "realbasicvsr" ]; then
-        deploy_realbasicvsr_module
-    fi
-else
-    install_common_packages
-    create_or_activate_virtual_env
-    clone_or_pull_leto_repo
-    deploy_module_requirements
-fi
 #Functions used for Reduction/Reconstruction modules deployment in AWS EC2 instance
 install_common_packages(){
     #Update yum 
@@ -162,3 +149,16 @@ deploy_realbasicvsr_module(){
 pause(){
    read -p "$*"
 }
+#Check the MODULE_NAME and proceed further accordingly
+if [ "$MODULE_NAME" = "fastsrgan" ] || [ "$MODULE_NAME" = "realbasicvsr" ]; then
+    if [ "$MODULE_NAME" = "fastsrgan" ]; then
+        deploy_fastsrgan_module
+    elif [ "$MODULE_NAME" = "realbasicvsr" ]; then
+        deploy_realbasicvsr_module
+    fi
+else
+    install_common_packages
+    create_or_activate_virtual_env
+    clone_or_pull_leto_repo
+    deploy_module_requirements
+fi
