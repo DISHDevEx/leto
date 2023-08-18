@@ -113,8 +113,9 @@ deploy_fastsrgan_module(){
             source activate tensorflow
             python -c "import tensorflow as tf; print(tf.__version__)"
         fi
-        #Install module requirements
+        #Deploy leto repository
         deploy_leto_repository
+        #Install module requirements
         install_module_requirements
     elif [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
@@ -123,8 +124,9 @@ deploy_fastsrgan_module(){
             source activate tensorflow
             python -c "import tensorflow as tf; print(tf.__version__)"
         fi
-        #Install module requirements
+        #Deploy leto repository
         deploy_leto_repository
+        #Install module requirements
         install_module_requirements
     fi
 }
@@ -139,19 +141,21 @@ deploy_realbasicvsr_module(){
             source activate pytorch
             python -c "import torch; print(torch.__version__)"
         fi
-        #Install module requirements
+        #Deploy leto repository
         deploy_leto_repository
+        #Install module requirements
         install_module_requirements
     elif [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
-        TENSORFLOW_CHECK=$(pip3 list | grep torch | wc -l)
-        if [ $TENSORFLOW_CHECK -gt 0 ]; then #Check for pytorch availability in the base ami
+        PYTORCH_CHECK=$(pip3 list | grep torch | wc -l)
+        if [ $PYTORCH_CHECK -gt 0 ]; then #Check for pytorch availability in the base ami
             echo "Activating pytorch"
             source activate pytorch
             python -c "import torch; print(torch.__version__)"
         fi
-        #Install module requirements
+        #Deploy leto repository
         deploy_leto_repository
-        install_module_requirements
+        #Install module requirements
+#        install_module_requirements
     fi
 }
 #Check the MODULE_NAME and proceed further accordingly
