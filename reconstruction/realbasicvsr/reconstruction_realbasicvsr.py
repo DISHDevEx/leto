@@ -135,7 +135,7 @@ def realbasicvsr_runner(method_args):
 if __name__ == "__main__":
     cloud_functionality = CloudFunctionality()
 
-    config = ConfigHandler('[reconstruction.realbasicvsr')
+    config = ConfigHandler('reconstruction.realbasicvsr')
     s3_args = config.s3
     method_args = config.method
 
