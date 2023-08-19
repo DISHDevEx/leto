@@ -124,6 +124,8 @@ def run(in_filename, out_filename):
 
 
 if __name__ == '__main__':
+    
+    ####################### Preprocessing ###################################
 
     cloud_functionality = CloudFunctionality()
 
@@ -136,12 +138,13 @@ if __name__ == '__main__':
 
     cloud_functionality.preprocess(method_args, s3_args)
 
-    ##########################################################
+    ####################### Check for errors in the args ###################################
+    
     """Options/Args"""
     if int(method_args['factor']) < 2:
         raise ValueError('Factor must be an integer more than or equal to 2.')
 
-    ##########################################################
+    ###################### Load the model ####################################
     """Load M2M Model"""
 
     if not torch.cuda.is_available():
@@ -156,7 +159,7 @@ if __name__ == '__main__':
 
     netNetwork.load_state_dict(torch.load('./smooth.pkl'))
 
-    ##########################################################
+    ###################### Run the frame interpolation ####################################
 
     # Loop through all videos that need to be reduced.
     for i in range(len(os.listdir("reduced_videos"))):
@@ -170,5 +173,5 @@ if __name__ == '__main__':
 
         run(input_video_path, output_video_path)
 
-    ##########################################################
+    ##################### Postprocessing #####################################
     cloud_functionality.postprocess(method_args, s3_args)
