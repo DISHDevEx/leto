@@ -4,6 +4,9 @@ import logging
 import os
 from utilities import ConfigHandler
 
+import configparser
+from utilities import CloudFunctionality
+
 
 def background_addition(video_path, image_path, output_path):
     """This methods adds static background to masked image
@@ -66,30 +69,19 @@ def main():
         None: however, results in a list of processed videos being stored to the
                 output video S3 path.'''
     
-    config = ConfigHandler('reduction.background_addition')
-  
-    s3 = config.s3
-    method = config.method
-    aux = Aux()
-    try:
-        video_list_s3_original_video = []
-        video_list_s3_original_video = aux.load_s3(
-            bucket= s3['input_bucket_s3'] , prefix=method['input_prefix_s3']
-        )
-    except Exception as e:
-        print(e)
-        logging.warning(
-            f"unable to load video list from s3; ensure AWS credentials have been provided."
-        )
-    if not os.path.exists("original_videos"):
-        os.mkdir("./original_videos")
-    if not os.path.exists("background_addition"):
-        os.mkdir("./background_addition")
-    
-    
-    aux.execute_label_and_write_local(video_list_s3_original_video, "original_videos")
-    videos = [f for f in os.listdir('original_videos') if f.endswith('.mp4')]
-    images = [f for f in os.listdir('original_videos') if f.endswith('.jpg')]
+    cloud_functionality = CloudFunctionality()
+
+    # load and allocate config file
+    config = configparser.ConfigParser(inline_comment_prefixes=';')
+    config.read('../../config.ini')
+    s3_args = config['DEFAULT']
+    method_args = config['reconstruction.recon_args']
+    logging.info("successfully loaded config file")
+
+    cloud_functionality.preprocess(method_args, s3_args)
+
+    videos = [f for f in os.listdir('reduced_videos') if f.endswith('.mp4')]
+    images = [f for f in os.listdir('reduced_videos') if f.endswith('.jpg')]
 
     matched_files = []
 
@@ -101,16 +93,9 @@ def main():
         
     
     for files in matched_files:
-        background_addition(files[0],files[1],'background_addition')
-    out_video_list = aux.load_local("./background_addition")
-    if ".ipynb_checkpoints" in out_video_list:
-        out_video_list.remove(".ipynb_checkpoints")
-    aux.upload_s3(out_video_list, bucket = s3['output_bucket_s3'], prefix = method['output_prefix_s3'])
-
-    aux.set_local_path('original_videos')
-    aux.clean()
-    aux.set_local_path('background_subtraction')
-    aux.clean()
+        background_addition(files[0],files[1],'reconstructed_videos')
+  
+    cloud_functionality.postprocess(method_args, s3_args)
 if __name__ == "__main__":
     start_time = time.time()
     main()
