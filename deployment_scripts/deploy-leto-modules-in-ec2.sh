@@ -15,6 +15,7 @@ if [ "$LIBRARY_REQUIRED" == "Tensorflow" ]; then
     TENSORFLOW_REQUIRED=true
 elif [ "$LIBRARY_REQUIRED" == "PyTorch" ]; then
     PYTORCH_REQUIRED=true
+fi
 #Functions used for Reduction/Reconstruction modules deployment in AWS EC2 instance
 install_common_packages(){
     #Update yum 
@@ -213,10 +214,8 @@ deploy_pytorch_dependent_module(){
 if [ "$TENSORFLOW_REQUIRED" == "true" ] || [ "$PYTORCH_REQUIRED" == "true" ]; then
     if [ "$TENSORFLOW_REQUIRED" == "true" ]; then
         deploy_tensorflow_dependent_module
-    else
-        if [ "$PYTORCH_REQUIRED" == "true" ]; then
-            deploy_pytorch_dependent_module
-        fi
+    elif [ "$PYTORCH_REQUIRED" == "true" ]; then
+        deploy_pytorch_dependent_module
     fi
 else
     install_common_packages
