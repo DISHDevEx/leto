@@ -33,7 +33,7 @@ class FileSizeUploader:
 
     def upload_to_dynamodb(self, file_path, size):
         try:
-            response = self.table.put_item(Item={'orignal_video_location': file_path, 'file_size': str(size)})
+            response = self.table.put_item(Item={'video_location': file_path, 'file_size': str(size)})
             print(f"Uploaded {file_path} to DynamoDB with size {size} bytes.")
             return response
         except Exception as e:

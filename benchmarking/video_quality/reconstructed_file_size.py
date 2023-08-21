@@ -36,7 +36,7 @@ class FileSizeUploader:
     def upload_to_dynamodb(self, file_path, size):
         try:
             reconstructed_folder = file_path.split("/")[1]
-            response = self.table.put_item(Item={'reconstructed_video_location': file_path, 'file_size': size, 'reconstructed_method': reconstructed_folder})
+            response = self.table.put_item(Item={'video_location': file_path, 'file_size': str(size), 'reconstructed_method': reconstructed_folder})
             print(f"Uploaded {file_path} reduced method {reconstructed_folder} to DynamoDB with size {size} bytes.")
             return response
         except Exception as e:

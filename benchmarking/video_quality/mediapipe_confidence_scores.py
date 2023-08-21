@@ -29,7 +29,7 @@ function_name = method['function_name']
 payload = {
     "bucket_name": s3['input_bucket_s3'],
     "folder_path": method['folder_path'],
-    "dynamodb_table" : method['dynamodb_table']
+    "dynamodb_table": method['dynamodb_table']
 }
 
 # Call the Lambda function
