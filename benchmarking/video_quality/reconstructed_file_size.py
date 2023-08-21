@@ -1,8 +1,20 @@
-import os
+import subprocess
+import sys
 import boto3
 import logging
-import configparser
+
 logging.info("running reduction module")
+
+
+# get git repo root level
+root_path = subprocess.run(
+    ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=False
+).stdout.rstrip("\n")
+
+# add git repo path to use all libraries
+sys.path.append(root_path)
+
+from utilities import ConfigHandler
 
 
 class FileSizeUploader:
@@ -53,13 +65,13 @@ class FileSizeUploader:
 
 
 
+config = ConfigHandler('benchmarking.reconstructed_file_size')
+s3 = config.s3
+method = config.method
 
 
-
-
-
-table_name = "leto_reconstructed_file_sizes"
-uploader = FileSizeUploader("leto-dish", "leto_reconstructed_file_sizes")
-directory_key = 'reduced-videos/ffmpeg-resolution-downsampler-480p-lanczos'
+table_name = method['table_name']
+uploader = FileSizeUploader(s3['input_bucket_s3'], table_name)
+directory_key = method['directory_key']
 s3_file_locations = uploader.get_s3_file_locations(directory_key)
 uploader.process_and_upload(s3_file_locations)
