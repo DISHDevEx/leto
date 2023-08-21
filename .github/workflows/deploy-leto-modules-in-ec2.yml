@@ -70,7 +70,6 @@ jobs:
         sudo apt-get -y install expect-dev
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
-        # --parameters '{"command": ["curl -o deploy-leto-modules-in-ec2.sh https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/common-workflow/deployment_scripts/deploy-leto-modules-in-ec2.sh"]}' \
         --parameters '{"command": ["whoami"]}' \
         --target ${{ github.event.inputs.instance_id }}
 
