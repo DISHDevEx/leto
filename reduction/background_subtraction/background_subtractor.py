@@ -7,7 +7,6 @@ from pathlib import Path
 import subprocess
 import time
 import sys
-from moviepy.editor import VideoFileClip
 
 root_path = subprocess.run(
     ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=False
@@ -23,8 +22,8 @@ import subprocess
 from pathlib import Path
 
 def background_subtractor(input_folder, output_folder):
-    ''' This code helps to extract background from the video 
-    Video works usually well on the videos with static background. It will take first frame as static
+    ''' This method helps to extract foreground from the video by removing static background
+    Video works usually well on the videos with static background. 
     
     Parameters:
     input_folder : name of local input folder
@@ -85,11 +84,14 @@ def background_subtractor(input_folder, output_folder):
         # Release video capture and writer objects
         capture.release()
         out.release()
-        encoded_video_name = os.path.join(output_folder, video_name + "_masked_encoded")
+        encoded_video_name = os.path.join(output_folder, video_name)
         cmd = f"static_ffmpeg -y -i {output_filename} -c:v libx264  -crf 34 -preset veryfast {encoded_video_name}.mp4"
         subprocess.run(cmd, shell=True)
 
 def building_static_image(video_path, output_folder):
+    """This method helps to extract static frame from the video. 
+    It takes first frame and last frame as reference frames and calculate abs diff from each frame 
+    the frame with minumum difference is termed as static frame """
 
 # Path to the video file
     video_path = video_path
