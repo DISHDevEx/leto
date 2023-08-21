@@ -7,10 +7,14 @@ WORKING_DIRECTORY="/home/ec2-user"
 GIT_BRANCH=$1
 MODULE_TYPE=$2
 MODULE_NAME=$3
-TENSORFLOW_DEPENDENT_MODULES=("fastsrgan")
-PYTORCH_DEPENDENT_MODULES=("realbasicvsr")
+LIBRARY_REQUIRED=$4
 TENSORFLOW_REQUIRED=false
 PYTORCH_REQUIRED=false
+#Update variable values based on input parameter value
+if [ "$LIBRARY_REQUIRED" == "Tensorflow" ]; then
+    TENSORFLOW_REQUIRED=true
+elif [ "$LIBRARY_REQUIRED" == "PyTorch" ]; then
+    PYTORCH_REQUIRED=true
 #Functions used for Reduction/Reconstruction modules deployment in AWS EC2 instance
 install_common_packages(){
     #Update yum 
@@ -32,6 +36,15 @@ install_common_packages(){
         sudo yum install -y mesa-libGL
         sudo yum list installed mesa-libGL.x86_64 | grep mesa-libGL.x86_64
         echo "Successfully installed mesa-libGL"
+    fi
+    #Install pip
+    PIP_CHECK=$(sudo yum list installed python3-pip | grep python3-pip | wc -l)
+    if [ "$PIP_CHECK" -gt 0 ];then
+        echo "Pip package is already installed"
+    else
+        sudo yum install -y python3-pip
+        sudo yum list installed python3-pip | grep python3-pip
+        echo "Successfully installed pip"
     fi
 }
 setup_virtual_env(){
@@ -123,7 +136,7 @@ install_module_requirements(){
         fi
 # 'pip' is not available, try 'pip3'
     elif command -v pip3 &> /dev/null; then
-        if python -m pip install -r $WORKING_DIRECTORY/leto/$MODULE_TYPE/$MODULE_NAME/$FILE_NAME; then
+        if python -m pip3 install -r $WORKING_DIRECTORY/leto/$MODULE_TYPE/$MODULE_NAME/$FILE_NAME; then
             pip list
             echo "Successfully installed requirements for $MODULE_NAME module."
         else
@@ -137,7 +150,6 @@ install_module_requirements(){
 deploy_tensorflow_dependent_module(){
     install_common_packages
     if [ -d "/home/ec2-user/miniconda3/envs/leto" ]; then
-        conda deactivate #To deactivate conda - 'leto' environment
         conda deactivate #To deactivate conda - 'base' environment
         # Check if 'pip' is available
         if command -v pip &> /dev/null; then
@@ -157,6 +169,7 @@ deploy_tensorflow_dependent_module(){
             source activate tensorflow
             python -c "import tensorflow as tf; print(tf.__version__)"
         fi
+        install_common_packages
         deploy_leto_repository
         install_module_requirements
     elif [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
@@ -166,6 +179,7 @@ deploy_tensorflow_dependent_module(){
             source activate tensorflow
             python -c "import tensorflow as tf; print(tf.__version__)"
         fi
+        install_common_packages
         deploy_leto_repository
         install_module_requirements
     fi
@@ -193,6 +207,7 @@ deploy_pytorch_dependent_module(){
             source activate pytorch
             python -c "import torch; print(torch.__version__)"
         fi
+        install_common_packages
         deploy_leto_repository
         install_module_requirements
     elif [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
@@ -202,24 +217,11 @@ deploy_pytorch_dependent_module(){
             source activate pytorch
             python -c "import torch; print(torch.__version__)"
         fi
+        install_common_packages
         deploy_leto_repository
         install_module_requirements
     fi
 }
-#Check for Tensorflow dependency and update respective variable value
-for tensorflow_module in "${TENSORFLOW_DEPENDENT_MODULES[@]}"; do
-    if [ "$tensorflow_module" == "$MODULE_NAME" ]; then
-        TENSORFLOW_REQUIRED=true
-        break  # Exit the loop if a match is found
-    fi
-done
-#Check for PyTorch dependency and and update respective variable value
-for pytorch_module in "${PYTORCH_DEPENDENT_MODULES[@]}"; do
-    if [ "$pytorch_module" == "$MODULE_NAME" ]; then
-        PYTORCH_REQUIRED=true
-        break  # Exit the loop if a match is found
-    fi
-done
 #Check for module dependency and proceed further accordingly
 if [ "$TENSORFLOW_REQUIRED" == "true" ] || [ "$PYTORCH_REQUIRED" == "true" ]; then
     if [ "$TENSORFLOW_REQUIRED" == "true" ]; then
