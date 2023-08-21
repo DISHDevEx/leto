@@ -116,7 +116,7 @@ install_module_requirements(){
 deploy_tensorflow_dependent_module(){
 cd $WORKING_DIRECTORY
 echo "Activating tensorflow"
-source activate tensorflow
+source activate /opt/tensorflow
 python -c "import tensorflow as tf; print(tf.__version__)"
 install_common_packages
 deploy_leto_repository
@@ -125,7 +125,7 @@ install_module_requirements
 deploy_pytorch_dependent_module(){
 cd $WORKING_DIRECTORY
 echo "Activating pytorch"
-source activate pytorch
+source activate /opt/conda/envs/pytorch
 python -c "import torch; print(torch.__version__)"
 install_common_packages
 deploy_leto_repository
