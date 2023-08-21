@@ -114,6 +114,7 @@ install_module_requirements(){
     fi
 }
 deploy_tensorflow_dependent_module(){
+cd $WORKING_DIRECTORY
 echo "Activating tensorflow"
 source activate tensorflow
 python -c "import tensorflow as tf; print(tf.__version__)"
@@ -122,6 +123,7 @@ deploy_leto_repository
 install_module_requirements
 }
 deploy_pytorch_dependent_module(){
+cd $WORKING_DIRECTORY
 echo "Activating pytorch"
 source activate pytorch
 python -c "import torch; print(torch.__version__)"
@@ -135,6 +137,7 @@ if [ "$LIBRARY_REQUIRED" == "Tensorflow" ]; then
 elif [ "$LIBRARY_REQUIRED" == "PyTorch" ]; then
     deploy_pytorch_dependent_module
 elif [ "$LIBRARY_REQUIRED" == "None"]; then
+    cd $WORKING_DIRECTORY
     install_common_packages
     setup_virtual_env
     deploy_leto_repository
