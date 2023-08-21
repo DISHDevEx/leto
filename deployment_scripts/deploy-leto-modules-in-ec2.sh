@@ -72,6 +72,7 @@ setup_virtual_env(){
         source ~/.bashrc
         conda init
         source ~/.bashrc
+        echo "conda deactivate" >> ~/.bashrc
         rm -rf Miniconda3.sh
         #Create new virtual conda environment
         conda create --name leto python=3.10.12 -y
@@ -126,8 +127,6 @@ install_module_requirements(){
 }
 deploy_tensorflow_dependent_module(){
     if [ -d "/home/ec2-user/miniconda3/envs/leto" ]; then
-        conda init bash
-        source ~/.bashrc
         conda deactivate #To deactivate conda - 'base' environment
         TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
     fi
@@ -154,8 +153,6 @@ deploy_tensorflow_dependent_module(){
 }
 deploy_pytorch_dependent_module(){
     if [ -d "/home/ec2-user/miniconda3/envs/leto" ]; then
-        conda init bash
-        source ~/.bashrc
         conda deactivate #To deactivate conda - 'base' environment
         PYTORCH_CHECK=$(pip list | grep torch | wc -l)
     fi
