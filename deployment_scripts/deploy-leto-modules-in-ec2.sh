@@ -21,13 +21,13 @@ install_common_packages(){
     #Update yum 
     sudo yum update -y
     #Install git
-    GIT_CHECK=$(sudo yum list installed git.x86_64 | grep git.x86_64 | wc -l)
-    if [ "$GIT_CHECK" -gt 0 ];then
-        echo "git package is already installed";git --version
+    if git --version &>/dev/null; then
+        git --version
+        echo "git package is already installed"
     else
         sudo yum install -y git
-        sudo yum list installed git.x86_64 | grep git.x86_64
-        echo "Successfully installed git";git --version
+        git --version
+        echo "Successfully installed git"
     fi
     #Install mesa-libGL
     MESA_CHECK=$(sudo yum list installed mesa-libGL.x86_64 | grep mesa-libGL.x86_64 | wc -l)
@@ -39,16 +39,15 @@ install_common_packages(){
         echo "Successfully installed mesa-libGL"
     fi
     #Install pip
-    PIP_CHECK=$(sudo yum list installed python3-pip | grep python3-pip | wc -l)
-    if [ "$PIP_CHECK" -gt 0 ];then
+    if pip --version &>/dev/null; then
+        pip --version
         echo "pip package is already installed"
-        alias python='python3'
-        alias pip='pip3'
+    elif pip3 --version &>/dev/null; then     
+        pip3 --version
+        echo "pip package is already installed"
     else
         sudo yum install -y python3-pip
-        sudo yum list installed python3-pip | grep python3-pip
-        alias python='python3'
-        alias pip='pip3'
+        pip3 --version
         echo "Successfully installed pip"
     fi
 }
@@ -60,7 +59,7 @@ setup_virtual_env(){
         source ~/.bashrc
         echo "conda environment named 'leto' already exist"
         echo "Activating 'leto' environment"
-        conda activate leto
+        conda activate /home/ec2-user/miniconda3/envs/leto
         conda env list
     else
         echo "Installing Miniconda3"
@@ -78,7 +77,7 @@ setup_virtual_env(){
         conda create --name leto python=3.10.12 -y
         conda env list
         #Activate leto environment
-        conda activate leto
+        conda activate /home/ec2-user/miniconda3/envs/leto
         conda env list
     fi
 }
@@ -118,64 +117,28 @@ install_module_requirements(){
     #Find the requirements file of the module
     cd $WORKING_DIRECTORY/leto/$MODULE_TYPE/$MODULE_NAME && fVar=$(find -type f -name 'requirements*.txt');
     FILE_NAME=${fVar:2}
-    if python -m pip install -r $WORKING_DIRECTORY/leto/$MODULE_TYPE/$MODULE_NAME/$FILE_NAME; then
-        pip list
+    if $1 -m $2 install -r $WORKING_DIRECTORY/leto/$MODULE_TYPE/$MODULE_NAME/$FILE_NAME; then
+        $2 list
         echo "Successfully installed requirements for $MODULE_NAME module."
     else
         echo "Requirements installation failed for $MODULE_NAME module."
     fi
 }
 deploy_tensorflow_dependent_module(){
-    if [ -d "/home/ec2-user/miniconda3/envs/leto" ]; then
-        conda deactivate #To deactivate conda - 'base' environment
-        TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
-    fi
-    if [ "$TENSORFLOW_CHECK" > 0 ]; then #Check for tensorflow availability in the base ami
-        echo "Activating tensorflow"
-        source activate tensorflow
-        python -c "import tensorflow as tf; print(tf.__version__)"
-        install_common_packages
-        deploy_leto_repository
-        install_module_requirements
-    fi
-#
-    if [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
-        TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
-    fi
-    if [ "$TENSORFLOW_CHECK" > 0 ]; then #Check for tensorflow availability in the base ami
-        echo "Activating tensorflow"
-        source activate tensorflow
-        python -c "import tensorflow as tf; print(tf.__version__)"
-        install_common_packages
-        deploy_leto_repository
-        install_module_requirements
-    fi
+echo "Activating tensorflow"
+source activate tensorflow
+python -c "import tensorflow as tf; print(tf.__version__)"
+install_common_packages
+deploy_leto_repository
+install_module_requirements python pip
 }
 deploy_pytorch_dependent_module(){
-    if [ -d "/home/ec2-user/miniconda3/envs/leto" ]; then
-        conda deactivate #To deactivate conda - 'base' environment
-        PYTORCH_CHECK=$(pip list | grep torch | wc -l)
-    fi
-    if [ "$PYTORCH_CHECK" > 0 ]; then #Check for pytorch availability in the base ami
-        echo "Activating pytorch"
-        source activate pytorch
-        python -c "import torch; print(torch.__version__)"
-        install_common_packages
-        deploy_leto_repository
-        install_module_requirements
-    fi
-#
-    if [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
-        PYTORCH_CHECK=$(pip list | grep tensorflow | wc -l)
-    fi
-    if [ "$PYTORCH_CHECK" > 0 ]; then #Check for tensorflow availability in the base ami
-        echo "Activating tensorflow"
-        source activate tensorflow
-        python -c "import torch; print(torch.__version__)"
-        install_common_packages
-        deploy_leto_repository
-        install_module_requirements
-    fi
+echo "Activating pytorch"
+source activate pytorch
+python -c "import torch; print(torch.__version__)"
+install_common_packages
+deploy_leto_repository
+install_module_requirements python3 pip3
 }
 #Check for module dependency and proceed further accordingly
 if [ "$TENSORFLOW_REQUIRED" == "true" ] || [ "$PYTORCH_REQUIRED" == "true" ]; then
@@ -188,5 +151,5 @@ else
     install_common_packages
     setup_virtual_env
     deploy_leto_repository
-    install_module_requirements
+    install_module_requirements python pip
 fi
