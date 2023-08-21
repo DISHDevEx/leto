@@ -159,6 +159,7 @@ def building_static_image(video_path, output_folder):
     cap.release()
 
     if static_frame is not None:
+        # building file path
         output_path = os.path.join(output_folder, video_name + ".jpg")
         cv2.imwrite(output_path, static_frame)
         print(f"Static frame saved as {output_path}")
