@@ -167,7 +167,7 @@ deploy_pytorch_dependent_module(){
     if [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         PYTORCH_CHECK=$(pip list | grep tensorflow | wc -l)
     fi
-    if [ $PYTORCH_CHECK -gt 0 ]; then #Check for tensorflow availability in the base ami
+    if [ "$PYTORCH_CHECK" -gt 0 ]; then #Check for tensorflow availability in the base ami
         echo "Activating tensorflow"
         source activate tensorflow
         python -c "import torch; print(torch.__version__)"
