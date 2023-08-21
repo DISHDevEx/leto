@@ -95,6 +95,7 @@ def building_static_image(video_path, output_folder):
 
 # Path to the video file
     video_path = video_path
+    video_path = os.path.basename(video_path)
     video_name = video_path.strip(".mp4")
 
     # Open the video file
