@@ -42,17 +42,13 @@ install_common_packages(){
     PIP_CHECK=$(sudo yum list installed python3-pip | grep python3-pip | wc -l)
     if [ "$PIP_CHECK" -gt 0 ];then
         echo "pip package is already installed"
-        if python3 --version && pip3 --version; then
-            alias python='python3'
-            alias pip='pip3'
-        fi
+        alias python='python3'
+        alias pip='pip3'
     else
         sudo yum install -y python3-pip
         sudo yum list installed python3-pip | grep python3-pip
-        if python3 --version && pip3 --version; then
-            alias python='python3'
-            alias pip='pip3'
-        fi
+        alias python='python3'
+        alias pip='pip3'
         echo "Successfully installed pip"
     fi
 }
@@ -133,7 +129,7 @@ deploy_tensorflow_dependent_module(){
         conda deactivate #To deactivate conda - 'base' environment
         TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
     fi
-    if [ $TENSORFLOW_CHECK -gt 0 ]; then #Check for tensorflow availability in the base ami
+    if [ "$TENSORFLOW_CHECK" -gt 0 ]; then #Check for tensorflow availability in the base ami
         echo "Activating tensorflow"
         source activate tensorflow
         python -c "import tensorflow as tf; print(tf.__version__)"
@@ -145,7 +141,7 @@ deploy_tensorflow_dependent_module(){
     if [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
     fi
-    if [ $TENSORFLOW_CHECK -gt 0 ]; then #Check for tensorflow availability in the base ami
+    if [ "$TENSORFLOW_CHECK" -gt 0 ]; then #Check for tensorflow availability in the base ami
         echo "Activating tensorflow"
         source activate tensorflow
         python -c "import tensorflow as tf; print(tf.__version__)"
@@ -159,7 +155,7 @@ deploy_pytorch_dependent_module(){
         conda deactivate #To deactivate conda - 'base' environment
         PYTORCH_CHECK=$(pip list | grep torch | wc -l)
     fi
-    if [ $PYTORCH_CHECK -gt 0 ]; then #Check for pytorch availability in the base ami
+    if [ "$PYTORCH_CHECK" -gt 0 ]; then #Check for pytorch availability in the base ami
         echo "Activating pytorch"
         source activate pytorch
         python -c "import torch; print(torch.__version__)"
