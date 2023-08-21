@@ -87,6 +87,7 @@ def background_subtractor(input_folder, output_folder):
         encoded_video_name = os.path.join(output_folder, video_name)
         cmd = f"static_ffmpeg -y -i {output_filename} -c:v libx264  -crf 34 -preset veryfast {encoded_video_name}.mp4"
         subprocess.run(cmd, shell=True)
+        os.remove(output_filename)
 
 def building_static_image(video_path, output_folder):
     """This method helps to extract static frame from the video. 
