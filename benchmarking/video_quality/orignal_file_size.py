@@ -1,15 +1,20 @@
 import os
+import subprocess
+import sys
 import boto3
 import logging
-import configparser
 logging.info("running reduction module")
 
-# load and allocate config file
-config = configparser.ConfigParser(inline_comment_prefixes=';')
-config.read('../../config.ini')
-s3 = config['DEFAULT']
-method = config['benchmarking']
-logging.info("successfully loaded config file")
+# get git repo root level
+root_path = subprocess.run(
+    ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=False
+).stdout.rstrip("\n")
+
+# add git repo path to use all libraries
+sys.path.append(root_path)
+
+from utilities import ConfigHandler
+
 class FileSizeUploader:
     def __init__(self, bucket_name, table_name):
         self.dynamodb = boto3.resource('dynamodb')
@@ -51,8 +56,14 @@ class FileSizeUploader:
             print(f"Error getting S3 file locations: {e}")
             return []
 
-table_name = "orignal_video_size"
-uploader = FileSizeUploader("leto-dish", "leto_orignal_file_sizes")
-directory_key = 'original-videos/benchmark/violencedetection/'
+
+
+config = ConfigHandler('benchmarking.original_file_size')
+s3 = config.s3
+method = config.method
+
+
+uploader = FileSizeUploader(s3['input_bucket_s3'], method['table_name'])
+directory_key = method['directory_key']
 s3_file_locations = uploader.get_s3_file_locations(directory_key)
 uploader.process_and_upload(s3_file_locations)
