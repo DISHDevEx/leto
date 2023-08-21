@@ -76,6 +76,7 @@ jobs:
     - name: Checking parameters being passed to the shell script
       run: |
         echo ${{ github.event.inputs.git_branch }}
+        echo ${{ github.event.inputs.module_type }}
         echo ${{ github.event.inputs.module }}
         echo ${{ github.event.inputs.library_required }}
         
