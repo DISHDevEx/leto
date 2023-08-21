@@ -5,11 +5,13 @@
 #Set variable values 
 WORKING_DIRECTORY="/home/ec2-user"
 GIT_BRANCH=$1
-MODULE_TYPE=$2
+MODULE_TYPE=$(echo $2 | tr '[:upper:]' '[:lower:]') #Converting value from uppercase to lowercase
 MODULE_NAME=$3
 LIBRARY_REQUIRED=$4
 TENSORFLOW_REQUIRED=false
 PYTORCH_REQUIRED=false
+PIP_COMMAND="pip"
+PYTHON_COMMAND="python"
 #Update variable values based on input parameter value
 if [ "$LIBRARY_REQUIRED" == "Tensorflow" ]; then
     TENSORFLOW_REQUIRED=true
@@ -41,10 +43,18 @@ install_common_packages(){
     #Install pip
     PIP_CHECK=$(sudo yum list installed python3-pip | grep python3-pip | wc -l)
     if [ "$PIP_CHECK" -gt 0 ];then
-        echo "Pip package is already installed"
+        echo "pip package is already installed"
+        if command -v pip3 &> /dev/null; then
+            PIP_COMMAND="pip3"
+            PYTHON_COMMAND="python3"
+        fi
     else
         sudo yum install -y python3-pip
         sudo yum list installed python3-pip | grep python3-pip
+        if command -v pip3 &> /dev/null; then
+            PIP_COMMAND="pip3"
+            PYTHON_COMMAND="python3"
+        fi
         echo "Successfully installed pip"
     fi
 }
@@ -113,98 +123,60 @@ install_module_requirements(){
     #Find the requirements file of the module
     cd $WORKING_DIRECTORY/leto/$MODULE_TYPE/$MODULE_NAME && fVar=$(find -type f -name 'requirements*.txt');
     FILE_NAME=${fVar:2}
-    # Check if 'pip' is available
-    if command -v pip &> /dev/null; then
-    # 'pip' is available, use it
-        if python -m pip install -r $WORKING_DIRECTORY/leto/$MODULE_TYPE/$MODULE_NAME/$FILE_NAME; then
-            pip list
-            echo "Successfully installed requirements for $MODULE_NAME module."
-        else
-            echo "Requirements installation failed for $MODULE_NAME module."
-        fi
-# 'pip' is not available, try 'pip3'
-    elif command -v pip3 &> /dev/null; then
-        if python -m pip3 install -r $WORKING_DIRECTORY/leto/$MODULE_TYPE/$MODULE_NAME/$FILE_NAME; then
-            pip list
-            echo "Successfully installed requirements for $MODULE_NAME module."
-        else
-            echo "Requirements installation failed for $MODULE_NAME module."
-        fi
+    if python -m $PIP_COMMAND install -r $WORKING_DIRECTORY/leto/$MODULE_TYPE/$MODULE_NAME/$FILE_NAME; then
+        $PIP_COMMAND list
+        echo "Successfully installed requirements for $MODULE_NAME module."
     else
-        echo "Error: 'pip' and 'pip3' are not installed. Please install either 'pip' or 'pip3' and try again."
-        exit 1
+        echo "Requirements installation failed for $MODULE_NAME module."
     fi
 }
 deploy_tensorflow_dependent_module(){
-    install_common_packages
     if [ -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         conda deactivate #To deactivate conda - 'base' environment
-        # Check if 'pip' is available
-        if command -v pip &> /dev/null; then
-        # 'pip' is available, use it
-            TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
-        else
-        # 'pip' is not available, try 'pip3'
-        if command -v pip3 &> /dev/null; then
-            TENSORFLOW_CHECK=$(pip3 list | grep tensorflow | wc -l)
-        else
-            echo "Error: 'pip' and 'pip3' are not installed. Please install 'pip3' and try again."
-            exit 1
-        fi
+        TENSORFLOW_CHECK=$($PIP_COMMAND list | grep tensorflow | wc -l)
     fi
-        if [ $TENSORFLOW_CHECK -gt 0 ]; then #Check for tensorflow availability in the base ami
-            echo "Activating tensorflow"
-            source activate tensorflow
-            python -c "import tensorflow as tf; print(tf.__version__)"
-        fi
+    if [ $TENSORFLOW_CHECK -gt 0 ]; then #Check for tensorflow availability in the base ami
+        echo "Activating tensorflow"
+        source activate tensorflow
+        $PYTHON_COMMAND -c "import tensorflow as tf; print(tf.__version__)"
         install_common_packages
         deploy_leto_repository
         install_module_requirements
-    elif [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
-        TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
-        if [ $TENSORFLOW_CHECK -gt 0 ]; then #Check for tensorflow availability in the base ami
-            echo "Activating tensorflow"
-            source activate tensorflow
-            python -c "import tensorflow as tf; print(tf.__version__)"
-        fi
+    fi
+#
+    if [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
+        TENSORFLOW_CHECK=$($PIP_COMMAND list | grep tensorflow | wc -l)
+    fi
+    if [ $TENSORFLOW_CHECK -gt 0 ]; then #Check for tensorflow availability in the base ami
+        echo "Activating tensorflow"
+        source activate tensorflow
+        $PYTHON_COMMAND -c "import tensorflow as tf; print(tf.__version__)"
         install_common_packages
         deploy_leto_repository
         install_module_requirements
     fi
 }
 deploy_pytorch_dependent_module(){
-    install_common_packages
     if [ -d "/home/ec2-user/miniconda3/envs/leto" ]; then
-        conda deactivate #To deactivate conda - 'leto' environment
         conda deactivate #To deactivate conda - 'base' environment
-        # Check if 'pip' is available
-        if command -v pip &> /dev/null; then
-        # 'pip' is available, use it
-            PYTORCH_CHECK=$(pip list | grep tensorflow | wc -l)
-        else
-        # 'pip' is not available, try 'pip3'
-        if command -v pip3 &> /dev/null; then
-            PYTORCH_CHECK=$(pip3 list | grep tensorflow | wc -l)
-        else
-            echo "Error: 'pip' and 'pip3' are not installed. Please install 'pip3' and try again."
-            exit 1
-        fi
+        TENSORFLOW_CHECK=$($PIP_COMMAND list | grep torch | wc -l)
     fi
-        if [ $PYTORCH_CHECK -gt 0 ]; then #Check for pytorch availability in the base ami
-            echo "Activating pytorch"
-            source activate pytorch
-            python -c "import torch; print(torch.__version__)"
-        fi
+    if [ $TENSORFLOW_CHECK -gt 0 ]; then #Check for pytorch availability in the base ami
+        echo "Activating pytorch"
+        source activate pytorch
+        $PYTHON_COMMAND -c "import torch; print(torch.__version__)"
         install_common_packages
         deploy_leto_repository
         install_module_requirements
-    elif [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
-        PYTORCH_CHECK=$(pip3 list | grep torch | wc -l)
-        if [ $PYTORCH_CHECK -gt 0 ]; then #Check for pytorch availability in the base ami
-            echo "Activating pytorch"
-            source activate pytorch
-            python -c "import torch; print(torch.__version__)"
-        fi
+    fi
+#
+    if [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
+        TENSORFLOW_CHECK=$($PIP_COMMAND list | grep tensorflow | wc -l)
+    fi
+    if [ $TENSORFLOW_CHECK -gt 0 ]; then #Check for tensorflow availability in the base ami
+        echo "Activating tensorflow"
+        source activate tensorflow
+        $PYTHON_COMMAND -c "import torch; print(torch.__version__)"
         install_common_packages
         deploy_leto_repository
         install_module_requirements
