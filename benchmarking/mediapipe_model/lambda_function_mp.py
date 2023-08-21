@@ -55,6 +55,12 @@ def handler(event, context):
 
 
 
+        mAC = object_detection(mp_model, video.get_file().strip("'"), mp_output_video)
+
+        video_location = f's3://{bucket}/{key}'
+
+        return {video_location : mAC }
+
 
     except Exception as e:
         print(e)

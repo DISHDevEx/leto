@@ -1,7 +1,3 @@
-Reduction modules deployment in AWS EC2 instance with shell scripts:
---------------------------------------------------------------------
-The [reduction](https://github.com/DISHDevEx/leto/tree/main/reduction/) modules are used to take the input video file from the source S3 path, reduce the resolution, label it, and then upload the processed video to the destination S3 path.
-
 Prerequisite:
 -------------
 In order to run the ssm commands in GitHub workflow as 'ec2-user', you need to configure your AWS Session Manager to run as 'ec2-user' by following below steps:
@@ -11,6 +7,10 @@ a)Open AWS Systems Manager > Go to Session Manager page > Got to Preferences tab
 b)Now, enter 'ec2-user' as value for 'Operating system user name'
 
 c)Scroll down and update 'ssm-user' as 'ec2-user' in the 'Linux shell profile' section > Scroll down and click 'Save' button.
+
+Reduction modules deployment in AWS EC2 instance with shell scripts:
+--------------------------------------------------------------------
+The [reduction](https://github.com/DISHDevEx/leto/tree/main/reduction/) modules are used to take the input video file from the source S3 path, reduce the resolution, label it, and then upload the processed video to the destination S3 path.
 
 The module is deployed using shell scripts in AWS EC2 instance as per the below steps:
 
@@ -40,6 +40,41 @@ c)Enter reduction module name: "Enter respective reduction module name" #Reducti
 a)Download the 'deploy-reduction-modules-in-ec2.sh' to EC2
 
 b)Execute the 'deploy-reduction-modules-in-ec2.sh' script in EC2
+
+5.Post workflow execution, validate the changes by loging to the respective EC2 instance and check if the respective module requirements are installed in the EC2 or not.
+
+Reconstruction modules deployment in AWS EC2 instance with shell scripts:
+-------------------------------------------------------------------------
+The [reconstruction](https://github.com/DISHDevEx/leto/tree/main/reconstruction/) modules are used to take the input video file from the source - reduced videos S3 path, upscale the resolution, label it, and then upload the reconstructed video to the destination S3 path.
+
+The module is deployed using shell scripts in AWS EC2 instance as per the below steps:
+
+1.Create an AWS EC2 Amazon Linux instance using 'Create new EC2 instance' workflow in the leto repository with the following parameters:
+
+a)Enter name of the EC2: "Enter desired name for EC2 instance"
+
+b)Enter AMI id for the EC2: {e.g. ami-0f34c5ae932e6f0e4} #Recommended AMI id for reduction moudles: ami-0f598ecd07418eba2
+
+c)Enter EC2 instance type: {e.g. t3.small}
+
+2.Login to the EC2 instance as 'ec2-user' to ensure it is up and running as expected. 
+  Also, copy the respective EC2 instance id as we have to pass it as a parameter in the next step.
+
+3.Then execute the 'deploy-reconstuction-modules-in-ec2' workflow in the leto repository with following parameters:
+
+a)Enter EC2 instance id: "Enter respective EC2 instance id" #Instance id entry is required
+
+b)Enter Git branch name: "Enter desired branch name" #This entry is optional and default branch value is 'main'
+
+c)Enter reconstruction module name: "Enter respective reconstruction module name" #Reduction module name entry is required
+
+  Note: This reduction module 'name' should be the same as the respective module 'folder name' under the 'reconstruction' directory in the GitHub - leto repository.
+
+4.The 'deploy-reconstruction-modules-in-ec2.sh' script will do the following steps in the EC2:
+
+a)Download the 'deploy-reconstruction-modules-in-ec2.sh' to EC2
+
+b)Execute the 'deploy-reconstruction-modules-in-ec2.sh' script in EC2
 
 5.Post workflow execution, validate the changes by loging to the respective EC2 instance and check if the respective module requirements are installed in the EC2 or not.
 
