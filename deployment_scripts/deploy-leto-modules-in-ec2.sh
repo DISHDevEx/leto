@@ -128,7 +128,7 @@ deploy_tensorflow_dependent_module(){
     if [ -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         conda deactivate #To deactivate conda - 'base' environment
         TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
-        echo "$TENSORFLOW_CHECK"
+        ((TENSORFLOW_CHECK=TENSORFLOW_CHECK))
     fi
     if [ "$TENSORFLOW_CHECK" -gt 0 ]; then #Check for tensorflow availability in the base ami
         echo "Activating tensorflow"
@@ -141,7 +141,7 @@ deploy_tensorflow_dependent_module(){
 #
     if [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
-        echo "$TENSORFLOW_CHECK"
+        ((TENSORFLOW_CHECK=TENSORFLOW_CHECK))
     fi
     if [ "$TENSORFLOW_CHECK" -gt 0 ]; then #Check for tensorflow availability in the base ami
         echo "Activating tensorflow"
@@ -156,6 +156,7 @@ deploy_pytorch_dependent_module(){
     if [ -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         conda deactivate #To deactivate conda - 'base' environment
         PYTORCH_CHECK=$(pip list | grep torch | wc -l)
+        ((PYTORCH_CHECK=PYTORCH_CHECK))
     fi
     if [ "$PYTORCH_CHECK" -gt 0 ]; then #Check for pytorch availability in the base ami
         echo "Activating pytorch"
@@ -168,6 +169,7 @@ deploy_pytorch_dependent_module(){
 #
     if [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         PYTORCH_CHECK=$(pip list | grep tensorflow | wc -l)
+        ((PYTORCH_CHECK=PYTORCH_CHECK))
     fi
     if [ "$PYTORCH_CHECK" -gt 0 ]; then #Check for tensorflow availability in the base ami
         echo "Activating tensorflow"
