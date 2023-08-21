@@ -1,6 +1,7 @@
 import subprocess
 import sys
 import boto3
+import botocore.config
 import json
 
 # get git repo root level
@@ -17,12 +18,15 @@ config = ConfigHandler('benchmarking.mp_confidence')
 s3 = config.s3
 method = config.method
 
-
 # Create a Lambda client
-lambda_client = boto3.client('lambda', region_name=s3['region'])
+config = botocore.config.Config(
+    read_timeout=900,
+    connect_timeout=900,
+    retries={"max_attempts": 0}
+)
+lambda_client = boto3.client('lambda', region_name=s3['region'], config=config)
 
 # Lambda function name
-
 function_name = method['function_name']
 
 # Payload data
@@ -35,7 +39,7 @@ payload = {
 # Call the Lambda function
 response = lambda_client.invoke(
     FunctionName=function_name,
-    InvocationType=method['invocation_type'], 
+    InvocationType=method['invocation_type'],
     Payload=json.dumps(payload)
 )
 
