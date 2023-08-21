@@ -127,6 +127,7 @@ install_module_requirements(){
 deploy_tensorflow_dependent_module(){
     if [ -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         conda init bash
+        source ~/.bashrc
         conda deactivate #To deactivate conda - 'base' environment
         TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
     fi
@@ -154,6 +155,7 @@ deploy_tensorflow_dependent_module(){
 deploy_pytorch_dependent_module(){
     if [ -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         conda init bash
+        source ~/.bashrc
         conda deactivate #To deactivate conda - 'base' environment
         PYTORCH_CHECK=$(pip list | grep torch | wc -l)
     fi
