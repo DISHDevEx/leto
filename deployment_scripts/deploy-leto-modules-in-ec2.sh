@@ -130,7 +130,7 @@ deploy_tensorflow_dependent_module(){
         TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
         ((TENSORFLOW_CHECK=TENSORFLOW_CHECK))
     fi
-    if [ "$TENSORFLOW_CHECK" -gt 0 ]; then #Check for tensorflow availability in the base ami
+    if [ "$TENSORFLOW_CHECK" > 0 ]; then #Check for tensorflow availability in the base ami
         echo "Activating tensorflow"
         source activate tensorflow
         python -c "import tensorflow as tf; print(tf.__version__)"
@@ -143,7 +143,7 @@ deploy_tensorflow_dependent_module(){
         TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
         ((TENSORFLOW_CHECK=TENSORFLOW_CHECK))
     fi
-    if [ "$TENSORFLOW_CHECK" -gt 0 ]; then #Check for tensorflow availability in the base ami
+    if [ "$TENSORFLOW_CHECK" > 0 ]; then #Check for tensorflow availability in the base ami
         echo "Activating tensorflow"
         source activate tensorflow
         python -c "import tensorflow as tf; print(tf.__version__)"
@@ -156,9 +156,8 @@ deploy_pytorch_dependent_module(){
     if [ -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         conda deactivate #To deactivate conda - 'base' environment
         PYTORCH_CHECK=$(pip list | grep torch | wc -l)
-        ((PYTORCH_CHECK=PYTORCH_CHECK))
     fi
-    if [ "$PYTORCH_CHECK" -gt 0 ]; then #Check for pytorch availability in the base ami
+    if [ "$PYTORCH_CHECK" > 0 ]; then #Check for pytorch availability in the base ami
         echo "Activating pytorch"
         source activate pytorch
         python -c "import torch; print(torch.__version__)"
@@ -169,9 +168,8 @@ deploy_pytorch_dependent_module(){
 #
     if [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         PYTORCH_CHECK=$(pip list | grep tensorflow | wc -l)
-        ((PYTORCH_CHECK=PYTORCH_CHECK))
     fi
-    if [ "$PYTORCH_CHECK" -gt 0 ]; then #Check for tensorflow availability in the base ami
+    if [ "$PYTORCH_CHECK" > 0 ]; then #Check for tensorflow availability in the base ami
         echo "Activating tensorflow"
         source activate tensorflow
         python -c "import torch; print(torch.__version__)"
