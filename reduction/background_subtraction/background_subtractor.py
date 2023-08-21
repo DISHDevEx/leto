@@ -58,7 +58,7 @@ def background_subtractor(input_folder, output_folder):
         backSub = cv2.createBackgroundSubtractorMOG2()
 
         # Variable to store the background image
-        background_img = None
+        building_static_image(video_path, output_folder)
 
         while True:
             ret, frame = capture.read()
@@ -67,11 +67,6 @@ def background_subtractor(input_folder, output_folder):
 
             # Update the background model
             fgMask = backSub.apply(frame)
-
-            # Capture the initial frame as the background
-            if background_img is None:
-                background_img = frame.copy()
-
             # Get the frame number and write it on the current frame
             cv2.rectangle(frame, (10, 2), (100, 20), (255, 255, 255), -1)
             cv2.putText(frame, str(capture.get(cv2.CAP_PROP_POS_FRAMES)), (15, 15),
@@ -87,16 +82,85 @@ def background_subtractor(input_folder, output_folder):
             if keyboard == ord('q') or keyboard == 27:
                 break
 
-        # Save the background image as a JPG file
-        background_img_filename = os.path.join(output_folder, video_name + "_background.jpg")
-        cv2.imwrite(background_img_filename, background_img)
-
         # Release video capture and writer objects
         capture.release()
         out.release()
         encoded_video_name = os.path.join(output_folder, video_name + "_masked_encoded")
         cmd = f"static_ffmpeg -y -i {output_filename} -c:v libx264  -crf 34 -preset veryfast {encoded_video_name}.mp4"
         subprocess.run(cmd, shell=True)
+
+def building_static_image(video_path, output_folder):
+
+# Path to the video file
+    video_path = video_path
+    video_name = video_path.strip(".mp4")
+
+    # Open the video file
+    cap = cv2.VideoCapture(video_path)
+
+    if not cap.isOpened():
+        print("Error opening video file")
+        exit()
+
+    # Read the first frame and convert it to grayscale for the first reference
+    ret, first_frame = cap.read()
+    if not ret:
+        print("Error reading the first frame")
+        exit()
+
+    first_frame_gray = cv2.cvtColor(first_frame, cv2.COLOR_BGR2GRAY)
+
+    # Get the total number of frames in the video
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    print(total_frames)
+
+    # Set the video capture to the last frame
+    cap.set(cv2.CAP_PROP_POS_FRAMES, total_frames - 1)
+
+    # Read the last frame and convert it to grayscale for the second reference
+    ret, last_frame = cap.read()
+    if not ret:
+        print("Error reading the last frame")
+        exit()
+
+    last_frame_gray = cv2.cvtColor(last_frame, cv2.COLOR_BGR2GRAY)
+
+    # Parameters for frame comparison
+    static_frame = None
+    static_frame_diff = float('inf')  # Initialize with a high value
+    # re-initialize the frame number
+    cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+
+    while True:
+        ret, frame = cap.read()
+        #print(ret)
+
+        if not ret:
+            break
+
+        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        first_frame_diff = cv2.absdiff(gray_frame, first_frame_gray)
+        #print(first_frame_diff)
+        last_frame_diff = cv2.absdiff(gray_frame, last_frame_gray)
+        #print(last_frame_diff)
+
+        frame_diff_sum = cv2.sumElems(first_frame_diff)[0] + cv2.sumElems(last_frame_diff)[0]
+
+        if frame_diff_sum < static_frame_diff:
+            static_frame_diff = frame_diff_sum
+            static_frame = frame.copy()
+    #     else:
+    #         static_frame_diff = min(first_frame_diff, last_frame_diff)
+    #         static_frame = frame.copy()
+    cap.release()
+
+    if static_frame is not None:
+        output_path = os.path.join(output_folder, video_name + ".jpg")
+        cv2.imwrite(output_path, static_frame)
+        print(f"Static frame saved as {output_path}")
+    else:
+        print("No static frame found in the video.")
 
 
 
