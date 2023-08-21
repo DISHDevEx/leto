@@ -4,10 +4,12 @@ Module to contain the handler function for the YOLO lambda function. This file i
 import boto3
 import os
 from yolo import Yolo
-from aEye import Video
+
 from pipeline import pipeline
 import urllib.parse
 
+s3_client = boto3.client("s3")
+dynamodb = boto3.resource('dynamodb')
 
 def handler(event, context):
     """
@@ -19,36 +21,61 @@ def handler(event, context):
             The s3 path information for mediapipe's object detection model to be applied on.
     """
     print("Loading function")
+    print(os.system("ls"))
 
-    s3_client = boto3.client("s3")
+    score = {}
 
     yolo_model = Yolo()
     yolo_model.load_model_weight("yolov8s.pt")
 
-    bucket = event["Records"][0]["s3"]["bucket"]["name"]
-    key = urllib.parse.unquote_plus(
-        event["Records"][0]["s3"]["object"]["key"], encoding="utf-8"
-    )
+    bucket_name = event["bucket_name"]
+    folder_path = event["folder_path"]
+    dynamodb_table = event["dynamodb_table"]
 
     try:
-        video = Video(bucket=bucket, key=key)
+        # Retrieve the list of object keys from the specified bucket
+        s3_keys = list_object_keys(bucket_name, folder_path)
 
-        yolo_output_video = os.path.join(
-            "/tmp", os.path.basename("yolo_" + video.get_title())
-        )
+        for key in s3_keys:
 
-        mAC = pipeline(video.get_file().strip("'"), yolo_model, yolo_output_video)
+            # Download the video from S3 to Lambda's /tmp directory
+            local_filename = '/tmp/' + os.path.basename(key)
+            s3_client.download_file(bucket_name, key, local_filename)
 
-        video_location = f's3://{bucket}/{key}'
+            # Process the downloaded video
 
-        return {video_location : mAC }
-        
+            mAC = pipeline(local_filename, yolo_model, "")
+            if len(mAC):
+                mean_average_confidence = sum(mAC.values()) / len(mAC)
+
+
+            os.remove(local_filename)
+            score.update({key: mean_average_confidence})
+            table_name = dynamodb_table
+
+            table = dynamodb.Table(table_name)
+            try:
+                response = table.put_item(Item={'video_location':  key, 'score': str(mean_average_confidence)})
+                print('Uploaded location:', key)
+            except Exception as e:
+                print('Error uploading metric:', mean_average_confidence, e)
+            print({key: mean_average_confidence})
+
+        return score
 
     except Exception as e:
         print(e)
         print(
             "Error getting object {} from bucket {}. Make sure they exist and your bucket is in the same region as this function.".format(
-                key, bucket
+                folder_path, bucket_name
             )
         )
         raise e
+
+def list_object_keys(bucket_name, folder_path):
+    keys = []
+    response = s3_client.list_objects_v2(Bucket=bucket_name,Prefix=folder_path)
+    if 'Contents' in response:
+        for obj in response['Contents']:
+            keys.append(obj['Key'])
+    return keys[1:]

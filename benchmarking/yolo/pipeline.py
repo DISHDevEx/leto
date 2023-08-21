@@ -3,7 +3,7 @@ Module contains the pipeline to faciliate and apply a yolo model to predict fram
 This pipeline will call visualize_yolo to visualize the result from the prediction.
 """
 
-from .visualize import visualize_yolo
+from visualize import visualize_yolo
 import cv2
 
 
