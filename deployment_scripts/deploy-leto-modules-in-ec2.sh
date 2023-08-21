@@ -213,8 +213,10 @@ deploy_pytorch_dependent_module(){
 if [ "$TENSORFLOW_REQUIRED" == "true" ] || [ "$PYTORCH_REQUIRED" == "true" ]; then
     if [ "$TENSORFLOW_REQUIRED" == "true" ]; then
         deploy_tensorflow_dependent_module
-    elif [ "$PYTORCH_REQUIRED" == "true" ]; then
-        deploy_pytorch_dependent_module
+    else
+        if [ "$PYTORCH_REQUIRED" == "true" ]; then
+            deploy_pytorch_dependent_module
+        fi
     fi
 else
     install_common_packages
