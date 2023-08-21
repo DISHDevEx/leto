@@ -4,6 +4,7 @@ import logging
 import os
 from utilities import ConfigHandler
 
+
 def background_addition(video_path, image_path, output_path):
     """This methods adds static background to masked image
     Parameters
@@ -66,6 +67,7 @@ def main():
                 output video S3 path.'''
     
     config = ConfigHandler('reduction.background_addition')
+  
     s3 = config.s3
     method = config.method
     aux = Aux()
