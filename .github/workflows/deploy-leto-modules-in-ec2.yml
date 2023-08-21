@@ -20,6 +20,15 @@ on:
         required: false
         type: string
         default: main
+      module_type:
+        # Description to be shown in the UI
+        description: Select module type
+        #Module type selection is mandatory
+        required: true
+        type: choice
+        options:
+            - Reduction
+            - Reconstruction
       module:
         # Description to be shown in the UI
         description: Enter reconstruction module name
@@ -75,5 +84,5 @@ jobs:
       run: |
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
-        --parameters '{"command": ["bash /home/ec2-user/deploy-leto-modules-in-ec2.sh ${{ github.event.inputs.git_branch }} ${{ github.event.inputs.module }} ${{ github.event.inputs.library_required }}"]}' \
+        --parameters '{"command": ["bash /home/ec2-user/deploy-leto-modules-in-ec2.sh ${{ github.event.inputs.git_branch }} ${{ github.event.inputs.module_type }} ${{ github.event.inputs.module }} ${{ github.event.inputs.library_required }}"]}' \
         --target ${{ github.event.inputs.instance_id }}
