@@ -42,9 +42,6 @@ install_common_packages(){
     if pip --version &>/dev/null; then
         pip --version
         echo "pip package is already installed"
-    elif pip3 --version &>/dev/null; then     
-        pip3 --version
-        echo "pip package is already installed"
     else
         sudo yum install -y python3-pip
         pip3 --version
@@ -117,8 +114,8 @@ install_module_requirements(){
     #Find the requirements file of the module
     cd $WORKING_DIRECTORY/leto/$MODULE_TYPE/$MODULE_NAME && fVar=$(find -type f -name 'requirements*.txt');
     FILE_NAME=${fVar:2}
-    if $1 -m $2 install -r $WORKING_DIRECTORY/leto/$MODULE_TYPE/$MODULE_NAME/$FILE_NAME; then
-        $2 list
+    if python -m pip install -r $WORKING_DIRECTORY/leto/$MODULE_TYPE/$MODULE_NAME/$FILE_NAME; then
+        pip list
         echo "Successfully installed requirements for $MODULE_NAME module."
     else
         echo "Requirements installation failed for $MODULE_NAME module."
@@ -130,7 +127,7 @@ source activate tensorflow
 python -c "import tensorflow as tf; print(tf.__version__)"
 install_common_packages
 deploy_leto_repository
-install_module_requirements python pip
+install_module_requirements
 }
 deploy_pytorch_dependent_module(){
 echo "Activating pytorch"
@@ -138,7 +135,7 @@ source activate pytorch
 python -c "import torch; print(torch.__version__)"
 install_common_packages
 deploy_leto_repository
-install_module_requirements python3 pip3
+install_module_requirements
 }
 #Check for module dependency and proceed further accordingly
 if [ "$TENSORFLOW_REQUIRED" == "true" ] || [ "$PYTORCH_REQUIRED" == "true" ]; then
@@ -151,5 +148,5 @@ else
     install_common_packages
     setup_virtual_env
     deploy_leto_repository
-    install_module_requirements python pip
+    install_module_requirements
 fi
