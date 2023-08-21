@@ -43,17 +43,15 @@ install_common_packages(){
     if [ "$PIP_CHECK" -gt 0 ];then
         echo "pip package is already installed"
         if python3 --version && pip3 --version; then
-            echo "alias python='python3'" >> ~/.bashrc
-            echo "alias pip='pip3'" >> ~/.bashrc
-            source ~/.bashrc
+            alias python='python3'
+            alias pip='pip3'
         fi
     else
         sudo yum install -y python3-pip
         sudo yum list installed python3-pip | grep python3-pip
         if python3 --version && pip3 --version; then
-            echo "alias python='python3'" >> ~/.bashrc
-            echo "alias pip='pip3'" >> ~/.bashrc
-            source ~/.bashrc
+            alias python='python3'
+            alias pip='pip3'
         fi
         echo "Successfully installed pip"
     fi
