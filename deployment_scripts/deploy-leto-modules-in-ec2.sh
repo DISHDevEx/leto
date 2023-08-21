@@ -8,14 +8,6 @@ GIT_BRANCH=$1
 MODULE_TYPE=$(echo $2 | tr '[:upper:]' '[:lower:]') #Converting value from uppercase to lowercase
 MODULE_NAME=$3
 LIBRARY_REQUIRED=$4
-TENSORFLOW_REQUIRED=false
-PYTORCH_REQUIRED=false
-#Update variable values based on input parameter value
-if [ "$LIBRARY_REQUIRED" == "Tensorflow" ]; then
-    TENSORFLOW_REQUIRED=true
-elif [ "$LIBRARY_REQUIRED" == "PyTorch" ]; then
-    PYTORCH_REQUIRED=true
-fi
 #Functions used for Reduction/Reconstruction modules deployment in AWS EC2 instance
 install_common_packages(){
     #Update yum 
@@ -138,13 +130,11 @@ deploy_leto_repository
 install_module_requirements
 }
 #Check for module dependency and proceed further accordingly
-if [ "$TENSORFLOW_REQUIRED" == "true" ] || [ "$PYTORCH_REQUIRED" == "true" ]; then
-    if [ "$TENSORFLOW_REQUIRED" == "true" ]; then
-        deploy_tensorflow_dependent_module
-    elif [ "$PYTORCH_REQUIRED" == "true" ]; then
-        deploy_pytorch_dependent_module
-    fi
-else
+if [ "$LIBRARY_REQUIRED" == "Tensorflow" ]; then
+    deploy_tensorflow_dependent_module
+elif [ "$LIBRARY_REQUIRED" == "PyTorch" ]; then
+    deploy_pytorch_dependent_module
+elif [ "$LIBRARY_REQUIRED" == "None"]; then
     install_common_packages
     setup_virtual_env
     deploy_leto_repository

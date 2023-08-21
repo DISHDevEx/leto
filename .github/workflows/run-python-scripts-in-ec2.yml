@@ -13,6 +13,17 @@ on:
         #Instance id entry is mandatory
         required: true
         type: string
+      library_required:
+      # Description to be shown in the UI
+      description: Select library required
+      #Library selection is mandatory
+      required: true
+      type: choice
+      default: None
+      options:
+          - None
+          - Tensorflow
+          - PyTorch
       python_file_path:
         # Description to be shown in the UI
         description: Enter python file path in leto repository
@@ -44,7 +55,7 @@ jobs:
         sudo apt-get -y install expect-dev
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
-        --parameters '{"command": ["curl -o /home/ec2-user/run-python-scripts-in-ec2.sh https://raw.githubusercontent.com/DISHDevEx/leto/main/deployment_scripts/run-python-scripts-in-ec2.sh"]}' \
+        --parameters '{"command": ["curl -o /home/ec2-user/run-python-scripts-in-ec2.sh https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/common-workflow/deployment_scripts/run-python-scripts-in-ec2.sh"]}' \
         --target ${{ github.event.inputs.instance_id }}
 
     - name: Checking parameters being passed to the shell script
@@ -55,5 +66,5 @@ jobs:
       run: |
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
-        --parameters '{"command": ["bash /home/ec2-user/run-python-scripts-in-ec2.sh ${{ github.event.inputs.python_file_path }}"]}' \
+        --parameters '{"command": ["bash /home/ec2-user/run-python-scripts-in-ec2.sh ${{ github.event.inputs.library_required }} ${{ github.event.inputs.python_file_path }} "]}' \
         --target ${{ github.event.inputs.instance_id }}
