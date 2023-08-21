@@ -82,24 +82,11 @@ deploy_leto_repository(){
         echo "Doing 'git pull' as the leto directory already exists." 
         cd $WORKING_DIRECTORY/leto
         git pull
-        #Temporary block start - until the changes are merged to main
-        curl -o requirements_fastsrgan.txt https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/common-workflow/reconstruction/fastsrgan/requirements_fastsrgan.txt
-        curl -o requirements_realbasicvsr.txt https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/common-workflow/reconstruction/realbasicvsr/requirements_realbasicvsr.txt
-        mv requirements_fastsrgan.txt reconstruction/fastsrgan/requirements_fastsrgan.txt
-        mv requirements_realbasicvsr.txt reconstruction/realbasicvsr/requirements_realbasicvsr.txt
-        #Temporary block end
         echo "Git pull is completed successfully."
     else
         echo "Cloning leto repository into this path $WORKING_DIRECTORY"
         cd $WORKING_DIRECTORY
         git clone https://github.com/DISHDevEx/leto.git
-        #Temporary block start - until the changes are merged to main
-        cd $WORKING_DIRECTORY/leto
-        curl -o requirements_fastsrgan.txt https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/common-workflow/reconstruction/fastsrgan/requirements_fastsrgan.txt
-        curl -o requirements_realbasicvsr.txt https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/common-workflow/reconstruction/realbasicvsr/requirements_realbasicvsr.txt
-        mv requirements_fastsrgan.txt reconstruction/fastsrgan/requirements_fastsrgan.txt
-        mv requirements_realbasicvsr.txt reconstruction/realbasicvsr/requirements_realbasicvsr.txt
-        #Temporary block end
         echo "Git clone is completed successfully."
     fi
     #Switch git branch if 'GIT_BRANCH' is not equal to 'main'
