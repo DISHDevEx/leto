@@ -116,7 +116,9 @@ install_module_requirements(){
 deploy_tensorflow_dependent_module(){
 cd $WORKING_DIRECTORY
 echo "Activating tensorflow"
-source activate /opt/tensorflow
+if [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
+    source activate base #As this is being executed in a 'tensorflow' ami, the word 'base' refers to 'tensorflow'
+fi
 python -c "import tensorflow as tf; print(tf.__version__)"
 install_common_packages
 deploy_leto_repository
