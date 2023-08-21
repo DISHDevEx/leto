@@ -1,3 +1,6 @@
+"""
+
+"""
 import os
 from aEye import Aux
 import boto3
@@ -8,8 +11,19 @@ class CloudFunctionality:
     def __init__(self):
         self.aux = Aux()
         self.s3 = boto3.client("s3")
+        
+    def preprocess_reduction(self, s3_args, method_args ):
+        video_list = self.aux.load_s3(s3['input_bucket_s3'], method['input_prefix_s3'])
+        return video_list
+        
+    
+    def postprocess_reduction(self, s3_args, method_args):
+        result = self.aux.load_local(method['temp_path'])
+        self.aux.upload_s3(result, bucket=s3['output_bucket_s3'], prefix=method['output_prefix_s3'])
+        self.aux.set_local_path(method['temp_path'])
+        self.aux.clean()
 
-    def download_model(self, method_args, s3_args):
+    def download_model(self, s3_args, method_args ):
         """
         Downloads any model file from s3 to a local path.
 
@@ -27,7 +41,7 @@ class CloudFunctionality:
         with open(method_args['local_model_path'], "wb") as file:
             self.s3.download_fileobj(s3_args['model_bucket_s3'], method_args['model_prefix_s3'], file)
 
-    def preprocess(self, method_args, s3_args):
+    def preprocess_reconstruction(self, s3_args, method_args):
         """
         Method that downloads videos and model from s3 onto local environment.
         """
@@ -46,7 +60,7 @@ class CloudFunctionality:
         if method_args.getboolean('download_model'):
             self.download_model(method_args, s3_args)
 
-    def postprocess(self, method_args, s3_args):
+    def postprocess_reconstruction(self, s3_args, method_args ):
         """
         Method that moves local video to s3 and deletes
         temporary video folders and model file.
@@ -77,3 +91,4 @@ class CloudFunctionality:
         # After cleaning videos, delete the pretrained model as well.
         if method_args.getboolean('clean_model'):
             os.remove(method_args['local_model_path'])
+
