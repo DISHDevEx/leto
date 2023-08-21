@@ -128,7 +128,6 @@ deploy_tensorflow_dependent_module(){
     if [ -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         conda deactivate #To deactivate conda - 'base' environment
         TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
-        ((TENSORFLOW_CHECK=TENSORFLOW_CHECK))
     fi
     if [ "$TENSORFLOW_CHECK" > 0 ]; then #Check for tensorflow availability in the base ami
         echo "Activating tensorflow"
@@ -141,7 +140,6 @@ deploy_tensorflow_dependent_module(){
 #
     if [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
-        ((TENSORFLOW_CHECK=TENSORFLOW_CHECK))
     fi
     if [ "$TENSORFLOW_CHECK" > 0 ]; then #Check for tensorflow availability in the base ami
         echo "Activating tensorflow"
