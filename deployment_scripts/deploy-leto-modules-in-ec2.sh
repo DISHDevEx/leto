@@ -7,6 +7,10 @@ WORKING_DIRECTORY="/home/ec2-user"
 GIT_BRANCH=$1
 MODULE_TYPE=$2
 MODULE_NAME=$3
+TENSORFLOW_DEPENDENT_MODULES=("fastsrgan")
+PYTORCH_DEPENDENT_MODULES=("realbasicvsr")
+TENSORFLOW_REQUIRED=false
+PYTORCH_REQUIRED=false
 #Functions used for Reduction/Reconstruction modules deployment in AWS EC2 instance
 install_common_packages(){
     #Update yum 
@@ -65,11 +69,24 @@ deploy_leto_repository(){
         echo "Doing 'git pull' as the leto directory already exists." 
         cd $WORKING_DIRECTORY/leto
         git pull
+        #Temporary block start - until the changes are merged to main
+        curl -o requirements_fastsrgan.txt https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/common-workflow/reconstruction/fastsrgan/requirements_fastsrgan.txt
+        curl -o requirements_realbasicvsr.txt https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/common-workflow/reconstruction/realbasicvsr/requirements_realbasicvsr.txt
+        mv requirements_fastsrgan.txt reconstruction/fastsrgan/requirements_fastsrgan.txt
+        mv requirements_realbasicvsr.txt reconstruction/realbasicvsr/requirements_realbasicvsr.txt
+        #Temporary block end
         echo "Git pull is completed successfully."
     else
         echo "Cloning leto repository into this path $WORKING_DIRECTORY"
         cd $WORKING_DIRECTORY
         git clone https://github.com/DISHDevEx/leto.git
+        #Temporary block start - until the changes are merged to main
+        cd $WORKING_DIRECTORY/leto
+        curl -o requirements_fastsrgan.txt https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/common-workflow/reconstruction/fastsrgan/requirements_fastsrgan.txt
+        curl -o requirements_realbasicvsr.txt https://raw.githubusercontent.com/DISHDevEx/leto/sriharsha/common-workflow/reconstruction/realbasicvsr/requirements_realbasicvsr.txt
+        mv requirements_fastsrgan.txt reconstruction/fastsrgan/requirements_fastsrgan.txt
+        mv requirements_realbasicvsr.txt reconstruction/realbasicvsr/requirements_realbasicvsr.txt
+        #Temporary block end
         echo "Git clone is completed successfully."
     fi
     #Switch git branch if 'GIT_BRANCH' is not equal to 'main'
@@ -95,27 +112,52 @@ install_module_requirements(){
     #Find the requirements file of the module
     cd $WORKING_DIRECTORY/leto/$MODULE_TYPE/$MODULE_NAME && fVar=$(find -type f -name 'requirements*.txt');
     FILE_NAME=${fVar:2}
-    if python -m pip install -r $WORKING_DIRECTORY/leto/$MODULE_TYPE/$MODULE_NAME/$FILE_NAME; then
-        pip list
-        echo "Successfully installed requirements for $MODULE_NAME module."
+    # Check if 'pip' is available
+    if command -v pip &> /dev/null; then
+    # 'pip' is available, use it
+        if python -m pip install -r $WORKING_DIRECTORY/leto/$MODULE_TYPE/$MODULE_NAME/$FILE_NAME; then
+            pip list
+            echo "Successfully installed requirements for $MODULE_NAME module."
+        else
+            echo "Requirements installation failed for $MODULE_NAME module."
+        fi
+# 'pip' is not available, try 'pip3'
+    elif command -v pip3 &> /dev/null; then
+        if python -m pip install -r $WORKING_DIRECTORY/leto/$MODULE_TYPE/$MODULE_NAME/$FILE_NAME; then
+            pip list
+            echo "Successfully installed requirements for $MODULE_NAME module."
+        else
+            echo "Requirements installation failed for $MODULE_NAME module."
+        fi
     else
-        echo "Requirements installation failed for $MODULE_NAME module."
+        echo "Error: 'pip' and 'pip3' are not installed. Please install either 'pip' or 'pip3' and try again."
+        exit 1
     fi
 }
-deploy_fastsrgan_module(){
+deploy_tensorflow_dependent_module(){
     install_common_packages
     if [ -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         conda deactivate #To deactivate conda - 'leto' environment
         conda deactivate #To deactivate conda - 'base' environment
-        TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
+        # Check if 'pip' is available
+        if command -v pip &> /dev/null; then
+        # 'pip' is available, use it
+            TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
+        else
+        # 'pip' is not available, try 'pip3'
+        if command -v pip3 &> /dev/null; then
+            TENSORFLOW_CHECK=$(pip3 list | grep tensorflow | wc -l)
+        else
+            echo "Error: 'pip' and 'pip3' are not installed. Please install 'pip3' and try again."
+            exit 1
+        fi
+    fi
         if [ $TENSORFLOW_CHECK -gt 0 ]; then #Check for tensorflow availability in the base ami
             echo "Activating tensorflow"
             source activate tensorflow
             python -c "import tensorflow as tf; print(tf.__version__)"
         fi
-        #Deploy leto repository
         deploy_leto_repository
-        #Install module requirements
         install_module_requirements
     elif [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         TENSORFLOW_CHECK=$(pip list | grep tensorflow | wc -l)
@@ -124,26 +166,34 @@ deploy_fastsrgan_module(){
             source activate tensorflow
             python -c "import tensorflow as tf; print(tf.__version__)"
         fi
-        #Deploy leto repository
         deploy_leto_repository
-        #Install module requirements
         install_module_requirements
     fi
 }
-deploy_realbasicvsr_module(){
+deploy_pytorch_dependent_module(){
     install_common_packages
     if [ -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         conda deactivate #To deactivate conda - 'leto' environment
         conda deactivate #To deactivate conda - 'base' environment
-        PYTORCH_CHECK=$(pip3 list | grep torch | wc -l)
+        # Check if 'pip' is available
+        if command -v pip &> /dev/null; then
+        # 'pip' is available, use it
+            PYTORCH_CHECK=$(pip list | grep tensorflow | wc -l)
+        else
+        # 'pip' is not available, try 'pip3'
+        if command -v pip3 &> /dev/null; then
+            PYTORCH_CHECK=$(pip3 list | grep tensorflow | wc -l)
+        else
+            echo "Error: 'pip' and 'pip3' are not installed. Please install 'pip3' and try again."
+            exit 1
+        fi
+    fi
         if [ $PYTORCH_CHECK -gt 0 ]; then #Check for pytorch availability in the base ami
             echo "Activating pytorch"
             source activate pytorch
             python -c "import torch; print(torch.__version__)"
         fi
-        #Deploy leto repository
         deploy_leto_repository
-        #Install module requirements
         install_module_requirements
     elif [ ! -d "/home/ec2-user/miniconda3/envs/leto" ]; then
         PYTORCH_CHECK=$(pip3 list | grep torch | wc -l)
@@ -152,18 +202,30 @@ deploy_realbasicvsr_module(){
             source activate pytorch
             python -c "import torch; print(torch.__version__)"
         fi
-        #Deploy leto repository
         deploy_leto_repository
-        #Install module requirements
-#        install_module_requirements
+        install_module_requirements
     fi
 }
-#Check the MODULE_NAME and proceed further accordingly
-if [ "$MODULE_NAME" = "fastsrgan" ] || [ "$MODULE_NAME" = "realbasicvsr" ]; then
-    if [ "$MODULE_NAME" = "fastsrgan" ]; then
-        deploy_fastsrgan_module
-    elif [ "$MODULE_NAME" = "realbasicvsr" ]; then
-        deploy_realbasicvsr_module
+#Check for Tensorflow dependency and update respective variable value
+for tensorflow_module in "${TENSORFLOW_DEPENDENT_MODULES[@]}"; do
+    if [ "$tensorflow_module" == "$MODULE_NAME" ]; then
+        TENSORFLOW_REQUIRED=true
+        break  # Exit the loop if a match is found
+    fi
+done
+#Check for PyTorch dependency and and update respective variable value
+for pytorch_module in "${PYTORCH_DEPENDENT_MODULES[@]}"; do
+    if [ "$pytorch_module" == "$MODULE_NAME" ]; then
+        PYTORCH_REQUIRED=true
+        break  # Exit the loop if a match is found
+    fi
+done
+#Check for module dependency and proceed further accordingly
+if [ "$TENSORFLOW_REQUIRED" == "true" ] || [ "$PYTORCH_REQUIRED" == "true" ]; then
+    if [ "$TENSORFLOW_REQUIRED" == "true" ]; then
+        deploy_tensorflow_dependent_module
+    elif [ "$PYTORCH_REQUIRED" == "true" ]; then
+        deploy_pytorch_dependent_module
     fi
 else
     install_common_packages
