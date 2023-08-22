@@ -125,6 +125,7 @@ install_module_requirements
 deploy_pytorch_dependent_module(){
 cd $WORKING_DIRECTORY
 echo "Activating pytorch"
+conda init bash
 conda activate /opt/conda/envs/pytorch
 python -c "import torch; print(torch.__version__)"
 install_common_packages
