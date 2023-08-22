@@ -131,6 +131,6 @@ if __name__ == "__main__":
     # Initialize and use the FileSizeUploader
     table_name = method['table_name']
     uploader = FileSizeUploader(s3['input_bucket_s3'], table_name)
-    directory_key = method['directory_key']
+    directory_key = method['folder_path']
     s3_file_locations = uploader.get_s3_file_locations(directory_key)
     uploader.process_and_upload(s3_file_locations)

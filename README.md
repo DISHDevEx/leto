@@ -211,6 +211,7 @@ The following scripts are aviliable.
 5. mediapipe_confidence_scores.py
 
 ```
+Run py files to generate the appropriate metrics.
 These scripts can run from anywhere.(local, aws etc)
 
 The arguments passed to these scripts come form _config.ini file_
