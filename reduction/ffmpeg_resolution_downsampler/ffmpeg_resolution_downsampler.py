@@ -18,6 +18,7 @@ root_path = subprocess.run(
 sys.path.append(root_path)
 
 from utilities import ConfigHandler
+from utilities import CloudFunctionality
 
 
 
@@ -38,30 +39,24 @@ def main():
     """
 
     logging.info("running reduction module")
-
-    config = ConfigHandler('reduction.ffmpeg_resolution_downsampler')
-    s3 = config.s3
-    method = config.method
-
+    
     aux = Aux()
-
+    cloud_functionality = CloudFunctionality()
     labeler = Labeler()
 
-    video_list_s3 = aux.load_s3(
-        bucket = s3['input_bucket_s3'], prefix= method['input_prefix_s3']
-    )
+    config = ConfigHandler('reduction.ffmpeg_resolution_downsampler')
+    s3_args = config.s3
+    method_args = config.method
 
+ 
+    
+    video_list_s3 = cloud_functionality.preprocess_reduction(s3_args, method_args )
+    
     downsampled_video = labeler.change_resolution(
-        video_list_s3, method['quality'], method['algorithm']
+        video_list_s3, method_args['quality'], method_args['algorithm']
     )
-
-    aux.execute_label_and_write_local(downsampled_video)
-
-    aux.upload_s3(
-        downsampled_video, bucket=method['output_bucket_s3'], prefix= method['output_prefix_s3']
-    )
-
-    aux.clean()
+    aux.execute_label_and_write_local(downsampled_video,path=method_args['temp_path'])
+    cloud_functionality.postprocess_reduction(s3_args, method_args)
 
 
 if __name__ == "__main__":
