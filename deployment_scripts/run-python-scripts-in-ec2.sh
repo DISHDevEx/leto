@@ -22,10 +22,12 @@ elif [ "$LIBRARY_REQUIRED" == "PyTorch" ]; then
     python -c "import torch; print(torch.__version__)"
     #Run the python script
     python $WORKING_DIRECTORY/$FILE_PATH
-elif [ "$LIBRARY_REQUIRED" == "None"]; then
-    cd $WORKING_DIRECTORY
-    conda activate /home/ec2-user/miniconda3/envs/leto
-    conda env list
-    #Run the python script
-    python $WORKING_DIRECTORY/$FILE_PATH
+else
+    if [ "$LIBRARY_REQUIRED" == "None"]; then
+        cd $WORKING_DIRECTORY
+        conda activate /home/ec2-user/miniconda3/envs/leto
+        conda env list
+        #Run the python script
+        python $WORKING_DIRECTORY/$FILE_PATH
+    fi
 fi

@@ -138,10 +138,12 @@ if [ "$LIBRARY_REQUIRED" == "Tensorflow" ]; then
     deploy_tensorflow_dependent_module
 elif [ "$LIBRARY_REQUIRED" == "PyTorch" ]; then
     deploy_pytorch_dependent_module
-elif [ "$LIBRARY_REQUIRED" == "None"]; then
-    cd $WORKING_DIRECTORY
-    install_common_packages
-    setup_virtual_env
-    deploy_leto_repository
-    install_module_requirements
+else
+    if [ "$LIBRARY_REQUIRED" == "None"]; then
+        cd $WORKING_DIRECTORY
+        install_common_packages
+        setup_virtual_env
+        deploy_leto_repository
+        install_module_requirements
+    fi
 fi
