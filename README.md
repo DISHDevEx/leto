@@ -194,4 +194,46 @@ The name of the requirements.txt file may vary slightly.
 │      ├── test_video.mp4
 
 ```
+
+## Running Benchmarking:
+**Note: Before running the benchmarking scripts make sure the AWS credentials and the token is not expired.**
+
+The following scripts are aviliable.
+```
+1. orignal_file_size.py
+
+2. reduced_file_size.py
+
+3. reconstructed_file_size.py
+
+4. yolo_confindence_scores.py
+
+5. mediapipe_confidence_scores.py
+
+```
+Run py files to generate the appropriate metrics.
+These scripts can run from anywhere.(local, aws etc)
+
+The arguments passed to these scripts come form _config.ini file_
+### for example:
+
+```ini
+[benchmarking.reduced_file_size]
+; method specific arguments
+table_name = leto_reduced_file_size
+directory_key = original-videos/
+```
+All the scripts will upload the metrics to the tables in **Dynamodb**.
+
+The following tables are present today so change them accordingly in the **config.ini** file.
+
+1. leto_original_file_size
+2. leto_reduced_file_size
+3. leto_reconstructed_file_size
+4. leto_mediapipe
+5. leto_yolo
+
+
+Note: Merging of these tables is still in progress
+
 ----------------------------------
