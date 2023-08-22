@@ -16,10 +16,8 @@ root_path = subprocess.run(
 sys.path.append(root_path)
 
 from utilities import ConfigHandler
-import os
-import cv2
-import subprocess
-from pathlib import Path
+
+
 
 def background_subtractor(input_folder, output_folder):
     ''' This method helps to extract foreground from the video by removing static background
@@ -96,8 +94,8 @@ def building_static_image(video_path, output_folder):
 
 # Path to the video file
     video_path = video_path
-    video_path = os.path.basename(video_path)
-    video_name = video_path.strip(".mp4")
+    video_basename = os.path.basename(video_path)
+    video_name = Path(video_basename).stem
 
     # Open the video file
     cap = cv2.VideoCapture(video_path)
