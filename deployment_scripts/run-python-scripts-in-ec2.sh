@@ -1,5 +1,5 @@
 #Shell script to run the Leto - Python scripts in the target AWS EC2 instance
-#Version: v1.0.0
+#Version: v2.0.0
 #
 #!/bin/bash
 #Set variable values
