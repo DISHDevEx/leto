@@ -14,13 +14,13 @@ on:
         required: true
         type: string
       library_required:
-      # Description to be shown in the UI
-      description: Select library required
-      #Library selection is mandatory
-      required: true
-      type: choice
-      default: None
-      options:
+        # Description to be shown in the UI
+        description: Select library required
+        #Library selection is mandatory
+        required: true
+        type: choice
+        default: None
+        options:
           - None
           - Tensorflow
           - PyTorch
