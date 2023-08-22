@@ -11,13 +11,15 @@ WORKING_DIRECTORY="/home/ec2-user/leto"
 if [ "$LIBRARY_REQUIRED" == "Tensorflow" ]; then
     cd $WORKING_DIRECTORY
     echo "Activating tensorflow"
-    source activate tensorflow
+    source /opt/tensorflow/bin/activate
+    python -c "import tensorflow as tf; print(tf.__version__)"
     #Run the python script
     python $WORKING_DIRECTORY/$FILE_PATH
 elif [ "$LIBRARY_REQUIRED" == "PyTorch" ]; then
     cd $WORKING_DIRECTORY
     echo "Activating pytorch"
-    source activate pytorch
+    conda activate /opt/conda/envs/pytorch
+    python -c "import torch; print(torch.__version__)"
     #Run the python script
     python $WORKING_DIRECTORY/$FILE_PATH
 elif [ "$LIBRARY_REQUIRED" == "None"]; then
