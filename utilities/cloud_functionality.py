@@ -13,6 +13,7 @@ class CloudFunctionality:
         self.s3 = boto3.client("s3")
         
     def preprocess_reduction(self, s3_args, method_args ):
+        os.mkdir(method['temp_path'])
         video_list = self.aux.load_s3(s3['input_bucket_s3'], method['input_prefix_s3'])
         return video_list
         

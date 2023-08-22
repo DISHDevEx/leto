@@ -44,20 +44,18 @@ def main():
     labeler = Labeler()
 
     config = ConfigHandler('reduction.ffmpeg_resolution_downsampler')
-    s3 = config.s3
-    method = config.method
+    s3_args = config.s3
+    method_args = config.method
 
  
     
     video_list_s3 = cloud_functionality.preprocess_reduction(s3_args, method_args )
     
     downsampled_video = labeler.change_resolution(
-        video_list_s3, method['quality'], method['algorithm']
+        video_list_s3, method_args['quality'], method_args['algorithm']
     )
-    aux.execute_label_and_write_local(downsampled_video,path=method['temp_path'])
-
-    
-    cloud_functionality.postprocess_reduction(s3_args, method_args )
+    aux.execute_label_and_write_local(downsampled_video,path=method_args['temp_path'])
+    cloud_functionality.postprocess_reduction(s3_args, method_args)
 
 
 if __name__ == "__main__":

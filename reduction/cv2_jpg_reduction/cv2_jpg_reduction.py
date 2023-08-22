@@ -81,26 +81,20 @@ def cv2_jpg_reduction(video_list, path="temp", quality=15, crf=28):
 def main():
    
     config = ConfigHandler('reduction.cv2_jpg_reduction')
-    s3 = config.s3
-    method = config.method
+    s3_args = config.s3
+    method_args = config.method
 
-    aux = Aux()
+    cloud_functionality = CloudFunctionality()
 
-    os.mkdir(method['temp_path'])
 
-    video_list = aux.load_s3(s3['input_bucket_s3'], method['input_prefix_s3'])
+    video_list = cloud_functionality.preprocess_reduction(s3_args, method_args )
+    
     # reduce each and store in temp_path
+    cv2_jpg_reduction(video_list, method_args['temp_path'], method_args.getint('quality'), method_args.getint('crf'))
     
+    cloud_functionality.postprocess_reduction(s3_args, method_args)
     
-    cv2_jpg_reduction(video_list, method['temp_path'], method.getint('quality'), method.getint('crf'))
 
-    # use Aux to easily load, upload and clean up
-    aux = Aux()
-
-    result = aux.load_local(method['temp_path'])
-    aux.upload_s3(result, bucket=s3['output_bucket_s3'], prefix=method['output_prefix_s3'])
-
-#     aux.clean()
 
 
 if __name__ == "__main__":
