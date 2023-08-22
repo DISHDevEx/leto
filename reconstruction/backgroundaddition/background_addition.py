@@ -19,6 +19,7 @@ from utilities import CloudFunctionality
 import time
 
 
+
 def background_addition(video_path, image_path, output_path):
     """This methods adds static background to masked image
     Parameters
@@ -55,19 +56,20 @@ def background_addition(video_path, image_path, output_path):
         combined_frame = cv2.addWeighted(frame, 1, resized_image, 0.5, 0)
 
         out.write(combined_frame)
-        
-    name = output_path.split('/')[1]
+   
+    cap.release()
+    
+    out.release()
+    
+    vname = output_path.split('/')[1]    
+    name = vname.strip('.mp4')
     output_folder = output_path.split('/')[0]
-    encoded_video_name = os.path.join(output_folder, name + 'background.mp4')
-    cmd = f"static_ffmpeg -y -i {output_path} -c:v libx264   -preset veryfast {encoded_video_name}.mp4"
+    encoded_video_name = os.path.join(output_folder, name + '_background.mp4')
+    
+    cmd = f"static_ffmpeg -y -i {output_path} -c:v libx264 -crf 34 -preset veryfast {encoded_video_name}"
     subprocess.run(cmd, shell=True)
     
     os.remove(output_path)
-    
-    cap.release()
-    out.release()
-    cv2.destroyAllWindows()
-    
 
 def main():
     '''
@@ -116,7 +118,7 @@ def main():
     for files in matched_files:
  
         name = files[0].split('/')[1]
-        background_addition(files[0],files[1],f'./reconstructed_videos/{name}')
+        background_addition(files[0],files[1],f'reconstructed_videos/{name}')
   
     cloud_functionality.postprocess(method_args, s3_args)
 if __name__ == "__main__":
