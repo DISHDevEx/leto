@@ -1,3 +1,4 @@
+"""This module generates reduced_file_sizes for dynamodb ."""
 import subprocess
 import sys
 import boto3
@@ -26,6 +27,7 @@ class FileSizeUploader:
         Initializes the FileSizeUploader.
 
         Args:
+        ----------
             bucket_name (str): The name of the S3 bucket.
             table_name (str): The name of the DynamoDB table.
         """
@@ -39,9 +41,11 @@ class FileSizeUploader:
         Retrieves the size of a file in bytes from S3.
 
         Args:
+        ----------
             s3_key (str): The S3 key of the file.
 
         Returns:
+        ----------
             int or None: The size of the file in bytes, or None if an error occurs.
         """
         try:
@@ -57,10 +61,12 @@ class FileSizeUploader:
         Uploads file information to DynamoDB.
 
         Args:
+        ----------
             file_path (str): The path of the file.
             size (int): The size of the file in bytes.
 
         Returns:
+        ----------
             dict or None: The response from DynamoDB, or None if an error occurs.
         """
         try:
@@ -79,9 +85,11 @@ class FileSizeUploader:
         Processes file locations and uploads information to DynamoDB.
 
         Args:
+        ----------
             file_locations (list): List of S3 file locations.
 
         Returns:
+        ----------
             None
         """
         for location in file_locations:
@@ -94,9 +102,11 @@ class FileSizeUploader:
         Retrieves S3 file locations from a specific directory.
 
         Args:
+        ----------
             directory_key (str): The S3 directory key.
 
         Returns:
+        ----------
             list: List of S3 file locations.
         """
         try:
@@ -108,13 +118,15 @@ class FileSizeUploader:
             print(f"Error getting S3 file locations: {e}")
             return []
 
-# Initialize configuration and perform the file size upload
-config = ConfigHandler('benchmarking.reduced_file_size')
-s3 = config.s3
-method = config.method
 
-# Initialize and use the FileSizeUploader
-uploader = FileSizeUploader(s3['input_bucket_s3'], method['table_name'])
-directory_key = method['directory_key']
-s3_file_locations = uploader.get_s3_file_locations(directory_key)
-uploader.process_and_upload(s3_file_locations)
+if __name__ == "__main__":
+    # Initialize configuration and perform the file size upload
+    config = ConfigHandler('benchmarking.reduced_file_size')
+    s3 = config.s3
+    method = config.method
+
+    # Initialize and use the FileSizeUploader
+    uploader = FileSizeUploader(s3['input_bucket_s3'], method['table_name'])
+    directory_key = method['directory_key']
+    s3_file_locations = uploader.get_s3_file_locations(directory_key)
+    uploader.process_and_upload(s3_file_locations)

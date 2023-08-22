@@ -1,3 +1,4 @@
+"""This module generates orignal_file_sizes for dynamodb ."""
 import subprocess
 import sys
 import boto3
@@ -24,6 +25,7 @@ class FileSizeUploader:
         Initialize the FileSizeUploader.
 
         Parameters:
+        ----------
             bucket_name (str): The name of the S3 bucket.
             table_name (str): The name of the DynamoDB table.
         """
@@ -37,6 +39,7 @@ class FileSizeUploader:
         Get the size of a file in S3.
 
         Parameters:
+        ----------
             s3_key (str): The S3 key of the file.
 
         Returns:
@@ -55,6 +58,7 @@ class FileSizeUploader:
         Upload file information to DynamoDB.
 
         Parameters:
+        ----------
             file_path (str): The path of the file.
             size (int): The size of the file in bytes.
 
@@ -75,6 +79,7 @@ class FileSizeUploader:
         Process and upload file sizes for the given S3 file locations.
 
         Parameters:
+        ----------
             file_locations (list): List of S3 file locations.
 
         Returns:
@@ -90,6 +95,7 @@ class FileSizeUploader:
         Get a list of S3 file locations within a directory.
 
         Parameters:
+        ----------
             directory_key (str): The S3 key of the directory.
 
         Returns:
@@ -104,13 +110,15 @@ class FileSizeUploader:
             print(f"Error getting S3 file locations: {e}")
             return []
 
-# Load configuration
-config = ConfigHandler('benchmarking.original_file_size')
-s3 = config.s3
-method = config.method
 
-# Initialize and use the FileSizeUploader
-uploader = FileSizeUploader(s3['input_bucket_s3'], method['table_name'])
-directory_key = method['directory_key']
-s3_file_locations = uploader.get_s3_file_locations(directory_key)
-uploader.process_and_upload(s3_file_locations)
+if __name__ == "__main__":
+    # Load configuration
+    config = ConfigHandler('benchmarking.original_file_size')
+    s3 = config.s3
+    method = config.method
+
+    # Initialize and use the FileSizeUploader
+    uploader = FileSizeUploader(s3['input_bucket_s3'], method['table_name'])
+    directory_key = method['directory_key']
+    s3_file_locations = uploader.get_s3_file_locations(directory_key)
+    uploader.process_and_upload(s3_file_locations)

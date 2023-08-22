@@ -1,3 +1,4 @@
+"""This module generates reconstructed_file_sizes for dynamodb ."""
 import subprocess
 import sys
 import boto3
@@ -21,6 +22,7 @@ class FileSizeUploader:
     A class for uploading file sizes and associated information to DynamoDB.
 
     Attributes:
+    ----------
         bucket_name (str): The name of the S3 bucket containing the files.
         table_name (str): The name of the DynamoDB table to upload data to.
     """
@@ -43,9 +45,11 @@ class FileSizeUploader:
         Retrieve the size of a file in the S3 bucket.
 
         Args:
+        ----------
             s3_key (str): The S3 key (path) of the file.
 
         Returns:
+        ----------
             int: The size of the file in bytes, or None if an error occurred.
         """
         try:
@@ -61,10 +65,12 @@ class FileSizeUploader:
         Upload file information to DynamoDB.
 
         Args:
+        ----------
             file_path (str): The path of the file.
             size (int): The size of the file in bytes.
 
         Returns:
+        ----------
             dict: The response from the DynamoDB put_item operation, or None if an error occurred.
         """
         try:
@@ -83,9 +89,11 @@ class FileSizeUploader:
         Process and upload file information for a list of file locations.
 
         Args:
+        ----------
             file_locations (list): List of file locations (S3 keys) to process and upload.
 
         Returns:
+        ----------
             None
         """
         for location in file_locations:
@@ -98,9 +106,11 @@ class FileSizeUploader:
         Retrieve a list of S3 file locations (keys) for a given directory.
 
         Args:
+        ----------
             directory_key (str): The directory key in the S3 bucket.
 
         Returns:
+        ----------
             list: List of S3 file locations (keys).
         """
         try:
@@ -112,13 +122,15 @@ class FileSizeUploader:
             print(f"Error getting S3 file locations: {e}")
             return []
 
-# Initialize configuration and perform the file size upload
-config = ConfigHandler('benchmarking.reconstructed_file_size')
-s3 = config.s3
-method = config.method
-# Initialize and use the FileSizeUploader
-table_name = method['table_name']
-uploader = FileSizeUploader(s3['input_bucket_s3'], table_name)
-directory_key = method['directory_key']
-s3_file_locations = uploader.get_s3_file_locations(directory_key)
-uploader.process_and_upload(s3_file_locations)
+
+if __name__ == "__main__":
+    # Initialize configuration and perform the file size upload
+    config = ConfigHandler('benchmarking.reconstructed_file_size')
+    s3 = config.s3
+    method = config.method
+    # Initialize and use the FileSizeUploader
+    table_name = method['table_name']
+    uploader = FileSizeUploader(s3['input_bucket_s3'], table_name)
+    directory_key = method['directory_key']
+    s3_file_locations = uploader.get_s3_file_locations(directory_key)
+    uploader.process_and_upload(s3_file_locations)
