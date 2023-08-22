@@ -18,94 +18,103 @@ root_path = subprocess.run(
 sys.path.append(root_path)
 
 from utilities import ConfigHandler
+from utilities import CloudFunctionality
 
 
-def cv2_jpg_reduction(video, path="temp", quality=15, crf=28):
-    # Create a VideoCapture object
-    cap = cv2.VideoCapture(video.get_file().strip("'"))
+def cv2_jpg_reduction(video_list, path="temp", quality=15, crf=28):
+        """
+        
+        Method that downloads videos from s3 and returns a list of video objects.
+        
+        Parameters
+        ----------
+        video_list: list[aEye.Video]
+            List of video objects. 
+        path: dict
+            Defines the local path to store videos. 
+        quality: int
+            Determines the quality of the video. 
+        crf:int
+            Determines the constant rate factor of the video.
+            
+        """
+    for video in video_list:
+        # Create a VideoCapture object
+        cap = cv2.VideoCapture(video.get_file().strip("'"))
 
-    # Check if video opened successfully
-    if cap.isOpened() == False:
-        print("Unable to read video ")
+        # Check if video opened successfully
+        if cap.isOpened() == False:
+            print("Unable to read video ")
 
-    # Default resolutions of the frame are obtained.The default resolutions are system dependent.
-    # We convert the resolutions from float to integer.
-    frame_width = int(cap.get(3))
-    frame_height = int(cap.get(4))
-    fps = cap.get(cv2.CAP_PROP_FPS)
-    title = video.get_title()
+        # Default resolutions of the frame are obtained.The default resolutions are system dependent.
+        # We convert the resolutions from float to integer.
+        frame_width = int(cap.get(3))
+        frame_height = int(cap.get(4))
+        fps = cap.get(cv2.CAP_PROP_FPS)
+        title = video.get_title()
 
-    # make a temp_path to store cv2 video
-    # this is needed because ffmpeg cant edit same file in place
-    os.mkdir(f"{path}_cv2")
+        # make a temp_path to store cv2 video
+        # this is needed because ffmpeg cant edit same file in place
+        os.mkdir(f"{path}_cv2")
 
-    out = cv2.VideoWriter(
-        f"{path}_cv2/" + title,
-        cv2.VideoWriter_fourcc(*"mp4v"),
-        fps,
-        (frame_width, frame_height),
-    )
+        out = cv2.VideoWriter(
+            f"{path}_cv2/" + title,
+            cv2.VideoWriter_fourcc(*"mp4v"),
+            fps,
+            (frame_width, frame_height),
+        )
 
-    index = 0
-    while True:
-        ret, frame = cap.read()
+        index = 0
+        while True:
+            ret, frame = cap.read()
 
-        if ret == True:
-            # compress the jpg quality with cv2
-            enc = cv2.imencode(".jpg", frame, [cv2.IMWRITE_JPEG_QUALITY, quality])[1]
-            out.write(cv2.imdecode(enc, cv2.IMREAD_COLOR))
+            if ret == True:
+                # compress the jpg quality with cv2
+                enc = cv2.imencode(".jpg", frame, [cv2.IMWRITE_JPEG_QUALITY, quality])[1]
+                out.write(cv2.imdecode(enc, cv2.IMREAD_COLOR))
 
-            index += 1
-        # Break the loop
-        else:
-            break
+                index += 1
+            # Break the loop
+            else:
+                break
 
-    logging.info(f"successfully reduce {title} with cv2 jpeg quality rate of {quality}")
+        logging.info(f"successfully reduce {title} with cv2 jpeg quality rate of {quality}")
 
-    cap.release()
-    out.release()
+        cap.release()
+        out.release()
 
-    # using ffmpeg to reencode video with h264 format with crf value
-    cmd = f"static_ffmpeg -y -i {path}_cv2/{title} -c:v libx264  -crf {crf} -preset slow {path}/{title}"
-    subprocess.run(cmd, shell=True)
+        # using ffmpeg to reencode video with h264 format with crf value
+        cmd = f"static_ffmpeg -y -i {path}_cv2/{title} -c:v libx264  -crf {crf} -preset slow {path}/{title}"
+        subprocess.run(cmd, shell=True)
 
-    logging.info(
-        f"successfully reencode {title} into h264 format with the crf of {crf}"
-    )
+        logging.info(
+            f"successfully reencode {title} into h264 format with the crf of {crf}"
+        )
 
-    os.remove(f"{path}_cv2/{title}")
-    os.rmdir(f"{path}_cv2")
+        os.remove(f"{path}_cv2/{title}")
+        os.rmdir(f"{path}_cv2")
 
 
 def main():
    
     config = ConfigHandler('reduction.cv2_jpg_reduction')
-    s3 = config.s3
-    method = config.method
+    s3_args = config.s3
+    method_args = config.method
 
-    aux = Aux()
+    cloud_functionality = CloudFunctionality()
 
-    os.mkdir(method['temp_path'])
 
-    video_list = aux.load_s3(s3['input_bucket_s3'], method['input_prefix_s3'])
+    video_list = cloud_functionality.preprocess_reduction(s3_args, method_args )
+    
     # reduce each and store in temp_path
-    for video in video_list:
-        cv2_jpg_reduction(video, method['temp_path'], method.getint('quality'), method.getint('crf'))
+    cv2_jpg_reduction(video_list, method_args['temp_path'], method_args.getint('quality'), method_args.getint('crf'))
+    
+    cloud_functionality.postprocess_reduction(s3_args, method_args)
+    
 
-    # use Aux to easily load, upload and clean up
-    aux = Aux()
-
-    result = aux.load_local(method['temp_path'])
-    aux.upload_s3(result, bucket=s3['output_bucket_s3'], prefix=method['output_prefix_s3'])
-
-    aux.clean()
 
 
 if __name__ == "__main__":
     main()
 
 
-#TODO
-# __del__
-# deal with temp directories 
-# or implement AUX functionality to deal with temps.
