@@ -8,11 +8,13 @@ b)Now, enter 'ec2-user' as value for 'Operating system user name'
 
 c)Scroll down and update 'ssm-user' as 'ec2-user' in the 'Linux shell profile' section > Scroll down and click 'Save' button.
 
-Reduction modules deployment in AWS EC2 instance with shell scripts:
---------------------------------------------------------------------
+Reduction/Reconstruction modules deployment in AWS EC2 instance with shell scripts:
+-----------------------------------------------------------------------------------
 The [reduction](https://github.com/DISHDevEx/leto/tree/main/reduction/) modules are used to take the input video file from the source S3 path, reduce the resolution, label it, and then upload the processed video to the destination S3 path.
 
-The module is deployed using shell scripts in AWS EC2 instance as per the below steps:
+The [reconstruction](https://github.com/DISHDevEx/leto/tree/main/reconstruction/) modules are used to take the input video file from the source - reduced videos S3 path, upscale the resolution, label it, and then upload the reconstructed video to the destination S3 path.
+
+The reduction/reconstruction modules are deployed using shell scripts in AWS EC2 instance as per the below steps:
 
 1.Create an AWS EC2 Amazon Linux instance using 'Create new EC2 instance' workflow in the leto repository with the following parameters:
 
@@ -25,7 +27,7 @@ c)Enter EC2 instance type: {e.g. t3.small}
 2.Login to the EC2 instance as 'ec2-user' to ensure it is up and running as expected. 
   Also, copy the respective EC2 instance id as we have to pass it as a parameter in the next step.
 
-3.Then execute the 'deploy-reduction-modules-in-ec2' workflow in the leto repository with following parameters:
+3.Then execute the 'deploy-leto-modules-in-ec2' workflow in the leto repository with following parameters:
 
 a)Enter EC2 instance id: "Enter respective EC2 instance id" #Instance id entry is required
 

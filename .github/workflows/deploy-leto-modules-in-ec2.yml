@@ -31,7 +31,7 @@ on:
             - Reconstruction
       module:
         # Description to be shown in the UI
-        description: Enter reconstruction module name
+        description: Enter module name
         #Module name entry is mandatory
         required: true
         type: string
