@@ -1,5 +1,5 @@
 """
-
+Module to support periphery cloud functionality for any video reduction or reconstruction modules. 
 """
 import os
 from aEye import Aux
@@ -13,15 +13,42 @@ class CloudFunctionality:
         self.s3 = boto3.client("s3")
         
     def preprocess_reduction(self, s3_args, method_args ):
-        os.mkdir(method['temp_path'])
-        video_list = self.aux.load_s3(s3['input_bucket_s3'], method['input_prefix_s3'])
+        """
+        
+        Method that downloads videos from s3 and returns a list of video objects.
+        
+        Parameters
+        ----------
+        s3_args: dict
+            Defines the s3 bucket params. 
+        method_args: dict
+            Defines reduction technique specific args. 
+            
+        Returns
+        -------
+        video_list: list[aEye.Video]
+            List of video objects. 
+        
+        """
+        os.mkdir(method_args['temp_path'])
+        video_list = self.aux.load_s3(s3_args['input_bucket_s3'], method_args['input_prefix_s3'])
         return video_list
         
     
     def postprocess_reduction(self, s3_args, method_args):
-        result = self.aux.load_local(method['temp_path'])
-        self.aux.upload_s3(result, bucket=s3['output_bucket_s3'], prefix=method['output_prefix_s3'])
-        self.aux.set_local_path(method['temp_path'])
+        """
+        Method that downloads videos from s3 onto local environment a
+        
+        Parameters
+        ----------
+        s3_args: dict
+            Defines the s3 bucket params. 
+        method_args: dict
+            Defines reduction technique specific args. 
+        """
+        result = self.aux.load_local(method_args['temp_path'])
+        self.aux.upload_s3(result, bucket=s3_args['output_bucket_s3'], prefix=method_args['output_prefix_s3'])
+        self.aux.set_local_path(method_args['temp_path'])
         self.aux.clean()
 
     def download_model(self, s3_args, method_args ):
@@ -30,13 +57,10 @@ class CloudFunctionality:
 
         Parameters
         ----------
-
-        local_path: string
-            Path where we want to store object locally
-        bucket_name: string
-            The bucket name where the files belong in the S3 bucket.
-        key: string
-            The name of the object and any preceding folders.
+        s3_args: dict
+            Defines the s3 bucket params. 
+        method_args: dict
+            Defines reduction technique specific args. 
         """
 
         with open(method_args['local_model_path'], "wb") as file:
@@ -45,6 +69,13 @@ class CloudFunctionality:
     def preprocess_reconstruction(self, s3_args, method_args):
         """
         Method that downloads videos and model from s3 onto local environment.
+        
+        Parameters
+        ----------
+        s3_args: dict
+            Defines the s3 bucket params. 
+        method_args: dict
+            Defines reduction technique specific args. 
         """
 
         os.mkdir("./reduced_videos")
@@ -65,6 +96,13 @@ class CloudFunctionality:
         """
         Method that moves local video to s3 and deletes
         temporary video folders and model file.
+        
+        Parameters
+        ----------
+        s3_args: dict
+            Defines the s3 bucket params. 
+        method_args: dict
+            Defines reduction technique specific args. 
         """
 
         # Load reconstructed video files

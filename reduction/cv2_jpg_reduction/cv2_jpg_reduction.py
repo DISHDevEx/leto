@@ -18,9 +18,26 @@ root_path = subprocess.run(
 sys.path.append(root_path)
 
 from utilities import ConfigHandler
+from utilities import CloudFunctionality
 
 
 def cv2_jpg_reduction(video_list, path="temp", quality=15, crf=28):
+        """
+        
+        Method that downloads videos from s3 and returns a list of video objects.
+        
+        Parameters
+        ----------
+        video_list: list[aEye.Video]
+            List of video objects. 
+        path: dict
+            Defines the local path to store videos. 
+        quality: int
+            Determines the quality of the video. 
+        crf:int
+            Determines the constant rate factor of the video.
+            
+        """
     for video in video_list:
         # Create a VideoCapture object
         cap = cv2.VideoCapture(video.get_file().strip("'"))
@@ -41,7 +58,7 @@ def cv2_jpg_reduction(video_list, path="temp", quality=15, crf=28):
         os.mkdir(f"{path}_cv2")
 
         out = cv2.VideoWriter(
-            f"{path}_cv2/" + title+"test_label",
+            f"{path}_cv2/" + title,
             cv2.VideoWriter_fourcc(*"mp4v"),
             fps,
             (frame_width, frame_height),

@@ -103,8 +103,8 @@ if __name__ == "__main__":
     s3_args = config.s3
     method_args = config.method
 
-    cloud_functionality.preprocess(method_args, s3_args)
+    cloud_functionality.preprocess_reconstruction(s3_args, method_args)
 
     superres_video(method_args, s3_args)
 
-    cloud_functionality.postprocess(method_args, s3_args)
+    cloud_functionality.postprocess_reconstruction(s3_args, method_args)

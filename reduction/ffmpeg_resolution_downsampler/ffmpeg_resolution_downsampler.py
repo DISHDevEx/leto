@@ -18,6 +18,7 @@ root_path = subprocess.run(
 sys.path.append(root_path)
 
 from utilities import ConfigHandler
+from utilities import CloudFunctionality
 
 
 
