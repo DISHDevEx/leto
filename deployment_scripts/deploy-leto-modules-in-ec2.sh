@@ -133,17 +133,37 @@ install_common_packages
 deploy_leto_repository
 install_module_requirements
 }
+# #Check for module dependency and proceed further accordingly
+# if [ "$LIBRARY_REQUIRED" == "Tensorflow" ]; then
+#     deploy_tensorflow_dependent_module
+# elif [ "$LIBRARY_REQUIRED" == "PyTorch" ]; then
+#     deploy_pytorch_dependent_module
+# else
+#     if [ "$LIBRARY_REQUIRED" == "None"]; then
+#         cd $WORKING_DIRECTORY
+#         install_common_packages
+#         setup_virtual_env
+#         deploy_leto_repository
+#         install_module_requirements
+#     fi
+# fi
+#
 #Check for module dependency and proceed further accordingly
-if [ "$LIBRARY_REQUIRED" == "Tensorflow" ]; then
+case $LIBRARY_REQUIRED in
+  "Tensorflow")
     deploy_tensorflow_dependent_module
-elif [ "$LIBRARY_REQUIRED" == "PyTorch" ]; then
+    ;;
+  "PyTorch")
     deploy_pytorch_dependent_module
-else
-    if [ "$LIBRARY_REQUIRED" == "None"]; then
-        cd $WORKING_DIRECTORY
-        install_common_packages
-        setup_virtual_env
-        deploy_leto_repository
-        install_module_requirements
-    fi
-fi
+    ;;
+  "None")
+    cd $WORKING_DIRECTORY
+    install_common_packages
+    setup_virtual_env
+    deploy_leto_repository
+    install_module_requirements
+    ;;
+  *) # Default case if none of the above matches
+    echo "Please pass correct input parameter for 'library_required'"
+    ;;
+esac
