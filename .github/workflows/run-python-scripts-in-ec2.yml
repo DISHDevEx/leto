@@ -60,6 +60,7 @@ jobs:
 
     - name: Checking parameters being passed to the shell script
       run: |
+        echo ${{ github.event.inputs.library_required }}  
         echo ${{ github.event.inputs.python_file_path }}
 
     - name: Run python script in EC2 instance using shell script
