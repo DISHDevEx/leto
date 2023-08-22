@@ -1,11 +1,22 @@
+# Current directory is brought to root level to avoid import issues
+import subprocess
+import sys
+
+# get git repo root level
+root_path = subprocess.run(
+    ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=False
+).stdout.rstrip("\n")
+# add git repo path to use all libraries
+sys.path.append(root_path)
+
 import cv2
 from aEye import Aux
 import logging
 import os
 from utilities import ConfigHandler
-
 import configparser
 from utilities import CloudFunctionality
+import time
 
 
 def background_addition(video_path, image_path, output_path):
@@ -19,15 +30,17 @@ def background_addition(video_path, image_path, output_path):
     
     """
     cap = cv2.VideoCapture(video_path)
+    
     image = cv2.imread(image_path)
 
-# Get the dimensions of the video frames
+    # Get the dimensions of the video frames
     frame_width = int(cap.get(3))
     frame_height = int(cap.get(4))
 
     # Define the codec and create a VideoWriter object to save the output
     output_path = output_path
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+
     out = cv2.VideoWriter(output_path, fourcc, 30, (frame_width, frame_height))
 
     while cap.isOpened():
@@ -40,10 +53,8 @@ def background_addition(video_path, image_path, output_path):
         
         # Combine the image and video frames
         combined_frame = cv2.addWeighted(frame, 1, resized_image, 0.5, 0)
-        
-        out.write(combined_frame)
 
-        cv2.imshow('Combined Video', combined_frame)
+        out.write(combined_frame)
         
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
@@ -72,34 +83,38 @@ def main():
     cloud_functionality = CloudFunctionality()
 
     # load and allocate config file
-    config = configparser.ConfigParser(inline_comment_prefixes=';')
-    config.read('../../config.ini')
-    s3_args = config['DEFAULT']
-    method_args = config['reconstruction.recon_args']
-    logging.info("successfully loaded config file")
+    config = ConfigHandler('reconstruction.background_addition')
+    s3_args = config.s3
+    method_args = config.method
+    
 
     cloud_functionality.preprocess(method_args, s3_args)
+    
+    folder_path = 'reduced_videos'
 
-    videos = [f for f in os.listdir('reduced_videos') if f.endswith('.mp4')]
-    images = [f for f in os.listdir('reduced_videos') if f.endswith('.jpg')]
+    videos = [f for f in os.listdir(folder_path) if f.endswith('.mp4')]
+    images = [f for f in os.listdir(folder_path) if f.endswith('.jpg')]
 
     matched_files = []
+    
 
     for video in videos:
         video_filename = os.path.splitext(video)[0]
         matching_img = f"{video_filename}.jpg"
-        if matching_img in images:
-            matched_files.append((video_filename, matching_img))
         
-    
+        if matching_img in images:
+            video_path = os.path.join(folder_path, video)
+            image_path = os.path.join(folder_path, matching_img)
+            matched_files.append((video_path, image_path))
+        
+
     for files in matched_files:
-        background_addition(files[0],files[1],'reconstructed_videos')
+ 
+        name = files[0].split('/')[1]
+        background_addition(files[0],files[1],f'./reconstructed_videos/{name}')
   
     cloud_functionality.postprocess(method_args, s3_args)
 if __name__ == "__main__":
     start_time = time.time()
     main()
     print("--- %s seconds ---" % (time.time() - start_time))
-
-
-
