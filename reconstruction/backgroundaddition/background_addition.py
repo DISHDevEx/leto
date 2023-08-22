@@ -38,7 +38,7 @@ def background_addition(video_path, image_path, output_path):
     frame_height = int(cap.get(4))
 
     # Define the codec and create a VideoWriter object to save the output
-    output_path = output_path
+    
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 
     out = cv2.VideoWriter(output_path, fourcc, 30, (frame_width, frame_height))
@@ -56,13 +56,18 @@ def background_addition(video_path, image_path, output_path):
 
         out.write(combined_frame)
         
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
+    name = output_path.split('/')[1]
+    output_folder = output_path.split('/')[0]
+    encoded_video_name = os.path.join(output_folder, name + 'background.mp4')
+    cmd = f"static_ffmpeg -y -i {output_path} -c:v libx264   -preset veryfast {encoded_video_name}.mp4"
+    subprocess.run(cmd, shell=True)
+    
+    os.remove(output_path)
+    
     cap.release()
     out.release()
     cv2.destroyAllWindows()
-
+    
 
 def main():
     '''
