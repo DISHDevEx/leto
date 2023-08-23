@@ -16,7 +16,7 @@ root_path = subprocess.run(
 sys.path.append(root_path)
 
 from utilities import ConfigHandler
-
+from utilities import CloudFunctionality
 
 
 def background_subtractor(video_list, path="temp"):
@@ -183,28 +183,19 @@ def main():
         None: however, results in a list of processed videos being stored to the
                 output video S3 path.'''
     
-    config = ConfigHandler('reduction.background_subtractor')
-    s3 = config.s3
-    method = config.method
+    config = ConfigHandler('reduction.cv2_jpg_reduction')
+    s3_args = config.s3
+    method_args = config.method
     aux = Aux()
-    try:
-        video_list_s3_original_video = []
-        video_list_s3_original_video = aux.load_s3(
-            bucket= s3['input_bucket_s3'] , prefix=method['input_prefix_s3']
-        )
-    except Exception as e:
-        print(e)
-        logging.warning(
-            f"unable to load video list from s3; ensure AWS credentials have been provided."
-        )
-    if not os.path.exists("original_videos"):
-        os.mkdir("./original_videos")
-    if not os.path.exists("background_subtraction"):
-        os.mkdir("./background_subtraction")
+
+    cloud_functionality = CloudFunctionality()
+
+
+    video_list = cloud_functionality.preprocess_reduction(s3_args, method_args )
     
     
     #aux.execute_label_and_write_local(video_list_s3_original_video, "original_videos")
-    background_subtractor('original_videos','background_subtraction')
+    background_subtractor(video_list,path="temp")
     out_video_list = aux.load_local("./background_subtraction")
     if ".ipynb_checkpoints" in out_video_list:
         out_video_list.remove(".ipynb_checkpoints")
