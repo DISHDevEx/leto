@@ -1,5 +1,5 @@
-#Shell script to deploy the Leto - Reduction modules in the target AWS EC2 instance
-#Version: v2.0.0
+#Shell script to deploy the Leto - Reconstruction modules in the target AWS EC2 instance
+#Version: v1.0.0
 #
 #!/bin/bash
 #Update yum 
@@ -84,11 +84,12 @@ fi
 echo "Installing requirements for $MODULE_NAME module."
 #Install requirements
 #Find the requirements file of the module
-cd $WORKING_DIRECTORY/leto/reduction/$MODULE_NAME && fVar=$(find -type f -name 'requirements*.txt');
+cd $WORKING_DIRECTORY/leto/reconstruction/$MODULE_NAME && fVar=$(find -type f -name 'requirements*.txt');
 FILE_NAME=${fVar:2}
-if python -m pip install -r $WORKING_DIRECTORY/leto/reduction/$MODULE_NAME/$FILE_NAME; then
+if python -m pip install -r $WORKING_DIRECTORY/leto/reconstruction/$MODULE_NAME/$FILE_NAME; then
     pip list
     echo "Successfully installed requirements for $MODULE_NAME module."
 else
     echo "Requirements installation failed for $MODULE_NAME module."
 fi
+

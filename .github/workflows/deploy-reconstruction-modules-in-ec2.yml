@@ -1,7 +1,7 @@
-#GitHub workflow to run the Leto - Python scripts in the target AWS EC2 instance
+#GitHub workflow to deploy the Leto - Reconstruction modules in the target AWS EC2 instance
 #Version: v1.0.0
 #
-name: run-python-scripts-in-ec2
+name: deploy-reconstruction-modules-in-ec2
 
 on:
   workflow_dispatch:
@@ -13,11 +13,17 @@ on:
         #Instance id entry is mandatory
         required: true
         type: string
-      python_file_path:
+      git_branch:
         # Description to be shown in the UI
-        description: Enter python file path in leto repository
-        #Python file path entry is mandatory and the file path should be based on it's location in the leto repository
-        #Example: The file path of 'cv2_jpg_reduction.py' in 'leto' repository is, 'reduction/cv2_jpg_reduction/cv2_jpg_reduction.py'
+        description: Enter Git branch name
+        #Branch name entry is not mandatory
+        required: false
+        type: string
+        default: main
+      module:
+        # Description to be shown in the UI
+        description: Enter reconstruction module name
+        #Module name entry is mandatory
         required: true
         type: string
 
@@ -28,8 +34,8 @@ permissions:
     id-token: write
 
 jobs:
-  run:
-    name: Run
+  deploy:
+    name: Deploy
     runs-on: ubuntu-latest
     steps:
     - name: Configure AWS credentials
@@ -38,22 +44,24 @@ jobs:
        role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
        role-session-name: ${{ secrets.SAMPLE_ROLE_SESSION }}
        aws-region: ${{ env.AWS_REGION }}
-    #Run python file in target AWS EC2 instance
-    - name: Download shell script from github to EC2 instance
+    #Download deployment shell script from github to '/home/ec2-user' path in target AWS EC2 instance
+    - name: Download deployment script from github to EC2 instance
       run: |
         sudo apt-get -y install expect-dev
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
-        --parameters '{"command": ["curl -o /home/ec2-user/run-python-scripts-in-ec2.sh https://raw.githubusercontent.com/DISHDevEx/leto/main/deployment_scripts/run-python-scripts-in-ec2.sh"]}' \
+        --parameters '{"command": ["curl -o /home/ec2-user/deploy-reconstruction-modules-in-ec2.sh https://raw.githubusercontent.com/DISHDevEx/leto/main/deployment_scripts/deploy-reconstruction-modules-in-ec2.sh"]}' \
         --target ${{ github.event.inputs.instance_id }}
 
     - name: Checking parameters being passed to the shell script
       run: |
-        echo ${{ github.event.inputs.python_file_path }}
-
-    - name: Run python script in EC2 instance using shell script
+        echo ${{ github.event.inputs.git_branch }}
+        echo ${{ github.event.inputs.module }}
+        
+    #Execute shell script to deploy module in target AWS EC2 instance
+    - name: Deploy module in EC2 instance
       run: |
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
-        --parameters '{"command": ["bash /home/ec2-user/run-python-scripts-in-ec2.sh ${{ github.event.inputs.python_file_path }}"]}' \
+        --parameters '{"command": ["bash /home/ec2-user/deploy-reconstruction-modules-in-ec2.sh ${{ github.event.inputs.git_branch }} ${{ github.event.inputs.module }}"]}' \
         --target ${{ github.event.inputs.instance_id }}

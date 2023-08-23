@@ -8,8 +8,6 @@ import subprocess
 import tensorflow as tf
 from tensorflow import keras
 import numpy as np
-import configparser
-import logging
 
 
 # get git repo root level
@@ -21,6 +19,7 @@ root_path = subprocess.run(
 sys.path.append(root_path)
 
 from utilities import CloudFunctionality
+from utilities import ConfigHandler
 
 
 def super_resolve_video(method_args):
@@ -31,7 +30,7 @@ def super_resolve_video(method_args):
     ----------
         method_args:
             configparser object.  Parameters defined in ~/config.ini
-            
+
     """
     # Loop through all videos that need to be reduced.
     for i in range(len(os.listdir("reduced_videos"))):
@@ -43,6 +42,7 @@ def super_resolve_video(method_args):
             "./reconstructed_videos/", os.listdir("reduced_videos")[i]
         )
 
+
         input_video = cv2.VideoCapture(input_video_path)
 
         # Create a variable to store the choice codec for the output video.
@@ -50,28 +50,32 @@ def super_resolve_video(method_args):
 
         fps = input_video.get(cv2.CAP_PROP_FPS)
 
-        superres_video = cv2.VideoWriter(superres_video_path, fourcc, fps, (1440, 1920))
+        resized_width = int(4 * input_video.get(cv2.CAP_PROP_FRAME_WIDTH))
+        resized_height = int(4 * input_video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        superres_video = cv2.VideoWriter(superres_video_path, fourcc, fps, (resized_width,resized_height))
 
         # Create an instance of fastsrgan model
-        model = keras.models.load_model("fastsrgan.h5")
+        model = keras.models.load_model(method_args['local_model_path'])
 
         while input_video.isOpened():
             ret, frame = input_video.read()
-            if ret is True:
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-                # Rescale to 0-1.
-                frame = frame / 255.0
-
-                sr_frame = model.predict(np.expand_dims(frame, axis=0))[0]
-
-                sr_frame = (((sr_frame + 1) / 2.0) * 255).astype(np.uint8)
-
-                sr_frame = cv2.cvtColor(sr_frame, cv2.COLOR_RGB2BGR)
-
-                superres_video.write(sr_frame)
-            else:
+            if not ret:
                 break
+
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+            # Rescale to 0-1.
+            frame = frame / 255.0
+
+            sr_frame = model.predict(np.expand_dims(frame, axis=0))[0]
+
+            sr_frame = (((sr_frame + 1) / 2.0) * 255).astype(np.uint8)
+
+            sr_frame = cv2.cvtColor(sr_frame, cv2.COLOR_RGB2BGR)
+
+            sr_frame = cv2.resize(sr_frame, (resized_width,resized_height))
+
+            superres_video.write(sr_frame)
 
         # Release video capture and writer objects
         input_video.release()
@@ -81,12 +85,9 @@ def super_resolve_video(method_args):
 if __name__ == "__main__":
     cloud_functionality = CloudFunctionality()
 
-    # load and allocate config file
-    config = configparser.ConfigParser(inline_comment_prefixes=';')
-    config.read('../../config.ini')
-    s3_args = config['DEFAULT']
-    method_args = config['reconstruction.recon_args']
-    logging.info("successfully loaded config file")
+    config = ConfigHandler('reconstruction.fastsrgan')
+    s3_args = config.s3
+    method_args = config.method
 
     cloud_functionality.preprocess(method_args, s3_args)
 
