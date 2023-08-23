@@ -10,11 +10,9 @@ root_path = subprocess.run(
 sys.path.append(root_path)
 
 import cv2
-from aEye import Aux
 import logging
 import os
 from utilities import ConfigHandler
-import configparser
 from utilities import CloudFunctionality
 import time
 
@@ -124,4 +122,4 @@ def main():
 if __name__ == "__main__":
     start_time = time.time()
     main()
-    print("--- %s seconds ---" % (time.time() - start_time))
+    logging.info("--- %s seconds ---" % (time.time() - start_time))
