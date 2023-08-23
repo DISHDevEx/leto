@@ -18,6 +18,7 @@ root_path = subprocess.run(
 sys.path.append(root_path)
 
 from utilities import ConfigHandler
+from utilities import CloudFunctionality
 
 
 def fps_bitrate(video_list, fps=30, bitrate=0):
@@ -85,25 +86,16 @@ def main():
                 output video S3 path.
     """
     config = ConfigHandler('reduction.fps_bitrate')
-    s3 = config.s3
-    method = config.method
-
+    s3_args = config.s3
+    method_args = config.method
     aux = Aux()
-
-    try:
-        video_list = aux.load_s3(
-            bucket = s3['input_bucket_s3'], prefix=method['input_prefix_s3']
-        )
-    except Exception as e:
-        print(e)
-        logging.warning(
-            f"unable to load video list from s3; ensure AWS credentials have been provided."
-        )
-
-    fps_bitrate(video_list, method.getint('fps'), method.getint('bitrate'))
-    aux.execute_label_and_write_local(video_list)
-    aux.upload_s3(video_list, s3['output_bucket_s3'], method['output_prefix_s3'])
-    aux.clean()
+    cloud_functionality = CloudFunctionality()
+    
+    
+    video_list = cloud_functionality.preprocess_reduction(s3_args, method_args )
+    fps_bitrate(video_list, method_args.getint('fps'), method_args.getint('bitrate'))
+    aux.execute_label_and_write_local(video_list,path=method_args['temp_path'])
+    cloud_functionality.postprocess_reduction(s3_args, method_args)
 
     return logging.info("video reduction completed on " + sys.version + ".")
 

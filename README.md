@@ -125,73 +125,47 @@ pip install -r <REQUIREMENTS.TXT>
 The name of the requirements.txt file may vary slightly.
 
 
-## Project Structure
+
+
+## Running Benchmarking:
+**Note: Before running the benchmarking scripts make sure the AWS credentials and the token is not expired.**
+
+The following scripts are aviliable.
+```
+1. orignal_file_size.py
+
+2. reduced_file_size.py
+
+3. reconstructed_file_size.py
+
+4. yolo_confindence_scores.py
+
+5. mediapipe_confidence_scores.py
 
 ```
-├──  leto				contains all modules that facilities all functionality to achieve leto's goal
-│   ├── benchmarking
-│       ├── mediapipe
-│           ├── object_detection.py
-│           ├── visualize.py
-│           ├── Dockerfile_mp
-│           ├── requirements_mp.txt
-│           ├── Dockerfile_mp
-│           ├──lambda_function_mp.py
-│       ├── yolo
-│           ├── yolo.py
-│           ├── pipeline.py
-│           ├── training_parameter_input.py
-│           ├── prediction_parameter_input.py
-│           ├── pipeline.py
-│           ├── visualize.py
-│           ├── Dockerfile_yolo
-│           ├──lambda_function_yolo.py
-│           ├── requirements_yolo.txt
-│       ├── video_quality
-│           ├── video_quality_functions.py
-│
-│   ├── reduction
-│       ├── ffmpeg_resolution_downsampler
-│           ├── requirements_ffmpeg_resolution_downsampler.txt
-│           ├── ffmpeg_resolution_downsampler.py
-│       ├── fps_bitrate
-│           ├── fps_bitrate.py
-│           ├── app-fps_bitrate.py
-│           ├── requirements.txt
-│           ├── README.md
-│       ├── cv2_jpg_reduction
-│           ├── cv2_jpg_reduction.py
-│           ├── requirements_cv2_jpg_reduction.txt
-│
-│   ├── reconstruction
-│       ├── realbasicvser
-│           ├── builder.py
-│           ├── realbasicvsr_x4.py
-│           ├── realbasicvsr_x4.py
-│           ├── reconstruction_realbasicvsr_setup.sh
-│           ├── realbasicvsr_preprocessing.py
-│           ├── reconstruction_realbasicvsr.py
-│           ├── realbasicvsr_postprocessing.py
-│       ├── opencv_resoltion_upscaler
-│           ├── requirements_opencv_resoltion_upscaler.txt
-│           ├── opencv_resoltion_upscaler.py
-│       ├── superres
-│           ├── requirements_superres.txt
-│           ├── reconstruction_superres.py
-│       ├── fastsrgan
-│           ├── fastsrgan.py
-│           ├── requirements_fastsrgan.txt
-|
-│   ├── utilities
-|       ├──cloud_functionality.py
-|       ├──config_handler.py
-|
-│
-├──  tests				contains unit tests
-│   ├── test_get_meta_data.py
-│   ├── conftest.py
-│   ├── test_data
-│      ├── test_video.mp4
+Run py files to generate the appropriate metrics.
+These scripts can run from anywhere.(local, aws etc)
 
+The arguments passed to these scripts come form _config.ini file_
+### for example:
+
+```ini
+[benchmarking.reduced_file_size]
+; method specific arguments
+table_name = leto_reduced_file_size
+directory_key = original-videos/
 ```
+All the scripts will upload the metrics to the tables in **Dynamodb**.
+
+The following tables are present today so change them accordingly in the **config.ini** file.
+
+1. leto_original_file_size
+2. leto_reduced_file_size
+3. leto_reconstructed_file_size
+4. leto_mediapipe
+5. leto_yolo
+
+
+Note: Merging of these tables is still in progress
+
 ----------------------------------

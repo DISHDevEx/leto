@@ -5,17 +5,9 @@ FROM public.ecr.aws/lambda/python:3.10
 
 #COPY --from=make-pthread-nameshim /pthread-nameshim/pthread_shim.so /opt/pthread_shim.so
 COPY requirements_mp.txt ${LAMBDA_TASK_ROOT}
-
-
-
-# Copy function code
+COPY object_detection.py "${LAMBDA_TASK_ROOT}"
+COPY visulize.py "${LAMBDA_TASK_ROOT}"
 COPY lambda_function_mp.py ${LAMBDA_TASK_ROOT}
-
-# Copy wheel file
-
-
-
-
 
 # Install the specified packages
 RUN pip install -r requirements_mp.txt
@@ -27,8 +19,7 @@ ADD https://storage.googleapis.com/mediapipe-models/object_detector/efficientdet
 
 RUN chmod a+rx /var/task/*.tflite
 
-COPY object_detection.py "${LAMBDA_TASK_ROOT}"
-COPY visulize.py "${LAMBDA_TASK_ROOT}"
+
 
 RUN ls
 
