@@ -1,6 +1,5 @@
 import boto3
 import pandas as pd
-import csv
 
 dynamodb = boto3.resource('dynamodb')
 
@@ -27,3 +26,10 @@ def mergetablestodf():
     df = pd.DataFrame(table_data)
 
     return df
+
+def main():
+    mergetablestodf()
+
+
+if __name__ == "__main__":
+    main()
