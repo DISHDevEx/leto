@@ -93,7 +93,7 @@ def main():
     method_args = config.method
     
 
-    cloud_functionality.preprocess(method_args, s3_args)
+    cloud_functionality.preprocess_reconstruction(s3_args, method_args)
     
     folder_path = 'reduced_videos'
 
@@ -118,7 +118,7 @@ def main():
         name = files[0].split('/')[1]
         background_addition(files[0],files[1],f'reconstructed_videos/{name}')
   
-    cloud_functionality.postprocess(method_args, s3_args)
+    cloud_functionality.postprocess_reconstruction(s3_args, method_args )
 if __name__ == "__main__":
     start_time = time.time()
     main()
