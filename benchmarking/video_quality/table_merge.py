@@ -18,7 +18,9 @@ def mergetablestodf():
     # Retrieve data from each table
     table_data = []
     for table_name in table_names:
-        response = dynamodb.scan(TableName=table_name)
+        table = dynamodb.Table(table_name)
+        response = table.scan()
+        #ßresponse = dynamodb.scan(TableName=table_name)
         items = response.get('Items', [])
         table_data.extend(items)
         
