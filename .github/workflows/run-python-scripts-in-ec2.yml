@@ -1,5 +1,5 @@
 #GitHub workflow to run the Leto - Python scripts in the target AWS EC2 instance
-#Version: v1.0.0
+#Version: v2.0.0
 #
 name: run-python-scripts-in-ec2
 
@@ -13,6 +13,17 @@ on:
         #Instance id entry is mandatory
         required: true
         type: string
+      library_required:
+        # Description to be shown in the UI
+        description: Select library required
+        #Library selection is mandatory
+        required: true
+        type: choice
+        default: None
+        options:
+          - None
+          - Tensorflow
+          - PyTorch
       python_file_path:
         # Description to be shown in the UI
         description: Enter python file path in leto repository
@@ -49,11 +60,12 @@ jobs:
 
     - name: Checking parameters being passed to the shell script
       run: |
+        echo ${{ github.event.inputs.library_required }}  
         echo ${{ github.event.inputs.python_file_path }}
 
     - name: Run python script in EC2 instance using shell script
       run: |
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
-        --parameters '{"command": ["bash /home/ec2-user/run-python-scripts-in-ec2.sh ${{ github.event.inputs.python_file_path }}"]}' \
+        --parameters '{"command": ["bash /home/ec2-user/run-python-scripts-in-ec2.sh ${{ github.event.inputs.library_required }} ${{ github.event.inputs.python_file_path }} "]}' \
         --target ${{ github.event.inputs.instance_id }}

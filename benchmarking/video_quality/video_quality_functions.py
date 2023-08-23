@@ -12,7 +12,7 @@ root_path = subprocess.run(
 ).stdout.rstrip("\n")
 # add git repo path to use all libraries
 sys.path.append(root_path)
-from benchmarking.yolo import pipeline 
+from benchmarking.yolo import pipeline
 from benchmarking.mediapipe_model import object_detection
 
 import cv2
@@ -25,9 +25,9 @@ def calculate_psnr(original_path, modified_path):
     """
     This will help to calculate PSNR for videos with same FPS and resolution.
     PSNR is Peak Signal to Noise ratio  which is used to measure the quality
-    of a reconstructed or compressed image or video signalcompared to its original, 
+    of a reconstructed or compressed image or video signalcompared to its original,
     uncompressed version. It provides a quantitative measure of the fidelity of
-    the reconstructed signal by calculating the ratio between the maximum possible 
+    the reconstructed signal by calculating the ratio between the maximum possible
     signal power (peak signal) and the power of the distortion or noise introduced
     during the compression or reconstruction process.
 
@@ -52,11 +52,11 @@ def calculate_psnr(original_path, modified_path):
     # Get video properties
     #Total frames
     num_frames =int(original_video.get(cv2.CAP_PROP_FRAME_COUNT))
-        
+
     #Fps
     fps_og = int(original_video.get(cv2.CAP_PROP_FPS))
     fps_mod = int(modified_video.get(cv2.CAP_PROP_FPS))
-    
+
     if fps_og != fps_mod:
         logging.warning(
             "Frame rate mismatch. Cannot calculate PSNR"
@@ -68,7 +68,7 @@ def calculate_psnr(original_path, modified_path):
 
     width_og = original_video.get(cv2.CAP_PROP_FRAME_WIDTH)
     width_mod = modified_video.get(cv2.CAP_PROP_FRAME_WIDTH)
-    
+
     if height_og != height_mod and width_og != width_mod:
         logging.warning(
             "Resolution mismatch. Cannot calculate PSNR"
@@ -84,7 +84,7 @@ def calculate_psnr(original_path, modified_path):
         ret2, frame2 = modified_video.read()
 
         #PSNR
-        total_psnr += cv2.PSNR(frame1,frame2) 
+        total_psnr += cv2.PSNR(frame1,frame2)
 
     # Calculate average PSNR
     average_psnr = total_psnr / num_frames
@@ -127,11 +127,11 @@ def calculate_video_ssim(original_path, modified_path):
     # Get video properties
     #Total frames
     num_frames =int(original_video.get(cv2.CAP_PROP_FRAME_COUNT))
-        
+
     #Fps
     fps_og = int(original_video.get(cv2.CAP_PROP_FPS))
     fps_mod = int(modified_video.get(cv2.CAP_PROP_FPS))
-    
+
     if fps_og != fps_mod:
         logging.warning(
             "Frame rate mismatch. Cannot calculate PSNR"
@@ -143,7 +143,7 @@ def calculate_video_ssim(original_path, modified_path):
 
     width_og = original_video.get(cv2.CAP_PROP_FRAME_WIDTH)
     width_mod = modified_video.get(cv2.CAP_PROP_FRAME_WIDTH)
-    
+
     if height_og != height_mod and width_og != width_mod:
         logging.warning(
             "Resolution mismatch. Cannot calculate PSNR"
