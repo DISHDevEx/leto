@@ -19,7 +19,7 @@ from utilities import ConfigHandler
 
 
 
-def background_subtractor(input_folder, output_folder):
+def background_subtractor(video_list, path="temp"):
     ''' This method helps to extract foreground from the video by removing static background
     Video works usually well on the videos with static background. 
     
@@ -33,12 +33,12 @@ def background_subtractor(input_folder, output_folder):
      '''
     
     # Create the output folder if it doesn't exist
-    os.makedirs(output_folder, exist_ok=True)
+    #os.makedirs(output_folder, exist_ok=True)
 
     # Initialize video capture
-    for video in os.listdir(input_folder):
-        video_path = os.path.join(input_folder, video)
-        capture = cv2.VideoCapture(video_path)
+    for video in video_list:
+        #video_path = os.path.join(input_folder, video)
+        capture = cv2.VideoCapture(video.get_file().strip("'"))
 
         # Get the video's frame width, height, and frames per second
         frame_width = int(capture.get(3))
@@ -47,15 +47,15 @@ def background_subtractor(input_folder, output_folder):
         video_name = Path(video).stem
 
         # Define the codec and create a VideoWriter object for the masked video
-        output_filename = os.path.join(output_folder, video_name + "_masked.mp4")
+        #output_filename = os.path.join(output_folder, video_name + "_masked.mp4")
         codec = cv2.VideoWriter_fourcc(*'mp4v')  # You can also use other codecs like MJPG, X264, etc.
-        out = cv2.VideoWriter(output_filename, codec, fps, (frame_width, frame_height), isColor=True)
+        out = cv2.VideoWriter('output.mp4', codec, fps, (frame_width, frame_height), isColor=True)
 
         # Create background subtraction object
         backSub = cv2.createBackgroundSubtractorMOG2()
 
         # Variable to store the background image
-        building_static_image(video_path, output_folder)
+        building_static_image(video.get_file().strip("'"), path="temp")
 
         while True:
             ret, frame = capture.read()
@@ -82,10 +82,10 @@ def background_subtractor(input_folder, output_folder):
         # Release video capture and writer objects
         capture.release()
         out.release()
-        encoded_video_name = os.path.join(output_folder, video_name)
-        cmd = f"static_ffmpeg -y -i {output_filename} -c:v libx264  -crf 34 -preset veryfast {encoded_video_name}.mp4"
+        encoded_video_name = os.path.join(path="temp", "out1")
+        cmd = f"static_ffmpeg -y -i output.mp4 -c:v libx264  -crf 34 -preset veryfast {encoded_video_name}.mp4"
         subprocess.run(cmd, shell=True)
-        os.remove(output_filename)
+        #os.remove(output_filename)
 
 def building_static_image(video_path, output_folder):
     """This method helps to extract static frame from the video. 
@@ -203,7 +203,7 @@ def main():
         os.mkdir("./background_subtraction")
     
     
-    aux.execute_label_and_write_local(video_list_s3_original_video, "original_videos")
+    #aux.execute_label_and_write_local(video_list_s3_original_video, "original_videos")
     background_subtractor('original_videos','background_subtraction')
     out_video_list = aux.load_local("./background_subtraction")
     if ".ipynb_checkpoints" in out_video_list:
