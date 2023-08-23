@@ -62,7 +62,7 @@ class CloudFunctionality:
         method_args: dict
             Defines reduction technique specific args. 
         """
-
+        
         with open(method_args['local_model_path'], "wb") as file:
             self.s3.download_fileobj(s3_args['model_bucket_s3'], method_args['model_prefix_s3'], file)
 
@@ -90,7 +90,7 @@ class CloudFunctionality:
 
         # Download model.
         if method_args.getboolean('download_model'):
-            self.download_model(method_args, s3_args)
+            self.download_model(s3_args, method_args)
 
     def postprocess_reconstruction(self, s3_args, method_args ):
         """
