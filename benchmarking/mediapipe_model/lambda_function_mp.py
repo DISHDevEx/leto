@@ -37,11 +37,11 @@ def handler(event, context):
             "/tmp", os.path.basename("mp_" + video.get_title())
         )
 
-        object_detection(mp_model, video.get_file().strip("'"), mp_output_video)
+        mAC = object_detection(mp_model, video.get_file().strip("'"), mp_output_video)
 
-        s3_client.upload_file(
-            mp_output_video, "leto-dish", f"object_detection/mp_{video.get_title()}"
-        )
+        video_location = f's3://{bucket}/{key}'
+
+        return {video_location : mAC }
 
     except Exception as e:
         print(e)
