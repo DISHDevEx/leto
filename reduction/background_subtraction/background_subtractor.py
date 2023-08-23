@@ -7,6 +7,7 @@ from pathlib import Path
 import subprocess
 import time
 import sys
+import numpy as np
 
 root_path = subprocess.run(
     ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=False
@@ -38,54 +39,60 @@ def background_subtractor(video_list, path="temp"):
     # Initialize video capture
     for video in video_list:
         #video_path = os.path.join(input_folder, video)
-        capture = cv2.VideoCapture(video.get_file().strip("'"))
+        stream = cv2.VideoCapture(video.get_file().strip("'"))
+        video_name = Path(str(video)).stem
 
         # Get the video's frame width, height, and frames per second
-        frame_width = int(capture.get(3))
-        frame_height = int(capture.get(4))
-        fps = int(capture.get(cv2.CAP_PROP_FPS))
-        video_name = Path(video).stem
+        if not stream.isOpened():
+            print("No stream :(")
+            exit()
 
-        # Define the codec and create a VideoWriter object for the masked video
-        #output_filename = os.path.join(output_folder, video_name + "_masked.mp4")
-        codec = cv2.VideoWriter_fourcc(*'mp4v')  # You can also use other codecs like MJPG, X264, etc.
-        out = cv2.VideoWriter('output.mp4', codec, fps, (frame_width, frame_height), isColor=True)
+        num_frames = stream.get(cv2.CAP_PROP_FRAME_COUNT)
+        frame_ids = np.random.uniform(size=20) * num_frames
+        frames = []
+        for fid in frame_ids:
+            stream.set(cv2.CAP_PROP_POS_FRAMES, fid)
+            ret, frame = stream.read()
+            if not ret:
+                print("SOMETHING WENT WRONG")
+                exit()
+            frames.append(frame)
 
-        # Create background subtraction object
-        backSub = cv2.createBackgroundSubtractorMOG2()
+        median = np.median(frames, axis=0).astype(np.uint8)
+        median_1 = median 
+        median = cv2.cvtColor(median, cv2.COLOR_BGR2GRAY)
 
-        # Variable to store the background image
-        building_static_image(video.get_file().strip("'"), path="temp")
+        fps = stream.get(cv2.CAP_PROP_FPS)
+        width = int(stream.get(3))
+        height = int(stream.get(4))
+        output_filename = os.path.join("./background_folder/",video_name + "_maskedfull.mp4" )
+        print(output_filename)
+        output = cv2.VideoWriter(output_filename,
+                                cv2.VideoWriter_fourcc(*'mp4v'),  # Change FourCC code
+                                fps=fps, frameSize=(width, height), isColor=False)  # Set isColor to False
 
+        stream.set(cv2.CAP_PROP_POS_FRAMES, 0)
         while True:
-            ret, frame = capture.read()
-            if frame is None:
+            ret, frame = stream.read()
+            if not ret:
+                print("No more stream :(")
                 break
 
-            # Update the background model
-            fgMask = backSub.apply(frame)
-            # Get the frame number and write it on the current frame
-            cv2.rectangle(frame, (10, 2), (100, 20), (255, 255, 255), -1)
-            cv2.putText(frame, str(capture.get(cv2.CAP_PROP_POS_FRAMES)), (15, 15),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
+            frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            diff_frame = cv2.absdiff(median, frame_gray)
+            #threshold, diff = cv2.threshold(diff_frame, 100, 255, cv2.THRESH_BINARY)
+            output.write(diff_frame)
+            #cv2.imshow("Video!", diff)
 
-            # Apply the foreground mask to the original frame
-            masked_frame = cv2.bitwise_and(frame, frame, mask=fgMask)
-
-            # Write the masked frame to the output video file
-            out.write(masked_frame)
-
-            keyboard = cv2.waitKey(30)
-            if keyboard == ord('q') or keyboard == 27:
+            if cv2.waitKey(1) == ord('q'):
                 break
 
-        # Release video capture and writer objects
-        capture.release()
-        out.release()
-        encoded_video_name = os.path.join(path="temp", "out1")
-        cmd = f"static_ffmpeg -y -i output.mp4 -c:v libx264  -crf 34 -preset veryfast {encoded_video_name}.mp4"
-        subprocess.run(cmd, shell=True)
-        #os.remove(output_filename)
+        stream.release()
+        output.release() 
+        cv2.destroyAllWindows()# Release the VideoWriter
+        median_frame_name = os.path.join("./temp",video_name + ".jpg")
+        cv2.imwrite(median_frame_name,median_1)
+        
 
 def building_static_image(video_path, output_folder):
     """This method helps to extract static frame from the video. 
