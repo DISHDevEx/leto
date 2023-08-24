@@ -55,7 +55,6 @@ def background_subtractor(video_list, path="temp"):
 
         # Get the video's frame width, height, and frames per second
         if not stream.isOpened():
-            print("Error reading video file")
             exit()
 
         num_frames = stream.get(cv2.CAP_PROP_FRAME_COUNT)
@@ -65,7 +64,6 @@ def background_subtractor(video_list, path="temp"):
             stream.set(cv2.CAP_PROP_POS_FRAMES, fid)
             ret, frame = stream.read()
             if not ret:
-                print("SOMETHING WENT WRONG")
                 exit()
             frames.append(frame)
 
@@ -77,7 +75,6 @@ def background_subtractor(video_list, path="temp"):
         while True:
             ret, frame = stream.read()
             if not ret:
-                print("No more stream :(")
                 break
 
             frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
