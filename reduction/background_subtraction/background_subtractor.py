@@ -65,7 +65,7 @@ def background_subtractor(video_list, path="temp"):
         fps = stream.get(cv2.CAP_PROP_FPS)
         width = int(stream.get(3))
         height = int(stream.get(4))
-        output_filename = os.path.join("./temp/",video_name + "_masked.mp4" )
+        output_filename = os.path.join(path,video_name + "_masked.mp4" )
         print(output_filename)
         output = cv2.VideoWriter(output_filename,
                                 cv2.VideoWriter_fourcc(*'mp4v'),  # Change FourCC code
@@ -90,92 +90,12 @@ def background_subtractor(video_list, path="temp"):
         stream.release()
         output.release() 
         cv2.destroyAllWindows()# Release the VideoWriter
-        median_frame_name = os.path.join("./temp",video_name + ".jpg")
+        median_frame_name = os.path.join(path,video_name + ".jpg")
         cv2.imwrite(median_frame_name,median_1)
-        encoded_video_name = os.path.join('./temp/', video_name)
-        cmd = f"static_ffmpeg -y -i {output_filename} -c:v libx264  -crf 23 -preset veryfast {encoded_video_name}.mp4"
+        encoded_video_name = os.path.join(path, video_name)
+        cmd = f"static_ffmpeg -y -i {output_filename} -c:v libx264  -crf 34 -preset veryfast {encoded_video_name}.mp4"
         subprocess.run(cmd, shell=True)
         
-
-def building_static_image(video_path, output_folder):
-    """This method helps to extract static frame from the video. 
-    It takes first frame and last frame as reference frames and calculate abs diff from each frame 
-    the frame with minumum difference is termed as static frame """
-
-# Path to the video file
-    video_path = video_path
-    video_basename = os.path.basename(video_path)
-    video_name = Path(video_basename).stem
-
-    # Open the video file
-    cap = cv2.VideoCapture(video_path)
-
-    if not cap.isOpened():
-        print("Error opening video file")
-        exit()
-
-    # Read the first frame and convert it to grayscale for the first reference
-    ret, first_frame = cap.read()
-    if not ret:
-        print("Error reading the first frame")
-        exit()
-
-    first_frame_gray = cv2.cvtColor(first_frame, cv2.COLOR_BGR2GRAY)
-
-    # Get the total number of frames in the video
-    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    print(total_frames)
-
-    # Set the video capture to the last frame
-    cap.set(cv2.CAP_PROP_POS_FRAMES, total_frames - 1)
-
-    # Read the last frame and convert it to grayscale for the second reference
-    ret, last_frame = cap.read()
-    if not ret:
-        print("Error reading the last frame")
-        exit()
-
-    last_frame_gray = cv2.cvtColor(last_frame, cv2.COLOR_BGR2GRAY)
-
-    # Parameters for frame comparison
-    static_frame = None
-    static_frame_diff = float('inf')  # Initialize with a high value
-    # re-initialize the frame number
-    cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-
-    while True:
-        ret, frame = cap.read()
-        #print(ret)
-
-        if not ret:
-            break
-
-        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-        first_frame_diff = cv2.absdiff(gray_frame, first_frame_gray)
-        #print(first_frame_diff)
-        last_frame_diff = cv2.absdiff(gray_frame, last_frame_gray)
-        #print(last_frame_diff)
-
-        frame_diff_sum = cv2.sumElems(first_frame_diff)[0] + cv2.sumElems(last_frame_diff)[0]
-
-        if frame_diff_sum < static_frame_diff:
-            static_frame_diff = frame_diff_sum
-            static_frame = frame.copy()
-    #     else:
-    #         static_frame_diff = min(first_frame_diff, last_frame_diff)
-    #         static_frame = frame.copy()
-    cap.release()
-
-    if static_frame is not None:
-        # building file path
-        output_path = os.path.join(output_folder, video_name + ".jpg")
-        cv2.imwrite(output_path, static_frame)
-        print(f"Static frame saved as {output_path}")
-    else:
-        print("No static frame found in the video.")
-
-
 
 def main():
     '''
@@ -193,7 +113,7 @@ def main():
         None: however, results in a list of processed videos being stored to the
                 output video S3 path.'''
     
-    config = ConfigHandler('reduction.cv2_jpg_reduction')
+    config = ConfigHandler('reduction.background_subtractor')
     s3_args = config.s3
     method_args = config.method
     aux = Aux()
@@ -205,16 +125,9 @@ def main():
     
     
     #aux.execute_label_and_write_local(video_list_s3_original_video, "original_videos")
-    background_subtractor(video_list,path="temp")
-    out_video_list = aux.load_local("./background_subtraction")
-    if ".ipynb_checkpoints" in out_video_list:
-        out_video_list.remove(".ipynb_checkpoints")
-    aux.upload_s3(out_video_list, bucket = s3['output_bucket_s3'], prefix = method['output_prefix_s3'])
+    background_subtractor(video_list,method_args['temp_path'])
 
-    aux.set_local_path('original_videos')
-    aux.clean()
-    aux.set_local_path('background_subtraction')
-    aux.clean()
+    cloud_functionality.postprocess_reduction(s3_args, method_args)
 if __name__ == "__main__":
     start_time = time.time()
     main()
