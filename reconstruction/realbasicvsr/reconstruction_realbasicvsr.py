@@ -10,8 +10,7 @@ import numpy as np
 import torch
 from mmcv.runner import load_checkpoint
 from mmedit.core import tensor2img
-import logging
-import configparser
+from pathlib import Path
 
 from builder import Builder
 
@@ -24,6 +23,7 @@ root_path = subprocess.run(
 sys.path.append(root_path)
 
 from utilities import CloudFunctionality
+from utilities import ConfigHandler
 
 VIDEO_EXTENSIONS = (".mp4", ".mov")
 
@@ -75,7 +75,7 @@ def realbasicvsr_runner(method_args):
     """
 
     # Initialize the model.
-    model = init_model("realbasicvsr_x4.py", method_args['local_model_path'])
+    model = init_model(absolute_path_getter("realbasicvsr_x4.py"), method_args['local_model_path'])
 
     # Read frames from video and create an array of frames.
 
@@ -131,18 +131,32 @@ def realbasicvsr_runner(method_args):
         video_writer.release()
 
 
+def absolute_path_getter(file_name):
+    """
+    Takes in file name, in the same working directory as the 'running' python file (__file__)
+
+    Arguments:
+        String: file_name
+            name of subject file
+    Returns:
+        PosixPath: py_path
+             Absolute path of file_name
+    """
+    method_path = Path(__file__)
+    abs_path_parent = method_path.parent.absolute()
+    py_path = str(abs_path_parent.joinpath(file_name))
+    return(py_path)
+
+
 if __name__ == "__main__":
     cloud_functionality = CloudFunctionality()
 
-    # load and allocate config file
-    config = configparser.ConfigParser(inline_comment_prefixes=';')
-    config.read('../../config.ini')
-    s3_args = config['DEFAULT']
-    method_args = config['reconstruction.recon_args']
-    logging.info("successfully loaded config file")
+    config = ConfigHandler('reconstruction.realbasicvsr')
+    s3_args = config.s3
+    method_args = config.method
 
-    cloud_functionality.preprocess(method_args, s3_args)
+    cloud_functionality.preprocess_reconstruction(s3_args, method_args)
 
-    realbasicvsr_runner(method_args, s3_args)
+    realbasicvsr_runner(method_args)
 
-    cloud_functionality.postprocess(method_args, s3_args)
+    cloud_functionality.postprocess_reconstruction(s3_args, method_args)

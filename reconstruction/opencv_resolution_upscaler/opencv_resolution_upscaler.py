@@ -5,12 +5,8 @@ import subprocess
 import argparse
 import cv2
 import os
-import boto3
-import static_ffmpeg
 import sys
 from aEye import Aux
-import configparser
-import logging
 
 # get git repo root level
 root_path = subprocess.run(
@@ -21,6 +17,7 @@ root_path = subprocess.run(
 sys.path.append(root_path)
 
 from utilities import CloudFunctionality
+from utilities import ConfigHandler
 
 
 def upscale_video(method_args):
@@ -105,15 +102,12 @@ def upscale_video(method_args):
 if __name__ == "__main__":
     cloud_functionality = CloudFunctionality()
 
-    # load and allocate config file
-    config = configparser.ConfigParser(inline_comment_prefixes=';')
-    config.read('../../config.ini')
-    s3_args = config['DEFAULT']
-    method_args = config['reconstruction.recon_args']
-    logging.info("successfully loaded config file")
+    config = ConfigHandler('reconstruction.opencv_ru')
+    s3_args = config.s3
+    method_args = config.method
 
-    cloud_functionality.preprocess(method_args, s3_args)
+    cloud_functionality.preprocess_reconstruction(s3_args, method_args)
 
     upscale_video(method_args)
 
-    cloud_functionality.postprocess(method_args, s3_args)
+    cloud_functionality.postprocess_reconstruction(s3_args, method_args)

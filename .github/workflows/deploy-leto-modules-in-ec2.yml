@@ -1,7 +1,7 @@
-#GitHub workflow to deploy the Leto - Reconstruction modules in the target AWS EC2 instance
+#GitHub workflow to deploy the Leto - Reduction/Reconstruction modules in the target AWS EC2 instance
 #Version: v1.0.0
 #
-name: deploy-reconstruction-modules-in-ec2
+name: deploy-leto-modules-in-ec2
 
 on:
   workflow_dispatch:
@@ -20,12 +20,32 @@ on:
         required: false
         type: string
         default: main
+      module_type:
+        # Description to be shown in the UI
+        description: Select module type
+        #Module type selection is mandatory
+        required: true
+        type: choice
+        options:
+            - Reduction
+            - Reconstruction
       module:
         # Description to be shown in the UI
-        description: Enter reconstruction module name
+        description: Enter module name
         #Module name entry is mandatory
         required: true
         type: string
+      library_required:
+        # Description to be shown in the UI
+        description: Select library required
+        #Library selection is mandatory
+        required: true
+        type: choice
+        default: None
+        options:
+            - None
+            - Tensorflow
+            - PyTorch
 
 env:
   AWS_REGION : ${{ secrets.AWS_REGION }}
@@ -50,18 +70,20 @@ jobs:
         sudo apt-get -y install expect-dev
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
-        --parameters '{"command": ["curl -o /home/ec2-user/deploy-reconstruction-modules-in-ec2.sh https://raw.githubusercontent.com/DISHDevEx/leto/main/deployment_scripts/deploy-reconstruction-modules-in-ec2.sh"]}' \
+        --parameters '{"command": ["curl -o /home/ec2-user/deploy-leto-modules-in-ec2.sh https://raw.githubusercontent.com/DISHDevEx/leto/main/deployment_scripts/deploy-leto-modules-in-ec2.sh"]}' \
         --target ${{ github.event.inputs.instance_id }}
 
     - name: Checking parameters being passed to the shell script
       run: |
         echo ${{ github.event.inputs.git_branch }}
+        echo ${{ github.event.inputs.module_type }}
         echo ${{ github.event.inputs.module }}
+        echo ${{ github.event.inputs.library_required }}
         
     #Execute shell script to deploy module in target AWS EC2 instance
     - name: Deploy module in EC2 instance
       run: |
         unbuffer aws ssm start-session \
         --document-name 'AWS-StartNonInteractiveCommand' \
-        --parameters '{"command": ["bash /home/ec2-user/deploy-reconstruction-modules-in-ec2.sh ${{ github.event.inputs.git_branch }} ${{ github.event.inputs.module }}"]}' \
+        --parameters '{"command": ["bash /home/ec2-user/deploy-leto-modules-in-ec2.sh ${{ github.event.inputs.git_branch }} ${{ github.event.inputs.module_type }} ${{ github.event.inputs.module }} ${{ github.event.inputs.library_required }}"]}' \
         --target ${{ github.event.inputs.instance_id }}

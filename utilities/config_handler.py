@@ -1,8 +1,8 @@
 """
 ConfigHandler acts as a wrapper for implementing the use of configparser in the Leto repo.
-All reconstruction and reduction methods implement this class to handle configuration input 
-from the config.ini file.  The class also allows for method execution from any level of the 
-leto directory hierarchy.  
+All reconstruction and reduction methods implement this class to handle configuration input
+from the config.ini file.  The class also allows for method execution from any level of the
+leto directory hierarchy.
 """
 
 from pathlib import Path
@@ -56,7 +56,7 @@ class ConfigHandler():
         config_path: string
             Absolute path to the master config.ini file.
         """
-        
+
         method_path = Path(__file__)
         leto_root = method_path.parent.parent.absolute()
         config_path = leto_root.joinpath('config.ini')
@@ -79,7 +79,7 @@ class ConfigHandler():
             All configs from the master config file.
         """
 
-        config = configparser.ConfigParser(inline_comment_prefixes=';')
+        config = configparser.ConfigParser(inline_comment_prefixes=';', interpolation=configparser.ExtendedInterpolation())
         config.read(self.config_path)
         return config
 

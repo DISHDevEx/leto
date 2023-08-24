@@ -30,8 +30,7 @@ class CloudFunctionality:
             List of video objects.
 
         """
-        if not os.path.exists(method_args['temp_path']):
-            os.mkdir(method_args['temp_path'])
+        os.mkdir(method_args['temp_path'])
         video_list = self.aux.load_s3(s3_args['input_bucket_s3'], method_args['input_prefix_s3'])
         return video_list
 
@@ -131,3 +130,4 @@ class CloudFunctionality:
         # After cleaning videos, delete the pretrained model as well.
         if method_args.getboolean('clean_model'):
             os.remove(method_args['local_model_path'])
+
