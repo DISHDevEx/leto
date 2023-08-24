@@ -21,12 +21,15 @@ from utilities import CloudFunctionality
 
 
 def background_subtractor(video_list, path="temp"):
-    ''' This method helps to extract foreground from the video by removing static background
+    ''' 
+    This method helps to extract foreground from the video by removing static background
     Video works usually well on the videos with static background. 
     
     Parameters:
-    video_list : list of videos to reduce
-    path: path to local folder where reduced videos need to be stored
+    video_list : list
+    list of input videos 
+    path: string
+    path to local folder where reduced videos need to be stored
 
     Returns:
     videos with background masked in S3 location
@@ -44,7 +47,7 @@ def background_subtractor(video_list, path="temp"):
 
         # Get the video's frame width, height, and frames per second
         if not stream.isOpened():
-            print("No stream :(")
+            print("Error reading video file")
             exit()
 
         num_frames = stream.get(cv2.CAP_PROP_FRAME_COUNT)
@@ -80,9 +83,8 @@ def background_subtractor(video_list, path="temp"):
 
             frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             diff_frame = cv2.absdiff(median, frame_gray)
-            #threshold, diff = cv2.threshold(diff_frame, 100, 255, cv2.THRESH_BINARY)
             output.write(diff_frame)
-            #cv2.imshow("Video!", diff)
+            
 
             if cv2.waitKey(1) == ord('q'):
                 break
@@ -124,7 +126,6 @@ def main():
     video_list = cloud_functionality.preprocess_reduction(s3_args, method_args )
     
     
-    #aux.execute_label_and_write_local(video_list_s3_original_video, "original_videos")
     background_subtractor(video_list,method_args['temp_path'])
 
     cloud_functionality.postprocess_reduction(s3_args, method_args)
