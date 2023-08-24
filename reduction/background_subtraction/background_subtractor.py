@@ -24,6 +24,8 @@ def background_subtractor(video_list, path="temp"):
     ''' 
     This method helps to extract foreground from the video by removing static background
     Video works usually well on the videos with static background. 
+    variables : fps(frame per second), num_frames(number of frames), width(frame width), 
+    height(frame height) are used for frame manipulation
     
     Parameters:
     -------------
