@@ -62,7 +62,7 @@ class CloudFunctionality:
         method_args: dict
             Defines reduction technique specific args.
         """
-
+        
         with open(method_args['local_model_path'], "wb") as file:
             self.s3.download_fileobj(s3_args['model_bucket_s3'], method_args['model_prefix_s3'], file)
 

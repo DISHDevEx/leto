@@ -21,7 +21,7 @@ from utilities import ConfigHandler
 from utilities import CloudFunctionality
 
 
-def fps_bitrate(video_list, fps=30, bitrate=0):
+def fps_bitrate(video_list, fps_factor=2, bitrate=0):
     """
     Wrapper method for the change_fps and set_bitrate methods in aEye.Labeler.
 
@@ -51,23 +51,22 @@ def fps_bitrate(video_list, fps=30, bitrate=0):
     """
 
     labeler = Labeler()
+    
+    modified_video_list = []
+    
+    for video in video_list:
 
-    try:
-        if fps < 1:
-            raise Exception
-        labeler.change_fps(video_list, fps)
-    except Exception:
-        logging.exception("unable to process with given fps; must be > 0")
+        video.extract_metadata()
+        
+        video_current_fps = int(video.meta_data["streams"][0]["avg_frame_rate"].split("/")[0])
 
-    try:
-        if bitrate < 0:
-            raise Exception
+        requested_fps = video_current_fps/fps_factor
 
-        labeler.set_bitrate(video_list, bitrate)
-    except Exception:
-        logging.exception("unable to process with given bitrate; must be >= 0")
+        labeler.change_fps([video], requested_fps)
 
-    return video_list
+        labeler.set_bitrate([video], bitrate)
+
+    return modified_video_list
 
 
 def main():
@@ -93,7 +92,7 @@ def main():
     
     
     video_list = cloud_functionality.preprocess_reduction(s3_args, method_args )
-    fps_bitrate(video_list, method_args.getint('fps'), method_args.getint('bitrate'))
+    fps_bitrate(video_list, method_args.getint('fps_factor'), method_args.getint('bitrate'))
     aux.execute_label_and_write_local(video_list,path=method_args['temp_path'])
     cloud_functionality.postprocess_reduction(s3_args, method_args)
 

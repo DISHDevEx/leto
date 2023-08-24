@@ -102,7 +102,8 @@ if __name__ == "__main__":
     config = ConfigHandler('reconstruction.superres')
     s3_args = config.s3
     method_args = config.method
-
+    
+    
     cloud_functionality.preprocess_reconstruction(s3_args, method_args)
 
     superres_video(method_args, s3_args)
