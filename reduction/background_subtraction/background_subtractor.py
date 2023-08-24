@@ -25,11 +25,11 @@ def background_subtractor(video_list, path="temp"):
     Video works usually well on the videos with static background. 
     
     Parameters:
-    input_folder : name of local input folder
-    output_folder: name of output folder
+    video_list : list of videos to reduce
+    path: path to local folder where reduced videos need to be stored
 
     Returns:
-    videos with background masked 
+    videos with background masked in S3 location
     
      '''
     
