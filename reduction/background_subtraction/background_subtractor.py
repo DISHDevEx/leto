@@ -65,7 +65,7 @@ def background_subtractor(video_list, path="temp"):
         fps = stream.get(cv2.CAP_PROP_FPS)
         width = int(stream.get(3))
         height = int(stream.get(4))
-        output_filename = os.path.join("./background_folder/",video_name + "_maskedfull.mp4" )
+        output_filename = os.path.join("./temp/",video_name + "_masked.mp4" )
         print(output_filename)
         output = cv2.VideoWriter(output_filename,
                                 cv2.VideoWriter_fourcc(*'mp4v'),  # Change FourCC code
@@ -92,6 +92,9 @@ def background_subtractor(video_list, path="temp"):
         cv2.destroyAllWindows()# Release the VideoWriter
         median_frame_name = os.path.join("./temp",video_name + ".jpg")
         cv2.imwrite(median_frame_name,median_1)
+        encoded_video_name = os.path.join('./temp/', video_name)
+        cmd = f"static_ffmpeg -y -i {output_filename} -c:v libx264  -crf 23 -preset veryfast {encoded_video_name}.mp4"
+        subprocess.run(cmd, shell=True)
         
 
 def building_static_image(video_path, output_folder):
