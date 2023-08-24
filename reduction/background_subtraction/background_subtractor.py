@@ -46,6 +46,9 @@ def background_subtractor(video_list, path="temp"):
     # Initialize video capture
     for video in video_list:
         stream = cv2.VideoCapture(video.get_file().strip("'"))
+        if not stream.isOpened():
+            exit()
+        # Get the video's frame width, height, and frames per second
         video_name = Path(str(video)).stem
         fps = stream.get(cv2.CAP_PROP_FPS)
         width = int(stream.get(3))
@@ -55,13 +58,12 @@ def background_subtractor(video_list, path="temp"):
                                 cv2.VideoWriter_fourcc(*'mp4v'),  # Change FourCC code
                                 fps=fps, frameSize=(width, height), isColor=False)  # Set isColor to False
 
-        # Get the video's frame width, height, and frames per second
-        if not stream.isOpened():
-            exit()
+        
 
         num_frames = stream.get(cv2.CAP_PROP_FRAME_COUNT)
-        frame_ids = np.random.uniform(size=20) * num_frames
+        frame_ids = np.random.choice(num_frames, size=20, replace=False)
         frames = []
+        # Looping through chosen frame ids
         for fid in frame_ids:
             stream.set(cv2.CAP_PROP_POS_FRAMES, fid)
             ret, frame = stream.read()
@@ -70,17 +72,17 @@ def background_subtractor(video_list, path="temp"):
             frames.append(frame)
 
         median = np.median(frames, axis=0).astype(np.uint8)
-        median_1 = median 
-        median = cv2.cvtColor(median, cv2.COLOR_BGR2GRAY)
+        median_gray = cv2.cvtColor(median, cv2.COLOR_BGR2GRAY)
 
         stream.set(cv2.CAP_PROP_POS_FRAMES, 0)
+        # Looping through entire video
         while True:
             ret, frame = stream.read()
             if not ret:
                 break
 
             frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            diff_frame = cv2.absdiff(median, frame_gray)
+            diff_frame = cv2.absdiff(median_gray, frame_gray)
             output.write(diff_frame)
             
 
@@ -91,7 +93,7 @@ def background_subtractor(video_list, path="temp"):
         output.release() 
         cv2.destroyAllWindows()# Release the VideoWriter
         median_frame_name = os.path.join(path,video_name + ".jpg")
-        cv2.imwrite(median_frame_name,median_1)
+        cv2.imwrite(median_frame_name,median)
         encoded_video_name = os.path.join(path, video_name)
         cmd = f"static_ffmpeg -y -i {output_filename} -c:v libx264  -crf 34 -preset veryfast {encoded_video_name}.mp4"
         subprocess.run(cmd, shell=True)
