@@ -26,12 +26,14 @@ def background_subtractor(video_list, path="temp"):
     Video works usually well on the videos with static background. 
     
     Parameters:
+    -------------
     video_list : list
     list of input videos 
     path: string
     path to local folder where reduced videos need to be stored
 
     Returns:
+    ---------
     videos with background masked in S3 location
     
      '''
@@ -100,8 +102,7 @@ def background_subtractor(video_list, path="temp"):
         
 
 def main():
-    '''
-      """
+    """
     Runner method for background_subtractor().  This method abstracts some of the
     interaction with S3 and AWS away from fps_bitrate.
 
@@ -115,6 +116,7 @@ def main():
         None: however, results in a list of processed videos being stored to the
                 output video S3 path.'''
     
+    """
     config = ConfigHandler('reduction.background_subtractor')
     s3_args = config.s3
     method_args = config.method
