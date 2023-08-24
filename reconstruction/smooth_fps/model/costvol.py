@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 import collections
 import cupy
 import os
@@ -8,26 +7,50 @@ import torch
 import typing
 
 
-##########################################################
-
-
+# A cache to store CUDA compiled functions
 objCudacache = {}
 
 
-def cuda_int32(intIn:int):
+def cuda_int32(intIn: int) -> cupy.int32:
+    """
+    Convert an integer to cupy.int32.
+
+    Args:
+        intIn (int): The input integer.
+
+    Returns:
+        cupy.int32: The integer converted to cupy.int32.
+    """
     return cupy.int32(intIn)
-# end
 
 
-def cuda_float32(fltIn:float):
+def cuda_float32(fltIn: float) -> cupy.float32:
+    """
+    Convert a float to cupy.float32.
+
+    Args:
+        fltIn (float): The input float.
+
+    Returns:
+        cupy.float32: The float converted to cupy.float32.
+    """
     return cupy.float32(fltIn)
-# end
 
 
-def cuda_kernel(strFunction:str, strKernel:str, objVariables:typing.Dict):
-    if 'device' not in objCudacache:
-        objCudacache['device'] = torch.cuda.get_device_name()
-    # end
+def cuda_kernel(strFunction: str, strKernel: str, objVariables: typing.Dict):
+    """
+    Compile and cache a CUDA kernel function.
+
+    Args:
+        strFunction (str): The name of the CUDA function.
+        strKernel (str): The CUDA kernel code as a string.
+        objVariables (typing.Dict): A dictionary of variables used in the kernel.
+
+    Returns:
+        str: A key to access the cached CUDA function.
+    """
+    if "device" not in objCudacache:
+        objCudacache["device"] = torch.cuda.get_device_name()
 
     strKey = strFunction
 
@@ -58,12 +81,9 @@ def cuda_kernel(strFunction:str, strKernel:str, objVariables:typing.Dict):
 
         elif True:
             print(strVariable, type(objValue))
-            assert(False)
+            assert False
 
-        # end
-    # end
-
-    strKey += objCudacache['device']
+    strKey += objCudacache["device"]
 
     if strKey not in objCudacache:
         for strVariable in objVariables:
@@ -73,87 +93,87 @@ def cuda_kernel(strFunction:str, strKernel:str, objVariables:typing.Dict):
                 continue
 
             elif type(objValue) == int:
-                strKernel = strKernel.replace('{{' + strVariable + '}}', str(objValue))
+                strKernel = strKernel.replace("{{" + strVariable + "}}", str(objValue))
 
             elif type(objValue) == float:
-                strKernel = strKernel.replace('{{' + strVariable + '}}', str(objValue))
+                strKernel = strKernel.replace("{{" + strVariable + "}}", str(objValue))
 
             elif type(objValue) == bool:
-                strKernel = strKernel.replace('{{' + strVariable + '}}', str(objValue))
+                strKernel = strKernel.replace("{{" + strVariable + "}}", str(objValue))
 
             elif type(objValue) == str:
-                strKernel = strKernel.replace('{{' + strVariable + '}}', objValue)
+                strKernel = strKernel.replace("{{" + strVariable + "}}", objValue)
 
             elif type(objValue) == torch.Tensor and objValue.dtype == torch.uint8:
-                strKernel = strKernel.replace('{{type}}', 'unsigned char')
+                strKernel = strKernel.replace("{{type}}", "unsigned char")
 
             elif type(objValue) == torch.Tensor and objValue.dtype == torch.float16:
-                strKernel = strKernel.replace('{{type}}', 'half')
+                strKernel = strKernel.replace("{{type}}", "half")
 
             elif type(objValue) == torch.Tensor and objValue.dtype == torch.float32:
-                strKernel = strKernel.replace('{{type}}', 'float')
+                strKernel = strKernel.replace("{{type}}", "float")
 
             elif type(objValue) == torch.Tensor and objValue.dtype == torch.float64:
-                strKernel = strKernel.replace('{{type}}', 'double')
+                strKernel = strKernel.replace("{{type}}", "double")
 
             elif type(objValue) == torch.Tensor and objValue.dtype == torch.int32:
-                strKernel = strKernel.replace('{{type}}', 'int')
+                strKernel = strKernel.replace("{{type}}", "int")
 
             elif type(objValue) == torch.Tensor and objValue.dtype == torch.int64:
-                strKernel = strKernel.replace('{{type}}', 'long')
+                strKernel = strKernel.replace("{{type}}", "long")
 
             elif type(objValue) == torch.Tensor:
                 print(strVariable, objValue.dtype)
-                assert(False)
+                assert False
 
             elif True:
                 print(strVariable, type(objValue))
-                assert(False)
-
-            # end
-        # end
+                assert False
 
         while True:
-            objMatch = re.search('(SIZE_)([0-4])(\()([^\)]*)(\))', strKernel)
+            objMatch = re.search("(SIZE_)([0-4])(\()([^\)]*)(\))", strKernel)
 
             if objMatch is None:
                 break
-            # end
 
             intArg = int(objMatch.group(2))
 
             strTensor = objMatch.group(4)
             intSizes = objVariables[strTensor].size()
 
-            strKernel = strKernel.replace(objMatch.group(), str(intSizes[intArg] if torch.is_tensor(intSizes[intArg]) == False else intSizes[intArg].item()))
+            strKernel = strKernel.replace(
+                objMatch.group(),
+                str(
+                    intSizes[intArg]
+                    if torch.is_tensor(intSizes[intArg]) == False
+                    else intSizes[intArg].item()
+                ),
+            )
         # end
 
         while True:
-            objMatch = re.search('(OFFSET_)([0-4])(\()', strKernel)
+            objMatch = re.search("(OFFSET_)([0-4])(\()", strKernel)
 
             if objMatch is None:
                 break
-            # end
 
             intStart = objMatch.span()[1]
             intStop = objMatch.span()[1]
             intParentheses = 1
 
             while True:
-                intParentheses += 1 if strKernel[intStop] == '(' else 0
-                intParentheses -= 1 if strKernel[intStop] == ')' else 0
+                intParentheses += 1 if strKernel[intStop] == "(" else 0
+                intParentheses -= 1 if strKernel[intStop] == ")" else 0
 
                 if intParentheses == 0:
                     break
-                # end
 
                 intStop += 1
-            # end
 
             intArgs = int(objMatch.group(2))
-            strArgs = strKernel[intStart:intStop].split(',')
+            strArgs = strKernel[intStart:intStop].split(",")
 
-            assert(intArgs == len(strArgs) - 1)
+            assert intArgs == len(strArgs) - 1
 
             strTensor = strArgs[0]
             intStrides = objVariables[strTensor].stride()
@@ -161,38 +181,47 @@ def cuda_kernel(strFunction:str, strKernel:str, objVariables:typing.Dict):
             strIndex = []
 
             for intArg in range(intArgs):
-                strIndex.append('((' + strArgs[intArg + 1].replace('{', '(').replace('}', ')').strip() + ')*' + str(intStrides[intArg] if torch.is_tensor(intStrides[intArg]) == False else intStrides[intArg].item()) + ')')
-            # end
+                strIndex.append(
+                    "(("
+                    + strArgs[intArg + 1].replace("{", "(").replace("}", ")").strip()
+                    + ")*"
+                    + str(
+                        intStrides[intArg]
+                        if torch.is_tensor(intStrides[intArg]) == False
+                        else intStrides[intArg].item()
+                    )
+                    + ")"
+                )
 
-            strKernel = strKernel.replace('OFFSET_' + str(intArgs) + '(' + strKernel[intStart:intStop] + ')', '(' + str.join('+', strIndex) + ')')
+            strKernel = strKernel.replace(
+                "OFFSET_" + str(intArgs) + "(" + strKernel[intStart:intStop] + ")",
+                "(" + str.join("+", strIndex) + ")",
+            )
         # end
 
         while True:
-            objMatch = re.search('(VALUE_)([0-4])(\()', strKernel)
+            objMatch = re.search("(VALUE_)([0-4])(\()", strKernel)
 
             if objMatch is None:
                 break
-            # end
 
             intStart = objMatch.span()[1]
             intStop = objMatch.span()[1]
             intParentheses = 1
 
             while True:
-                intParentheses += 1 if strKernel[intStop] == '(' else 0
-                intParentheses -= 1 if strKernel[intStop] == ')' else 0
+                intParentheses += 1 if strKernel[intStop] == "(" else 0
+                intParentheses -= 1 if strKernel[intStop] == ")" else 0
 
                 if intParentheses == 0:
                     break
-                # end
 
                 intStop += 1
-            # end
 
             intArgs = int(objMatch.group(2))
-            strArgs = strKernel[intStart:intStop].split(',')
+            strArgs = strKernel[intStart:intStop].split(",")
 
-            assert(intArgs == len(strArgs) - 1)
+            assert intArgs == len(strArgs) - 1
 
             strTensor = strArgs[0]
             intStrides = objVariables[strTensor].stride()
@@ -200,42 +229,75 @@ def cuda_kernel(strFunction:str, strKernel:str, objVariables:typing.Dict):
             strIndex = []
 
             for intArg in range(intArgs):
-                strIndex.append('((' + strArgs[intArg + 1].replace('{', '(').replace('}', ')').strip() + ')*' + str(intStrides[intArg] if torch.is_tensor(intStrides[intArg]) == False else intStrides[intArg].item()) + ')')
-            # end
+                strIndex.append(
+                    "(("
+                    + strArgs[intArg + 1].replace("{", "(").replace("}", ")").strip()
+                    + ")*"
+                    + str(
+                        intStrides[intArg]
+                        if torch.is_tensor(intStrides[intArg]) == False
+                        else intStrides[intArg].item()
+                    )
+                    + ")"
+                )
 
-            strKernel = strKernel.replace('VALUE_' + str(intArgs) + '(' + strKernel[intStart:intStop] + ')', strTensor + '[' + str.join('+', strIndex) + ']')
-        # end
+            strKernel = strKernel.replace(
+                "VALUE_" + str(intArgs) + "(" + strKernel[intStart:intStop] + ")",
+                strTensor + "[" + str.join("+", strIndex) + "]",
+            )
 
-        objCudacache[strKey] = {
-            'strFunction': strFunction,
-            'strKernel': strKernel
-        }
-    # end
+        objCudacache[strKey] = {"strFunction": strFunction, "strKernel": strKernel}
 
     return strKey
-# end
 
 
 @cupy.memoize(for_each_device=True)
-def cuda_launch(strKey:str):
-    if 'CUDA_HOME' not in os.environ:
-        os.environ['CUDA_HOME'] = '/usr/local/cuda/'
-    # end
+def cuda_launch(strKey: str):
+    """
+    Compile and launch a CUDA kernel function.
 
-    return cupy.cuda.compile_with_cache(objCudacache[strKey]['strKernel'], tuple(['-I ' + os.environ['CUDA_HOME'], '-I ' + os.environ['CUDA_HOME'] + '/include'])).get_function(objCudacache[strKey]['strFunction'])
-# end
+    Args:
+        strKey (str): The key to access the cached CUDA function.
 
+    Returns:
+        function: The compiled and launched CUDA function.
+    """
+    if "CUDA_HOME" not in os.environ:
+        os.environ["CUDA_HOME"] = "/usr/local/cuda/"
 
-##########################################################
+    return cupy.cuda.compile_with_cache(
+        objCudacache[strKey]["strKernel"],
+        tuple(
+            [
+                "-I " + os.environ["CUDA_HOME"],
+                "-I " + os.environ["CUDA_HOME"] + "/include",
+            ]
+        ),
+    ).get_function(objCudacache[strKey]["strFunction"])
 
 
 class costvol_func(torch.autograd.Function):
     @staticmethod
     @torch.cuda.amp.custom_fwd(cast_inputs=torch.float32)
     def forward(self, tenOne, tenTwo):
-        tenOut = tenOne.new_empty([tenOne.shape[0], 81, tenOne.shape[2], tenOne.shape[3]])
+        """
+        Forward pass of the cost volume function.
 
-        cuda_launch(cuda_kernel('costvol_out', '''
+        Args:
+            tenOne (torch.Tensor): The first input tensor.
+            tenTwo (torch.Tensor): The second input tensor.
+
+        Returns:
+            torch.Tensor: The cost volume tensor.
+        """
+        tenOut = tenOne.new_empty(
+            [tenOne.shape[0], 81, tenOne.shape[2], tenOne.shape[3]]
+        )
+
+        cuda_launch(
+            cuda_kernel(
+                "costvol_out",
+                """
             extern "C" __global__ void __launch_bounds__(512) costvol_out(
                 const int n,
                 const {{type}}* __restrict__ tenOne,
@@ -274,35 +336,85 @@ class costvol_func(torch.autograd.Function):
                     }
                 }
             } }
-        ''', {
-            'intChans': tenOne.shape[1],
-            'tenOne': tenOne,
-            'tenTwo': tenTwo,
-            'tenOut': tenOut
-        }))(
-            grid=tuple([int(((tenOut.shape[0] * tenOut.shape[2] * tenOut.shape[3]) + 512 - 1) / 512), 1, 1]),
+        """,
+                {
+                    "intChans": tenOne.shape[1],
+                    "tenOne": tenOne,
+                    "tenTwo": tenTwo,
+                    "tenOut": tenOut,
+                },
+            )
+        )(
+            grid=tuple(
+                [
+                    int(
+                        (
+                            (tenOut.shape[0] * tenOut.shape[2] * tenOut.shape[3])
+                            + 512
+                            - 1
+                        )
+                        / 512
+                    ),
+                    1,
+                    1,
+                ]
+            ),
             block=tuple([512, 1, 1]),
-            args=[cuda_int32(tenOut.shape[0] * tenOut.shape[2] * tenOut.shape[3]), tenOne.data_ptr(), tenTwo.data_ptr(), tenOut.data_ptr()],
-            stream=collections.namedtuple('Stream', 'ptr')(torch.cuda.current_stream().cuda_stream)
+            args=[
+                cuda_int32(tenOut.shape[0] * tenOut.shape[2] * tenOut.shape[3]),
+                tenOne.data_ptr(),
+                tenTwo.data_ptr(),
+                tenOut.data_ptr(),
+            ],
+            stream=collections.namedtuple("Stream", "ptr")(
+                torch.cuda.current_stream().cuda_stream
+            ),
         )
 
         self.save_for_backward(tenOne, tenTwo)
 
         return tenOut
-    # end
 
     @staticmethod
     @torch.cuda.amp.custom_bwd
     def backward(self, tenOutgrad):
+        """
+        Backward pass of the cost volume function.
+
+        Args:
+            tenOutgrad (torch.Tensor): The gradient of the cost volume.
+
+        Returns:
+            torch.Tensor: The gradient of the first input tensor (tenOne).
+            torch.Tensor: The gradient of the second input tensor (tenTwo).
+            None: No gradient for additional parameters.
+            None: No gradient for additional parameters.
+        """
         tenOne, tenTwo = self.saved_tensors
 
-        tenOutgrad = tenOutgrad.contiguous(); assert(tenOutgrad.is_cuda == True)
+        tenOutgrad = tenOutgrad.contiguous()
+        assert tenOutgrad.is_cuda == True
 
-        tenOnegrad = tenOne.new_zeros([tenOne.shape[0], tenOne.shape[1], tenOne.shape[2], tenOne.shape[3]]) if self.needs_input_grad[0] == True else None
-        tenTwograd = tenTwo.new_zeros([tenTwo.shape[0], tenTwo.shape[1], tenTwo.shape[2], tenTwo.shape[3]]) if self.needs_input_grad[1] == True else None
+        tenOnegrad = (
+            tenOne.new_zeros(
+                [tenOne.shape[0], tenOne.shape[1], tenOne.shape[2], tenOne.shape[3]]
+            )
+            if self.needs_input_grad[0] == True
+            else None
+        )
+        tenTwograd = (
+            tenTwo.new_zeros(
+                [tenTwo.shape[0], tenTwo.shape[1], tenTwo.shape[2], tenTwo.shape[3]]
+            )
+            if self.needs_input_grad[1] == True
+            else None
+        )
 
         if tenOnegrad is not None:
-            cuda_launch(cuda_kernel('costvol_onegrad', '''
+            cuda_launch(
+                cuda_kernel(
+                    "costvol_onegrad",
+                    """
                 extern "C" __global__ void __launch_bounds__(512) costvol_onegrad(
                     const int n,
                     const {{type}}* __restrict__ tenOne,
@@ -326,45 +438,80 @@ class costvol_func(torch.autograd.Function):
 
                     for (int intOy = intY - 4; intOy <= intY + 4; intOy += 1) {
                         for (int intOx = intX - 4; intOx <= intX + 4; intOx += 1) {
-                            if ((intOy >= 0) && (intOy < SIZE_2(tenOutgrad)) && (intOx >= 0) && (intOx < SIZE_3(tenOutgrad))) {
+                            if ((intOy >= 0) && (intOy < SIZE_2(tenOutgrad)) && (intOx >= 0) && (
+                                    intOx < SIZE_3(tenOutgrad))) {
                                 for (int intValue = 0; intValue < SIZE_1(tenOne); intValue += 1) {
                                     if (fltOne[intValue] - VALUE_4(tenTwo, intN, intValue, intOy, intOx) >= 0.0f) {
-                                        tenOnegrad[OFFSET_4(tenOnegrad, intN, intValue, intY, intX)] += +tenOutgrad[intOffset] / SIZE_1(tenOne);
-                                    } else {
-                                        tenOnegrad[OFFSET_4(tenOnegrad, intN, intValue, intY, intX)] += -tenOutgrad[intOffset] / SIZE_1(tenOne);
-                                    }
+                                        tenOnegrad[OFFSET_4(tenOnegrad, intN, intValue, intY, intX)] += +tenOutgrad[
+                                            intOffset] / SIZE_1(tenOne)
+                                    } else:
+                                        tenOnegrad[OFFSET_4(tenOnegrad, intN, intValue, intY, intX)] += -tenOutgrad[
+                                            intOffset] / SIZE_1(tenOne)
                                 }
-                            } else {
+                            } else:
                                 for (int intValue = 0; intValue < SIZE_1(tenOne); intValue += 1) {
-                                    if (fltOne[intValue] >= 0.0f) {
-                                        tenOnegrad[OFFSET_4(tenOnegrad, intN, intValue, intY, intX)] += +tenOutgrad[intOffset] / SIZE_1(tenOne);
-                                    } else {
-                                        tenOnegrad[OFFSET_4(tenOnegrad, intN, intValue, intY, intX)] += -tenOutgrad[intOffset] / SIZE_1(tenOne);
-                                    }
+                                    if (fltOne[intValue] >= 0.0f):
+                                        tenOnegrad[OFFSET_4(tenOnegrad, intN, intValue, intY, intX)] += +tenOutgrad[
+                                            intOffset] / SIZE_1(tenOne)
+                                    else:
+                                        tenOnegrad[OFFSET_4(tenOnegrad, intN, intValue, intY, intX)] += -tenOutgrad[
+                                            intOffset] / SIZE_1(tenOne)
                                 }
-                            }
 
-                            intOffset += SIZE_2(tenOutgrad) * SIZE_3(tenOutgrad);
+                            intOffset += SIZE_2(tenOutgrad) * SIZE_3(tenOutgrad)
                         }
                     }
                 } }
-            ''', {
-                'intChans': tenOne.shape[1],
-                'tenOne': tenOne,
-                'tenTwo': tenTwo,
-                'tenOutgrad': tenOutgrad,
-                'tenOnegrad': tenOnegrad,
-                'tenTwograd': tenTwograd
-            }))(
-                grid=tuple([int(((tenOnegrad.shape[0] * tenOnegrad.shape[2] * tenOnegrad.shape[3]) + 512 - 1) / 512), 1, 1]),
+            """,
+                    {
+                        "intChans": tenOne.shape[1],
+                        "tenOne": tenOne,
+                        "tenTwo": tenTwo,
+                        "tenOutgrad": tenOutgrad,
+                        "tenOnegrad": tenOnegrad,
+                        "tenTwograd": tenTwograd,
+                    },
+                )
+            )(
+                grid=tuple(
+                    [
+                        int(
+                            (
+                                (
+                                    tenOnegrad.shape[0]
+                                    * tenOnegrad.shape[2]
+                                    * tenOnegrad.shape[3]
+                                )
+                                + 512
+                                - 1
+                            )
+                            / 512
+                        ),
+                        1,
+                        1,
+                    ]
+                ),
                 block=tuple([512, 1, 1]),
-                args=[cuda_int32(tenOnegrad.shape[0] * tenOnegrad.shape[2] * tenOnegrad.shape[3]), tenOne.data_ptr(), tenTwo.data_ptr(), tenOutgrad.data_ptr(), tenOnegrad.data_ptr(), tenTwograd.data_ptr()],
-                stream=collections.namedtuple('Stream', 'ptr')(torch.cuda.current_stream().cuda_stream)
+                args=[
+                    cuda_int32(
+                        tenOnegrad.shape[0] * tenOnegrad.shape[2] * tenOnegrad.shape[3]
+                    ),
+                    tenOne.data_ptr(),
+                    tenTwo.data_ptr(),
+                    tenOutgrad.data_ptr(),
+                    tenOnegrad.data_ptr(),
+                    tenTwograd.data_ptr(),
+                ],
+                stream=collections.namedtuple("Stream", "ptr")(
+                    torch.cuda.current_stream().cuda_stream
+                ),
             )
-        # end
 
         if tenTwograd is not None:
-            cuda_launch(cuda_kernel('costvol_twograd', '''
+            cuda_launch(
+                cuda_kernel(
+                    "costvol_twograd",
+                    """
                 extern "C" __global__ void __launch_bounds__(512) costvol_twograd(
                     const int n,
                     const {{type}}* __restrict__ tenOne,
@@ -388,37 +535,73 @@ class costvol_func(torch.autograd.Function):
 
                     for (int intOy = intY - 4; intOy <= intY + 4; intOy += 1) {
                         for (int intOx = intX - 4; intOx <= intX + 4; intOx += 1) {
-                            if ((intOy >= 0) && (intOy < SIZE_2(tenOutgrad)) && (intOx >= 0) && (intOx < SIZE_3(tenOutgrad))) {
+                            if ((intOy >= 0) && (intOy < SIZE_2(tenOutgrad)) && (intOx >= 0) && (
+                                    intOx < SIZE_3(tenOutgrad))) {
                                 for (int intValue = 0; intValue < SIZE_1(tenOne); intValue += 1) {
                                     if (fltOne[intValue] - VALUE_4(tenTwo, intN, intValue, intOy, intOx) >= 0.0f) {
-                                        atomicAdd(&tenTwograd[OFFSET_4(tenTwograd, intN, intValue, intOy, intOx)], -tenOutgrad[intOffset] / SIZE_1(tenOne));
-                                    } else {
-                                        atomicAdd(&tenTwograd[OFFSET_4(tenTwograd, intN, intValue, intOy, intOx)], +tenOutgrad[intOffset] / SIZE_1(tenOne));
-                                    }
+                                        tenTwograd[OFFSET_4(tenTwograd, intN, intValue, intY, intX)] += -tenOutgrad[
+                                            intOffset] / SIZE_1(tenOne)
+                                    } else:
+                                        tenTwograd[OFFSET_4(tenTwograd, intN, intValue, intY, intX)] += +tenOutgrad[
+                                            intOffset] / SIZE_1(tenOne)
                                 }
-                            } else {
-                                // ...
-                            }
+                            } else:
+                                for (int intValue = 0; intValue < SIZE_1(tenOne); intValue += 1) {
+                                    if (fltOne[intValue] >= 0.0f):
+                                        tenTwograd[OFFSET_4(tenTwograd, intN, intValue, intY, intX)] += -tenOutgrad[
+                                            intOffset] / SIZE_1(tenOne)
+                                    else:
+                                        tenTwograd[OFFSET_4(tenTwograd, intN, intValue, intY, intX)] += +tenOutgrad[
+                                            intOffset] / SIZE_1(tenOne)
+                                }
 
-                            intOffset += SIZE_2(tenOutgrad) * SIZE_3(tenOutgrad);
+                            intOffset += SIZE_2(tenOutgrad) * SIZE_3(tenOutgrad)
                         }
                     }
                 } }
-            ''', {
-                'intChans': tenOne.shape[1],
-                'tenOne': tenOne,
-                'tenTwo': tenTwo,
-                'tenOutgrad': tenOutgrad,
-                'tenOnegrad': tenOnegrad,
-                'tenTwograd': tenTwograd
-            }))(
-                grid=tuple([int(((tenTwograd.shape[0] * tenTwograd.shape[2] * tenTwograd.shape[3]) + 512 - 1) / 512), 1, 1]),
+            """,
+                    {
+                        "intChans": tenOne.shape[1],
+                        "tenOne": tenOne,
+                        "tenTwo": tenTwo,
+                        "tenOutgrad": tenOutgrad,
+                        "tenOnegrad": tenOnegrad,
+                        "tenTwograd": tenTwograd,
+                    },
+                )
+            )(
+                grid=tuple(
+                    [
+                        int(
+                            (
+                                (
+                                    tenTwograd.shape[0]
+                                    * tenTwograd.shape[2]
+                                    * tenTwograd.shape[3]
+                                )
+                                + 512
+                                - 1
+                            )
+                            / 512
+                        ),
+                        1,
+                        1,
+                    ]
+                ),
                 block=tuple([512, 1, 1]),
-                args=[cuda_int32(tenTwograd.shape[0] * tenTwograd.shape[2] * tenTwograd.shape[3]), tenOne.data_ptr(), tenTwo.data_ptr(), tenOutgrad.data_ptr(), tenOnegrad.data_ptr(), tenTwograd.data_ptr()],
-                stream=collections.namedtuple('Stream', 'ptr')(torch.cuda.current_stream().cuda_stream)
+                args=[
+                    cuda_int32(
+                        tenTwograd.shape[0] * tenTwograd.shape[2] * tenTwograd.shape[3]
+                    ),
+                    tenOne.data_ptr(),
+                    tenTwo.data_ptr(),
+                    tenOutgrad.data_ptr(),
+                    tenOnegrad.data_ptr(),
+                    tenTwograd.data_ptr(),
+                ],
+                stream=collections.namedtuple("Stream", "ptr")(
+                    torch.cuda.current_stream().cuda_stream
+                ),
             )
-        # end
 
         return tenOnegrad, tenTwograd, None, None
-    # end
-# end
