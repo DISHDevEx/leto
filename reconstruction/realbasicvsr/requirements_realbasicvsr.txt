@@ -1,0 +1,4 @@
+openmim
+mmcv-full
+mmedit
+aEye>=1.2.2
