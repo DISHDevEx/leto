@@ -43,9 +43,15 @@ def background_subtractor(video_list, path="temp"):
 
     # Initialize video capture
     for video in video_list:
-        #video_path = os.path.join(input_folder, video)
         stream = cv2.VideoCapture(video.get_file().strip("'"))
         video_name = Path(str(video)).stem
+        fps = stream.get(cv2.CAP_PROP_FPS)
+        width = int(stream.get(3))
+        height = int(stream.get(4))
+        output_filename = os.path.join(path,video_name + "_masked.mp4" )
+        output = cv2.VideoWriter(output_filename,
+                                cv2.VideoWriter_fourcc(*'mp4v'),  # Change FourCC code
+                                fps=fps, frameSize=(width, height), isColor=False)  # Set isColor to False
 
         # Get the video's frame width, height, and frames per second
         if not stream.isOpened():
@@ -66,15 +72,6 @@ def background_subtractor(video_list, path="temp"):
         median = np.median(frames, axis=0).astype(np.uint8)
         median_1 = median 
         median = cv2.cvtColor(median, cv2.COLOR_BGR2GRAY)
-
-        fps = stream.get(cv2.CAP_PROP_FPS)
-        width = int(stream.get(3))
-        height = int(stream.get(4))
-        output_filename = os.path.join(path,video_name + "_masked.mp4" )
-        print(output_filename)
-        output = cv2.VideoWriter(output_filename,
-                                cv2.VideoWriter_fourcc(*'mp4v'),  # Change FourCC code
-                                fps=fps, frameSize=(width, height), isColor=False)  # Set isColor to False
 
         stream.set(cv2.CAP_PROP_POS_FRAMES, 0)
         while True:
