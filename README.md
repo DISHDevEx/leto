@@ -1,90 +1,35 @@
 # **Leto**
 ----------------------------------
-# Project Structure
 
-```
-├──  leto				contains all modules that facilites all functionality to achieve leto's goal
-│   ├── benchmarking
-│       ├── mediapipe
-│           ├── object_detection.py
-│           ├── visualize.py
-│           ├── Dockerfile_mp
-│           ├── requirements_mp.txt
-│           ├── Dockerfile_mp
-│           ├──lambda_function_mp.py
-│       ├── yolo
-│           ├── yolo.py
-│           ├── pipeline.py
-│           ├── training_parameter_input.py
-│           ├── prediction_parameter_input.py
-│           ├── pipeline.py
-│           ├── visualize.py
-│           ├── Dockerfile_yolo
-│           ├──lambda_function_yolo.py
-│           ├── requirements_yolo.txt
-│       ├── video_quality
-│           ├── video_quality_functions.py
-│
-│   ├── reduction
-│       ├── ffmpeg_resolution_downsampler
-│           ├── requirements_ffmpeg_resolution_downsampler.txt
-│           ├── ffmpeg_resolution_downsampler.py
-│       ├── fps_bitrate
-│           ├── fps_bitrate.py
-│           ├── app-fps_bitrate.py
-│           ├── requirements.txt
-│           ├── README.md
-│       ├── cv2_jpg_reduction
-│           ├── cv2_jpg_reduction.py
-│           ├── requirements_cv2_jpg_reduction.txt
-│
-│   ├── reconstruction
-│       ├── realbasicvser
-│           ├── builder.py
-│           ├── realbasicvsr_x4.py
-│           ├── realbasicvsr_x4.py
-│           ├── reconstruction_realbasicvsr_setup.sh
-│           ├── realbasicvsr_preprocessing.py
-│           ├── reconstruction_realbasicvsr.py
-│           ├── realbasicvsr_postprocessing.py
-│       ├── opencv_resoltion_upscaler
-│           ├── requirements_opencv_resoltion_upscaler.txt
-│           ├── opencv_resoltion_upscaler.py
-│       ├── superres
-│           ├── requirements_superres.txt
-│           ├── reconstruction_superres.py
-│       ├── fastsrgan
-│           ├── fastsrgan.py
-│           ├── requirements_fastsrgan.txt
-|
-│   ├── utilities
-|       ├──cloud_functionality.py
-|       ├──recon_args.py
-|
-│
-├──  tests				contains unit tests
-│   ├── test_get_meta_data.py
-│   ├── conftest.py
-│   ├── test_data
-│      ├── test_video.mp4
-
-```
-----------------------------------
-
-# Reduction to Reconstruction Mapping:
-
-ffmpeg resolution downsampler(240p,360p,420p,720p,1080p)(lanczos,bicubic) --> fastsrgan, superres(edsr_x4,espcn_x4,fsrcnn_x4,lapsrn_x4), opencv_resoltion_upscaler, realbasicvser(very slow).
-
-fps_bitrate --> Parings with frame interpolation coming soon!
+## Mapping Between Compatible Reduction and Reconstruction Methods
 
 
-# Reduction Modules
+| Reduction Method         | Applicable Reconstruction Method(s)    |
+|--------------|-----------|
+| [ffmpeg_resolution_downsampler](./reduction/ffmpeg_resolution_downsampler/) (360p,420p,640p,720p) | [opencv_resolution_upscaler](./reconstruction/opencv_resolution_upscaler/) <br> [superres](./reconstruction/superres/) (4 different configurations) <br> [fastsrgan](./reconstruction/fastsrgan/) <br> [realbasicvsr](./reconstruction/realbasicvsr/) (small sample size, takes a long time)     |
+| [fps_bitrate](./reduction/fps_bitrate/)      | Linear Frame interpolation <br> NN based frame interpolation   |
+| NN Codec                   |  NN Codec |
+| [cv2_jpg_reduction](./reduction/cv2_jpg_reduction/)                   |  N/A  |
+|Background Subtraction  |  Background Addition  |
 
-- **Reccomended EC2 Image image-id ami-0f598ecd07418eba2**
-
-- **Please use ec2-user!**
 
 
+## Running Reduction and Reconstruction Methods Using ***config.ini***:
+
+For existing Reduction and Reconstruction Methods, use the following guide to modify the [***config.ini***](config.ini) file prior to method execution.  If you have a new method you would like to get working with the ***config.ini***, then follow the instructions outlined in the [next section](#using-configini-with-new-reduction-and-reconstruction-methods) to do so.
+
+For existing methods, perform the following prior to method execution:
+
+1. Open the [***config.ini***](config.ini) and identify the appropriate section for the method you would like to execute.
+    - sections are denoted by the following pattern ```[<METHOD_CLASS>.<METHOD_NAME>]```; so, if you want to use a ***reduction*** method called ***fps_bitrate***, the ***config.ini*** file section should be titled something like ```[reduction.fps_bitrate]```.
+
+2. Modify the values for the keys you would like to change.  For example, if you would like to execute ***fps_bitrate*** with an ***fps*** value of 15 and a ***bitrate*** value of 0 (for 10x reduction), then the ***config.ini*** file should be modified to resemble:
+
+```ini
+[reduction.fps_bitrate]
+; method specific parameters:
+fps = 15
+bitrate = 0
 
 ### Running ffmpeg resolution downsampler
 
@@ -116,6 +61,12 @@ python ffmpeg_resolution_downsampler.py \
 --quality 480p \
 --algorithm lanczos
 ```
+      An example for a ***reduction*** method named ***fps_bitrate***:
+      ```
+      [reduction.fps_bitrate]
+      ```  
+  - Under your new section, define the arguments/variables you will need in your method.  This takes the form of a key/value format.  An example section is given below.  Comments are denoted using ```;``` and inline comments are allowed using ```;``` as well.  Sub-sections can be denoted with comments for readability, but this has no effect on accessing the configurations.
+  - Interpolation of values is supported with ***configparser***, here is the [documentation for the syntax of interpolation](https://docs.python.org/3/library/configparser.html#interpolation-of-values).
 
 Default input: s3://leto-dish/original-videos/benchmark/car/
 
@@ -352,33 +303,3 @@ python reconstruction_realbasicvsr.py \
 --local_model_path realbasicvsr_x4.pth
 --clean_model True
 ```
-
-### Running Background subtraction using Opencv2 Background subtraction
-1. Change current working directory
-``` console
-cd reduction/background_subtraction
-```
-2. Install dependencies
-```python
-pip install -r requirements_background_subtraction.txt
-```
-
-3. Update your bucket in config ini file for input videos
-
-ex of adding in config.ini file
-```
-[reduction.background_subtractor]
-; method specific parameters:
-
-; s3 prefixs for input/output:
-method_name = background_subtractor
-input_prefix_s3 = original-videos/
-output_prefix_s3 = reduced-videos/%(method_name)s/
-````
-4. Run the python file 
-``` console
-python background_subtraction.py
-```
-
-
-

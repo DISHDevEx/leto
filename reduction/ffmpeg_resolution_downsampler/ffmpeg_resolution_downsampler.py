@@ -2,16 +2,23 @@
 Script to change the resolution of a video via ffmpeg.
 """
 
-import configparser
 import logging
+import subprocess
+import sys
 
-from aEye import Video
 from aEye import Labeler
 from aEye import Aux
 
+# get git repo root level
+root_path = subprocess.run(
+    ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=False
+).stdout.rstrip("\n")
 
-import os
+# add git repo path to use all libraries
+sys.path.append(root_path)
 
+from utilities import ConfigHandler
+from utilities import CloudFunctionality
 
 
 
@@ -32,33 +39,24 @@ def main():
     """
 
     logging.info("running reduction module")
-
-    # load and allocate config file
-    config = configparser.ConfigParser(inline_comment_prefixes=';')
-    config.read('../../config.ini')
-    s3 = config['DEFAULT']
-    method = config['reduction.ffmpeg_resolution_downsampler']
-    logging.info("successfully loaded config file")
-
+    
     aux = Aux()
-
+    cloud_functionality = CloudFunctionality()
     labeler = Labeler()
 
-    video_list_s3 = aux.load_s3(
-        bucket = s3['input_bucket_s3'], prefix= method['input_prefix_s3']
-    )
+    config = ConfigHandler('reduction.ffmpeg_resolution_downsampler')
+    s3_args = config.s3
+    method_args = config.method
 
+ 
+    
+    video_list_s3 = cloud_functionality.preprocess_reduction(s3_args, method_args )
+    
     downsampled_video = labeler.change_resolution(
-        video_list_s3, method['quality'], method['algorithm']
+        video_list_s3, method_args['quality'], method_args['algorithm']
     )
-
-    aux.execute_label_and_write_local(downsampled_video)
-
-    aux.upload_s3(
-        downsampled_video, bucket=method['output_bucket_s3'], prefix= method['output_prefix_s3']
-    )
-
-    aux.clean()
+    aux.execute_label_and_write_local(downsampled_video,path=method_args['temp_path'])
+    cloud_functionality.postprocess_reduction(s3_args, method_args)
 
 
 if __name__ == "__main__":

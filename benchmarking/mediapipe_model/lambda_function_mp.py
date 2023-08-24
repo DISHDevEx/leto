@@ -6,9 +6,11 @@ from object_detection import object_detection
 
 import boto3
 import os
-from aEye import Video
+
 import urllib.parse
 
+s3_client = boto3.client("s3")
+dynamodb = boto3.resource('dynamodb')
 
 def handler(event, context):
     """
@@ -21,33 +23,60 @@ def handler(event, context):
     """
     print("Loading function")
     print(os.system("ls"))
-    s3_client = boto3.client("s3")
 
+    score = {}
     mp_model = os.path.basename("efficientdet_lite0.tflite")
 
-    bucket = event["Records"][0]["s3"]["bucket"]["name"]
-    key = urllib.parse.unquote_plus(
-        event["Records"][0]["s3"]["object"]["key"], encoding="utf-8"
-    )
+    bucket_name = event["bucket_name"]
+    folder_path = event["folder_path"]
+    dynamodb_table = event["dynamodb_table"]
 
     try:
-        video = Video(bucket=bucket, key=key)
+        # Retrieve the list of object keys from the specified bucket
+        s3_keys = list_object_keys(bucket_name, folder_path)
 
-        mp_output_video = os.path.join(
-            "/tmp", os.path.basename("mp_" + video.get_title())
-        )
+        for key in s3_keys:
+            # Download the video from S3 to Lambda's /tmp directory
+            local_filename = '/tmp/' + os.path.basename(key)
+            s3_client.download_file(bucket_name, key, local_filename)
 
-        mAC = object_detection(mp_model, video.get_file().strip("'"), mp_output_video)
+            # Process the downloaded video
 
-        video_location = f's3://{bucket}/{key}'
+            mAC = object_detection(mp_model,local_filename, "")
+            if len(mAC):
+                mean_average_confidence = sum(mAC.values()) / len(
+                    mAC)
 
-        return {video_location : mAC }
+            # Optionally, you can delete the local file to save space
+            os.remove(local_filename)
+            score.update({key: mean_average_confidence})
+
+            table_name = dynamodb_table
+
+            table = dynamodb.Table(table_name)
+            try:
+                response = table.put_item(Item={'video_location':  key, 'mp_score': str(mean_average_confidence)})
+                print('Uploaded location:', key)
+            except Exception as e:
+                print('Error uploading metric:', mean_average_confidence, e)
+
+            print({key: mean_average_confidence})
+        return score
+
 
     except Exception as e:
         print(e)
         print(
             "Error getting object {} from bucket {}. Make sure they exist and your bucket is in the same region as this function.".format(
-                key, bucket
+                folder_path, bucket_name
             )
         )
         raise e
+
+def list_object_keys(bucket_name, folder_path):
+    keys = []
+    response = s3_client.list_objects_v2(Bucket=bucket_name,Prefix=folder_path)
+    if 'Contents' in response:
+        for obj in response['Contents']:
+            keys.append(obj['Key'])
+    return keys[1:]
