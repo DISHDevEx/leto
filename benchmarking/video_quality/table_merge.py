@@ -34,7 +34,7 @@ def mergetablestodf():
                 # Merge table data
                 dataframes = pd.merge(dataframes, df, on="video_location", how="outer")
             df = pd.DataFrame()
-    return df
+    return dataframes
 
 
 if __name__ == "__main__":
