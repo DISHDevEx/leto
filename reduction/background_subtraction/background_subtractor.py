@@ -98,6 +98,7 @@ def background_subtractor(video_list, path="temp"):
         encoded_video_name = os.path.join(path, video_name)
         cmd = f"static_ffmpeg -y -i {output_filename} -c:v libx264  -crf 34 -preset veryfast {encoded_video_name}.mp4"
         subprocess.run(cmd, shell=True)
+        os.remove(output_filename)
 
 
 def main():
