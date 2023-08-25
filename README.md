@@ -77,7 +77,7 @@ from utilities import ConfigHandler
       An example for a ***reduction*** method named ***fps_bitrate***:
       ```
       [reduction.fps_bitrate]
-      ```  
+      ```
   - Under your new section, define the arguments/variables you will need in your method.  This takes the form of a key/value format.  An example section is given below.  Comments are denoted using ```;``` and inline comments are allowed using ```;``` as well.  Sub-sections can be denoted with comments for readability, but this has no effect on accessing the configurations.
   - Interpolation of values is supported with ***configparser***, here is the [documentation for the syntax of interpolation](https://docs.python.org/3/library/configparser.html#interpolation-of-values).
 
@@ -93,7 +93,7 @@ input_prefix_s3 = original-videos/
 output_prefix_s3 = reduced-videos/%(method_name)s-fps_%(fps)s-bitrate_%(bitrate)s/
   ```
 
-4. Instantiate the ***ConfigHandler*** class in the entry-point section of your Python file.  This is done by specifying the section you defined in the above step ```[<METHOD_CLASS>.<METHOD_NAME>]```.  Once the class is instantiated, create variables to make accessing different sections of the ***config.ini*** file easier.  In the below example, two sections are accessed: ***s3***, which maps to the ```[DEFAULT]``` section of the ***config.ini*** file; and ***method***, which maps to the ```[reduction.fps_bitrate]``` section supplied in the class instantiation.  
+4. Instantiate the ***ConfigHandler*** class in the entry-point section of your Python file.  This is done by specifying the section you defined in the above step ```[<METHOD_CLASS>.<METHOD_NAME>]```.  Once the class is instantiated, create variables to make accessing different sections of the ***config.ini*** file easier.  In the below example, two sections are accessed: ***s3***, which maps to the ```[DEFAULT]``` section of the ***config.ini*** file; and ***method***, which maps to the ```[reduction.fps_bitrate]``` section supplied in the class instantiation.
 
 ```python
 config = ConfigHandler('reduction.fps_bitrate')
@@ -103,16 +103,16 @@ method = config.method
 
 5. Access the configurations/arguments supplied in the ***config.ini*** file within your Python file.  This is done using standard ***dict*** notation, supplying the key to get the value.  ***Note***: *configparser* by default returns a ***str*** object when keys are accessed directly.  However, there are specific [getter methods in configparser](https://docs.python.org/3/library/configparser.html) to return ***bools***, ***ints***, and ***floats***.  Alternatively, the ***str*** object can be pulled into the py file and then cast to the correct datatype.  An example of accessing values from the above instantiation is given below:
 
-```python 
+```python
 # accessing bitrate, pulling in as an int
 bitrate = method.getint('bitrate')
 
 # accessing output_prefix_s3 as a str
-method['output_prefix_s3'] 
+method['output_prefix_s3']
 
 ```
 
-6. Run your .py file.  Boom, now you can dynamically allocate parameters in the ***config.ini*** file and then execute the .py file cleanly without CLI input.  
+6. Run your .py file.  Boom, now you can dynamically allocate parameters in the ***config.ini*** file and then execute the .py file cleanly without CLI input.
 
 ## Requirement Installation
 
