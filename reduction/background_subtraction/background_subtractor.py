@@ -21,7 +21,7 @@ from utilities import CloudFunctionality
 
 
 def background_subtractor(video_list, path="temp"):
-    ''' 
+    """ 
     This method helps to extract foreground from the video by removing static background
     Video works usually well on the videos with static background. 
     variables : fps(frame per second), num_frames(number of frames), width(frame width), 
@@ -38,10 +38,10 @@ def background_subtractor(video_list, path="temp"):
     ---------
     videos with background masked in S3 location
     
-     '''
-    
+     """
+
     # Create the output folder if it doesn't exist
-    #os.makedirs(output_folder, exist_ok=True)
+    # os.makedirs(output_folder, exist_ok=True)
 
     # Initialize video capture
     for video in video_list:
@@ -53,14 +53,16 @@ def background_subtractor(video_list, path="temp"):
         fps = stream.get(cv2.CAP_PROP_FPS)
         width = int(stream.get(3))
         height = int(stream.get(4))
-        output_filename = os.path.join(path,video_name + "_masked.mp4" )
-        output = cv2.VideoWriter(output_filename,
-                                cv2.VideoWriter_fourcc(*'mp4v'),  # Change FourCC code
-                                fps=fps, frameSize=(width, height), isColor=False)  # Set isColor to False
+        output_filename = os.path.join(path, video_name + "_masked.mp4")
+        output = cv2.VideoWriter(
+            output_filename,
+            cv2.VideoWriter_fourcc(*"mp4v"),  # Change FourCC code
+            fps=fps,
+            frameSize=(width, height),
+            isColor=False,
+        )  # Set isColor to False
 
-        
-
-        num_frames =int(stream.get(cv2.CAP_PROP_FRAME_COUNT) )
+        num_frames = int(stream.get(cv2.CAP_PROP_FRAME_COUNT))
         frame_ids = np.random.choice(num_frames, size=20, replace=False)
         frames = []
         # Looping through chosen frame ids
@@ -84,20 +86,19 @@ def background_subtractor(video_list, path="temp"):
             frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             diff_frame = cv2.absdiff(median_gray, frame_gray)
             output.write(diff_frame)
-            
 
-            if cv2.waitKey(1) == ord('q'):
+            if cv2.waitKey(1) == ord("q"):
                 break
 
         stream.release()
-        output.release() 
-        cv2.destroyAllWindows()# Release the VideoWriter
-        median_frame_name = os.path.join(path,video_name + ".jpg")
-        cv2.imwrite(median_frame_name,median)
+        output.release()
+        cv2.destroyAllWindows()  # Release the VideoWriter
+        median_frame_name = os.path.join(path, video_name + ".jpg")
+        cv2.imwrite(median_frame_name, median)
         encoded_video_name = os.path.join(path, video_name)
         cmd = f"static_ffmpeg -y -i {output_filename} -c:v libx264  -crf 34 -preset veryfast {encoded_video_name}.mp4"
         subprocess.run(cmd, shell=True)
-        
+
 
 def main():
     """
@@ -115,29 +116,21 @@ def main():
                 output video S3 path.'''
     
     """
-    config = ConfigHandler('reduction.background_subtractor')
+    config = ConfigHandler("reduction.background_subtractor")
     s3_args = config.s3
     method_args = config.method
     aux = Aux()
 
     cloud_functionality = CloudFunctionality()
 
+    video_list = cloud_functionality.preprocess_reduction(s3_args, method_args)
 
-    video_list = cloud_functionality.preprocess_reduction(s3_args, method_args )
-    
-    
-    background_subtractor(video_list,method_args['temp_path'])
+    background_subtractor(video_list, method_args["temp_path"])
 
     cloud_functionality.postprocess_reduction(s3_args, method_args)
+
+
 if __name__ == "__main__":
     start_time = time.time()
     main()
     print("--- %s seconds ---" % (time.time() - start_time))
-
-
-
-
-
-
-   
-
