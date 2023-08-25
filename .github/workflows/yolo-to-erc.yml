@@ -1,4 +1,4 @@
-name: publish-to-ecr
+name: publish-yolo-docker
 on:
   workflow_dispatch:
     #Inputs for workflow
