@@ -60,7 +60,7 @@ def background_subtractor(video_list, path="temp"):
 
         
 
-        num_frames = stream.get(cv2.CAP_PROP_FRAME_COUNT)
+        num_frames =int(stream.get(cv2.CAP_PROP_FRAME_COUNT) )
         frame_ids = np.random.choice(num_frames, size=20, replace=False)
         frames = []
         # Looping through chosen frame ids
