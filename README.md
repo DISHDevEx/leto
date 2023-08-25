@@ -162,10 +162,17 @@ The following tables are present today so change them accordingly in the **confi
 1. leto_original_file_size
 2. leto_reduced_file_size
 3. leto_reconstructed_file_size
-4. leto_mediapipe
-5. leto_yolo
+4. mediapipe_confidence_scores
+5. yolo_confidence_scores
 
 
-Note: Merging of these tables is still in progress
+In order to merge tables to a dataframe,
+```
+from benchmarking.video_quality.table_merge import mergetablestodf
+
+df = mergetablestodf()
+
+
+```
 
 ----------------------------------
