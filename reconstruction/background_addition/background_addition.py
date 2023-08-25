@@ -45,7 +45,7 @@ def background_addition(video_path, image_path, output_path):
 
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
 
-    out = cv2.VideoWriter(output_path, fourcc,fps, (frame_width, frame_height))
+    out = cv2.VideoWriter(output_path, fourcc, fps, (frame_width, frame_height))
 
     while cap.isOpened():
         ret, frame = cap.read()
