@@ -8,6 +8,7 @@ from aEye import Labeler
 from aEye import Aux
 import sys
 import logging
+import math
 
 # get git repo root level
 root_path = subprocess.run(
@@ -60,11 +61,11 @@ def fps_bitrate(video_list, fps_factor=2, bitrate_factor=2):
         
         video_current_fps = int(video.meta_data["streams"][0]["avg_frame_rate"].split("/")[0])
         
-        video_current_bitrate = int(video.meta_data["streams"][0]["bit_rate"]) 
+        video_current_bitrate = int(video.meta_data["streams"][0]["bit_rate"])
 
         requested_fps = video_current_fps/fps_factor
         
-        requested_bitrate = video_current_bitrate/bitrate_factor
+        requested_bitrate = math.ceil(video_current_bitrate/(bitrate_factor*1000))
 
         labeler.change_fps([video], requested_fps)
 
