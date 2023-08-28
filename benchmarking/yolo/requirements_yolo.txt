@@ -3,5 +3,5 @@ opencv-python>= 4.8.0.74
 opencv-python-headless>=4.8.0.00
 opencv-contrib-python>= 4.8.0.74
 numpy>=1.21.6
-aEye>=1.0.0
+aEye>=1.2.2
 ultralytics== 8.0.126

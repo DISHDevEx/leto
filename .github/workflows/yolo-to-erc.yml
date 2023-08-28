@@ -1,9 +1,14 @@
-name: publish-to-ecr
+name: publish-yolo-docker
 on:
-  push:
-    tags:
-    - '*'
-    - '**'
+  workflow_dispatch:
+    #Inputs for workflow
+    inputs:
+      version:
+        # Description to be shown in the UI
+        description: Enter version
+        #Version Number is mandatory
+        required: true
+        type: string
 env:
   BUCKET_NAME : ${{ secrets.EKS_BUCKET_NAME }}
   AWS_REGION : ${{ secrets.AWS_REGION }}
@@ -38,12 +43,12 @@ jobs:
         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
       run: |
         # Build a docker container and push it to ECR
-        echo "building version v0.0.14 ..."
+        echo "building version ${{ github.event.inputs.version }} ..."
         cd benchmarking
         cd yolo
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:v0.0.14 .
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.event.inputs.version }} .
         echo "pushing image to ECR ..."
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:v0.0.14
-        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:v0.0.14"
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.event.inputs.version }}
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:${{ github.event.inputs.version }}"
 #    - name: create wheel file from source code
 #      run: python setup.py bdist_wheel

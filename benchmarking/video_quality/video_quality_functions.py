@@ -16,28 +16,25 @@ from benchmarking.yolo import pipeline
 from benchmarking.mediapipe_model import object_detection
 
 import cv2
-import numpy as np
+import logging
 from skimage.metrics import structural_similarity as compare_ssim
-from aEye.auxiliary import Aux
 import os
-import re
 
 
-def calculate_psnr(original_path, compressed_path):
+def calculate_psnr(original_path, modified_path):
     """
-    This will help to calculate PSNR for video having any resolution
-    PSNR is Peak Signal to Noise ratio  which is used o measure the quality of a reconstructed or compressed image or video signal
-    compared to its original, uncompressed version.
-    It provides a quantitative measure of the fidelity of
-    the reconstructed signal by calculating the ratio
-    between the maximum possible signal power (peak signal)
-    and the power of the distortion or noise introduced
+    This will help to calculate PSNR for videos with same FPS and resolution.
+    PSNR is Peak Signal to Noise ratio  which is used to measure the quality
+    of a reconstructed or compressed image or video signalcompared to its original,
+    uncompressed version. It provides a quantitative measure of the fidelity of
+    the reconstructed signal by calculating the ratio between the maximum possible
+    signal power (peak signal) and the power of the distortion or noise introduced
     during the compression or reconstruction process.
 
     Parameters
     ----------
         original_video: Video file in any format(mp4, avi etc)
-        compressed_video : Video file after reduction/ reconstruction (mp4, avi etc)
+        modified_video : Video file after reduction/ reconstruction (mp4, avi etc)
 
      Returns
     ----------
@@ -50,14 +47,33 @@ def calculate_psnr(original_path, compressed_path):
     """
     # Read videos
     original_video = cv2.VideoCapture(original_path)
-    compressed_video = cv2.VideoCapture(compressed_path)
+    modified_video = cv2.VideoCapture(modified_path)
 
     # Get video properties
-    num_frames = min(
-        int(original_video.get(cv2.CAP_PROP_FRAME_COUNT)),
-        int(compressed_video.get(cv2.CAP_PROP_FRAME_COUNT)),
-    )
-    fps = int(original_video.get(cv2.CAP_PROP_FPS))
+    #Total frames
+    num_frames =int(original_video.get(cv2.CAP_PROP_FRAME_COUNT))
+
+    #Fps
+    fps_og = int(original_video.get(cv2.CAP_PROP_FPS))
+    fps_mod = int(modified_video.get(cv2.CAP_PROP_FPS))
+
+    if fps_og != fps_mod:
+        logging.warning(
+            "Frame rate mismatch. Cannot calculate PSNR"
+        )
+        return -1
+    #Resolution
+    height_og = original_video.get(cv2.CAP_PROP_FRAME_HEIGHT)
+    height_mod = modified_video.get(cv2.CAP_PROP_FRAME_HEIGHT)
+
+    width_og = original_video.get(cv2.CAP_PROP_FRAME_WIDTH)
+    width_mod = modified_video.get(cv2.CAP_PROP_FRAME_WIDTH)
+
+    if height_og != height_mod and width_og != width_mod:
+        logging.warning(
+            "Resolution mismatch. Cannot calculate PSNR"
+        )
+        return -1
 
     # Initialize PSNR value
     total_psnr = 0.0
@@ -65,42 +81,22 @@ def calculate_psnr(original_path, compressed_path):
     for _ in range(num_frames):
         # Read frames
         ret1, frame1 = original_video.read()
-        ret2, frame2 = compressed_video.read()
+        ret2, frame2 = modified_video.read()
 
-        # Resize compressed frame to match the resolution of the original frame
-        frame2_resized = cv2.resize(
-            frame2, (frame1.shape[1], frame1.shape[0]), interpolation=cv2.INTER_LINEAR
-        )
-
-        # Convert frames to floating-point format for PSNR calculation
-        frame1 = frame1.astype(np.float64)
-        frame2_resized = frame2_resized.astype(np.float64)
-
-        # Calculate MSE (Mean Squared Error)
-        mse = np.mean((frame1 - frame2_resized) ** 2)
-
-        # Calculate PSNR
-        if mse == 0:
-            # PSNR is infinite when MSE is 0, in this case, PSNR = 100
-            psnr = 100.0
-        else:
-            max_pixel = 255.0
-            psnr = 20 * np.log10(max_pixel / np.sqrt(mse))
-
-        # Accumulate PSNR value
-        total_psnr += psnr
+        #PSNR
+        total_psnr += cv2.PSNR(frame1,frame2)
 
     # Calculate average PSNR
     average_psnr = total_psnr / num_frames
 
     # Release video objects
     original_video.release()
-    compressed_video.release()
+    modified_video.release()
 
     return average_psnr
 
 
-def calculate_video_ssim(original_path, compressed_path):
+def calculate_video_ssim(original_path, modified_path):
     """
     This works with video of any resolution
     SSIM is is a perceptual metric that quantifies image quality
@@ -112,7 +108,7 @@ def calculate_video_ssim(original_path, compressed_path):
     Parameters
     ----------
         original_video: Video file in any format(mp4, avi etc)
-        compressed_video : Video file after reduction/ reconstruction (mp4, avi etc)
+        modified_video : Video file after reduction/ reconstruction (mp4, avi etc)
 
     Returns
     ----------
@@ -124,15 +120,35 @@ def calculate_video_ssim(original_path, compressed_path):
 
 
     """
+    # Read videos
     original_video = cv2.VideoCapture(original_path)
-    compressed_video = cv2.VideoCapture(compressed_path)
+    modified_video = cv2.VideoCapture(modified_path)
 
     # Get video properties
-    num_frames = min(
-        int(original_video.get(cv2.CAP_PROP_FRAME_COUNT)),
-        int(compressed_video.get(cv2.CAP_PROP_FRAME_COUNT)),
-    )
-    fps = int(original_video.get(cv2.CAP_PROP_FPS))
+    #Total frames
+    num_frames =int(original_video.get(cv2.CAP_PROP_FRAME_COUNT))
+
+    #Fps
+    fps_og = int(original_video.get(cv2.CAP_PROP_FPS))
+    fps_mod = int(modified_video.get(cv2.CAP_PROP_FPS))
+
+    if fps_og != fps_mod:
+        logging.warning(
+            "Frame rate mismatch. Cannot calculate PSNR"
+        )
+        return -1
+    #Resolution
+    height_og = original_video.get(cv2.CAP_PROP_FRAME_HEIGHT)
+    height_mod = modified_video.get(cv2.CAP_PROP_FRAME_HEIGHT)
+
+    width_og = original_video.get(cv2.CAP_PROP_FRAME_WIDTH)
+    width_mod = modified_video.get(cv2.CAP_PROP_FRAME_WIDTH)
+
+    if height_og != height_mod and width_og != width_mod:
+        logging.warning(
+            "Resolution mismatch. Cannot calculate PSNR"
+        )
+        return -1
 
     # Initialize SSIM value
     total_ssim = 0.0
@@ -140,16 +156,11 @@ def calculate_video_ssim(original_path, compressed_path):
     for _ in range(num_frames):
         # Read frames
         ret1, frame1 = original_video.read()
-        ret2, frame2 = compressed_video.read()
-
-        # Resize compressed frame to match the resolution of the original frame
-        frame2_resized = cv2.resize(
-            frame2, (frame1.shape[1], frame1.shape[0]), interpolation=cv2.INTER_LINEAR
-        )
+        ret2, frame2 = modified_video.read()
 
         # Convert frames to grayscale for SSIM calculation
         gray_frame1 = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)
-        gray_frame2 = cv2.cvtColor(frame2_resized, cv2.COLOR_BGR2GRAY)
+        gray_frame2 = cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY)
 
         # Calculate SSIM
         ssim = compare_ssim(gray_frame1, gray_frame2)
@@ -162,7 +173,7 @@ def calculate_video_ssim(original_path, compressed_path):
 
     # Release video objects
     original_video.release()
-    compressed_video.release()
+    modified_video.release()
 
     return average_ssim
 
@@ -288,8 +299,7 @@ def match_files(original_folder, modified_folder):
                 video_path_pair_list.append(video_tuple)
     if len(video_path_pair_list) == 0:
         return "No videos match"
-    else:
-        return video_path_pair_list
+    return video_path_pair_list
 
 
 def create_scores_dict(video_path_list):
@@ -307,7 +317,7 @@ def create_scores_dict(video_path_list):
 
     """
     list_scores = []
-    for i in range(0, len(video_path_list)):
+    for i in range(len(video_path_list)):
         dict_1 = {}
         original_file_path = video_path_list[i][0]
         reconstructed_file_path = video_path_list[i][1]

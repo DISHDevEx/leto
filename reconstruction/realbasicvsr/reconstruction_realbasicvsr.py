@@ -1,8 +1,6 @@
 """
 Module to contain the reconstruction technique based off of RealBasicVSR. 4x reconstruction of videos.
 """
-import argparse
-import glob
 import os
 import subprocess
 import sys
@@ -12,6 +10,7 @@ import numpy as np
 import torch
 from mmcv.runner import load_checkpoint
 from mmedit.core import tensor2img
+from pathlib import Path
 
 from builder import Builder
 
@@ -24,7 +23,7 @@ root_path = subprocess.run(
 sys.path.append(root_path)
 
 from utilities import CloudFunctionality
-from utilities import parse_recon_args
+from utilities import ConfigHandler
 
 VIDEO_EXTENSIONS = (".mp4", ".mov")
 
@@ -65,24 +64,18 @@ def init_model(config, checkpoint=None):
     return model
 
 
-def realbasicvsr_runner(args):
+def realbasicvsr_runner(method_args):
     """
     Method that super resolves videos using pretrained RealBasicVSR model (GAN based).
 
     Parameters
     ----------
-        args: argparse.Namespace
-            Object contains: input_bucket_s3, input_prefix_s3, output_bucket_s3,
-                             output_prefix_s3, download_model, model_bucket_s3,
-                             model_prefix_s3, local_model_path, clean_model, resolution.
+        method_args:
+            configparser object.  Parameters defined in ~/config.ini
     """
 
-    input_dir_og = "reduced_videos"
-    output_dir_og = "reconstructed_videos"
-    fps = 25
-
     # Initialize the model.
-    model = init_model("realbasicvsr_x4.py", args.local_model_path)
+    model = init_model(absolute_path_getter("realbasicvsr_x4.py"), method_args['local_model_path'])
 
     # Read frames from video and create an array of frames.
 
@@ -130,21 +123,40 @@ def realbasicvsr_runner(args):
         mmcv.mkdir_or_exist(output_dir)
 
         h, w = outputs.shape[-2:]
-        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-        video_writer = cv2.VideoWriter(output_dir, fourcc, fps, (w, h))
+        fourcc = cv2.VideoWriter_fourcc(*method_args['codec'])
+        video_writer = cv2.VideoWriter(output_dir, fourcc, method_args['fps'], (w, h))
         for i in range(0, outputs.size(1)):
             img = tensor2img(outputs[:, i, :, :, :])
             video_writer.write(img.astype(np.uint8))
         video_writer.release()
 
 
+def absolute_path_getter(file_name):
+    """
+    Takes in file name, in the same working directory as the 'running' python file (__file__)
+
+    Arguments:
+        String: file_name
+            name of subject file
+    Returns:
+        PosixPath: py_path
+             Absolute path of file_name
+    """
+    method_path = Path(__file__)
+    abs_path_parent = method_path.parent.absolute()
+    py_path = str(abs_path_parent.joinpath(file_name))
+    return(py_path)
+
+
 if __name__ == "__main__":
     cloud_functionality = CloudFunctionality()
 
-    args = parse_recon_args()
+    config = ConfigHandler('reconstruction.realbasicvsr')
+    s3_args = config.s3
+    method_args = config.method
 
-    cloud_functionality.preprocess(args)
+    cloud_functionality.preprocess_reconstruction(s3_args, method_args)
 
-    realbasicvsr_runner(args)
+    realbasicvsr_runner(method_args)
 
-    cloud_functionality.postprocess(args)
+    cloud_functionality.postprocess_reconstruction(s3_args, method_args)
