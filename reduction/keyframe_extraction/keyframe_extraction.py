@@ -1,5 +1,6 @@
 import os
 import cv2
+from aEye import Aux
 import torch
 import torchvision.transforms as transforms
 from torchvision.models import resnet50
@@ -7,59 +8,21 @@ import numpy as np
 from sklearn.cluster import KMeans
 import time
 import boto3
-import argparse
+
+root_path = subprocess.run(
+    ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=False
+).stdout.rstrip("\n")
+
+# add git repo path to use all libraries
+sys.path.append(root_path)
+
+from utilities import ConfigHandler
+from utilities import CloudFunctionality
 
 
 # Load the model 
 cnn_model = resnet50(pretrained=True)
 cnn_model = cnn_model.eval()
-
-def parse_args():
-    """
-    Parses the arguments needed for keyframe extraction reduction module.
-    Catalogues: input s3 bucket, input s3 prefix, output s3 bucket and output s3 prefix.
-
-
-    Returns
-    -------
-        args: argparse.Namespace object
-            Returns an object with the relevent input s3 bucket, input s3 prefix, output s3 bucket and output s3 prefix, fps, and bitrate.
-    """
-
-    parser = argparse.ArgumentParser(
-        description="Inference script of ffmpeg resolution downsampler"
-    )
-    parser.add_argument(
-        "--input_bucket_s3",
-        type=str,
-        default="leto-dish",
-        help="s3 bucket of the input video",
-    )
-
-    parser.add_argument(
-        "--input_prefix_s3",
-        type=str,
-        default="original-videos/benchmark/car/",
-        help="s3 prefix of the input video",
-    )
-
-    parser.add_argument(
-        "--output_bucket_s3",
-        type=str,
-        default="leto-dish",
-        help="s3 bucket of the input video",
-    )
-
-    parser.add_argument(
-        "--output_prefix_s3",
-        type=str,
-        default="reduced-videos/benchmark/keyframe-extraction/car/",
-        help="s3 prefix of the output video",
-    )
-
-    args = parser.parse_args()
-
-    return args
 
 
 def extract_frame_features(frame):
@@ -80,38 +43,41 @@ def extract_frame_features(frame):
 
     return features.flatten().numpy()
 
-def extract_key_frames(video_path, num_key_frames=10):
-    cap = cv2.VideoCapture(video_path)
-    frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    frames = []
+def extract_key_frames(video_list, num_key_frames=30):
+     for video in video_list:
+        stream = cv2.VideoCapture(video.get_file().strip("'"))
+        if not stream.isOpened():
+            exit()
+        frame_count = int(stream.get(cv2.CAP_PROP_FRAME_COUNT))
+        frames = []
 
-    # Extract features from each frame
-    for _ in range(frame_count):
-        ret, frame = cap.read()
-        if not ret:
-            break
-        frames.append(extract_frame_features(frame))
+        # Extract features from each frame
+        for _ in range(frame_count):
+            ret, frame = stream.read()
+            if not ret:
+                break
+            frames.append(extract_frame_features(frame))
 
-    cap.release()
+        stream.release()
 
-    # Apply K-Means clustering and select key frames
-    kmeans = KMeans(n_clusters=num_key_frames, random_state=0)
-    kmeans.fit(frames)
-    cluster_centers = kmeans.cluster_centers_
+        # Apply K-Means clustering and select key frames
+        kmeans = KMeans(n_clusters=num_key_frames, random_state=0)
+        kmeans.fit(frames)
+        cluster_centers = kmeans.cluster_centers_
 
-    # Calculate the distance of each frame to the cluster centers
-    distances = np.linalg.norm(np.array(frames)[:, np.newaxis] - cluster_centers, axis=2)
-    # Get the index of the closest cluster center for each frame
-    closest_clusters = np.argmin(distances, axis=1)
+        # Calculate the distance of each frame to the cluster centers
+        distances = np.linalg.norm(np.array(frames)[:, np.newaxis] - cluster_centers, axis=2)
+        # Get the index of the closest cluster center for each frame
+        closest_clusters = np.argmin(distances, axis=1)
 
-    # Get one representative key frame from each cluster
-    key_frames = []
-    for cluster_idx in range(num_key_frames):
-        cluster_frames = np.where(closest_clusters == cluster_idx)[0]
-        representative_frame_idx = cluster_frames[np.argmax(distances[cluster_frames, cluster_idx])]
-        key_frames.append(representative_frame_idx)
+        # Get one representative key frame from each cluster
+        key_frames = []
+        for cluster_idx in range(num_key_frames):
+            cluster_frames = np.where(closest_clusters == cluster_idx)[0]
+            representative_frame_idx = cluster_frames[np.argmax(distances[cluster_frames, cluster_idx])]
+            key_frames.append(representative_frame_idx)
 
-    return key_frames
+        return key_frames
 
 
 def save_key_frames(video_path, key_frames_indices, output_folder):
@@ -151,13 +117,19 @@ def upload_keyframes_to_S3(bucket_name,s3_folder_prefix,local_folder_path):
 
 
 def main():
-    args = parse_args()
-    video_path = "collision00.mp4"
-    key_frames_indices = extract_key_frames(video_path)
+    config = ConfigHandler("reduction.background_subtractor")
+    s3_args = config.s3
+    method_args = config.method
+    aux = Aux()
+
+    cloud_functionality = CloudFunctionality()
+
+    video_list = cloud_functionality.preprocess_reduction(s3_args, method_args)
+    key_frames_indices = extract_key_frames(video_list , )
 
     output_folder = "keyframe_cnn_collission"
 
-    save_key_frames(video_path, key_frames_indices, output_folder)
+    save_key_frames(video_path, key_frames_indices,method_args["temp_path"], output_folder)
 
     return print(f"{len(key_frames_indices)} key frames saved to {output_folder}.")
 
