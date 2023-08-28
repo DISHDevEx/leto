@@ -91,4 +91,5 @@ def object_detection(model_path, input_video, output_video, save_video=False):
     # the video capture object
     cap.release()
     out.release()
+    print((output_data))
     return output_data
