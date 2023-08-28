@@ -36,12 +36,12 @@ def fps_bitrate(video_list, fps_factor=2, bitrate_factor=2):
         video_list: list
             list of input videos
 
-        fps_factor: int  
-            Desired X factor reduction for frames per second. 
+        fps_factor: int
+            Desired X factor reduction for frames per second.
 
-        bitrate_factor: int 
-            Desired X factor reduction for video internal bitrate. 
-            
+        bitrate_factor: int
+            Desired X factor reduction for video internal bitrate.
+
 
     Returns
     ----------
@@ -50,20 +50,21 @@ def fps_bitrate(video_list, fps_factor=2, bitrate_factor=2):
     """
 
     labeler = Labeler()
-    
-    modified_video_list = []
-    
-    for video in video_list:
 
+    modified_video_list = []
+
+    for video in video_list:
         video.extract_metadata()
-        
-        video_current_fps = int(video.meta_data["streams"][0]["avg_frame_rate"].split("/")[0])
-        
+
+        video_current_fps = int(
+            video.meta_data["streams"][0]["avg_frame_rate"].split("/")[0]
+        )
+
         video_current_bitrate = int(video.meta_data["streams"][0]["bit_rate"])
 
-        requested_fps = video_current_fps/fps_factor
-        
-        requested_bitrate = math.ceil(video_current_bitrate/(bitrate_factor*1000))
+        requested_fps = video_current_fps / fps_factor
+
+        requested_bitrate = math.ceil(video_current_bitrate / (bitrate_factor * 1000))
 
         labeler.change_fps([video], requested_fps)
 
@@ -87,16 +88,19 @@ def main():
         None: however, results in a list of processed videos being stored to the
                 output video S3 path.
     """
-    config = ConfigHandler('reduction.fps_bitrate')
+    config = ConfigHandler("reduction.fps_bitrate")
     s3_args = config.s3
     method_args = config.method
     aux = Aux()
     cloud_functionality = CloudFunctionality()
-    
-    
-    video_list = cloud_functionality.preprocess_reduction(s3_args, method_args )
-    fps_bitrate(video_list, method_args.getint('fps_factor'), method_args.getint('bitrate_factor'))
-    aux.execute_label_and_write_local(video_list,path=method_args['temp_path'])
+
+    video_list = cloud_functionality.preprocess_reduction(s3_args, method_args)
+    fps_bitrate(
+        video_list,
+        method_args.getint("fps_factor"),
+        method_args.getint("bitrate_factor"),
+    )
+    aux.execute_label_and_write_local(video_list, path=method_args["temp_path"])
     cloud_functionality.postprocess_reduction(s3_args, method_args)
 
     return logging.info("video reduction completed on " + sys.version + ".")
