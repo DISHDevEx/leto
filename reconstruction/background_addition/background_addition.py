@@ -67,7 +67,7 @@ def background_addition(video_path, image_path, output_path):
     # ffmpeg encoding to contain file size
     vname = output_path.split("/")[1]
     name = Path(str(vname)).stem
-    name = name.strip("_bg.mp4")
+    name = name.strip("_bg")
     output_folder = output_path.split("/")[0]
     encoded_video_name = os.path.join(output_folder, name + ".mp4")
 
