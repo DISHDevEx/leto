@@ -36,14 +36,12 @@ def fps_bitrate(video_list, fps_factor=2, bitrate_factor=2):
         video_list: list
             list of input videos
 
-        fps: int | default --> 30
-            desired Frames per Second (fps) for output videos to be clocked to
+        fps_factor: int  
+            Desired X factor reduction for frames per second. 
 
-        bitrate: int | default --> 0
-            desired bitrate for the videos. This is given in Kb, so setting it to 1.5 Mb for example should be
-            1500, not 1.5.
-
-            Default Setting: Setting to 0 will do a 10x bitrate reduction
+        bitrate_factor: int 
+            Desired X factor reduction for video internal bitrate. 
+            
 
     Returns
     ----------
