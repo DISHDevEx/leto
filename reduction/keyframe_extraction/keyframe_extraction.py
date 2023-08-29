@@ -148,6 +148,21 @@ def extract_key_frames(video_list, path="temp", num_key_frames=30):
 
 
 def main():
+    """
+    Runner method for keyframe_extraction().  This method abstracts some of the
+    interaction with S3 and AWS away from fps_bitrate.
+
+    Parameters
+    ----------
+        None: runner method
+
+
+    Returns
+    ----------
+        None: however, results in a list of processed videos being stored to the
+                output video S3 path.'''
+    
+    """
     config = ConfigHandler("reduction.background_subtractor")
     s3_args = config.s3
     method_args = config.method
