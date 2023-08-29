@@ -88,7 +88,7 @@ def main():
 
     video_list = cloud_functionality.preprocess_reconstruction(s3_args, method_args)
 
-    reconstruct_video_with_keyframe_images(video_list,30, method_args["temp_path"], method_args.getint("num_key_frames"))
+    reconstruct_video_with_keyframe_images(video_list,30, method_args["temp_path"], method_args.getint("target_frame_rate"))
 
     cloud_functionality.postprocess_reconstruction(s3_args, method_args)
 
