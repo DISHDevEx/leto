@@ -28,6 +28,20 @@ cnn_model = cnn_model.eval()
 
 
 def extract_frame_features(frame):
+    """
+        Extracts deep features from an input image frame using a pre-trained CNN model.
+
+        This function takes an image frame as input, preprocesses it by applying transformations
+        including resizing and normalization, and then extracts deep features from the image using
+        a pre-trained Convolutional Neural Network (CNN) model. The extracted features are flattened
+        and returned as a NumPy array.
+
+        Parameters:
+            frame (PIL.Image or Tensor): The input image frame to extract features from.
+
+        Returns:
+            numpy.ndarray: A 1-dimensional NumPy array containing the flattened deep features
+                extracted from the input image frame."""
     transform = transforms.Compose(
         [
             transforms.ToPILImage(),
@@ -48,6 +62,22 @@ def extract_frame_features(frame):
 
 
 def extract_key_frames(video_list, path="temp", num_key_frames=30):
+    """
+    Extracts and generates key frames from a list of input videos using K-Means clustering.
+
+    This function takes a list of video filenames, processes each video to extract frame features,
+    performs K-Means clustering to select representative key frames, and then generates a new video
+    containing the selected key frames. The generated video is further compressed using FFmpeg.
+
+    Args:
+        video_list (list): A list of video filenames to process and generate key frames from.
+        path (str, optional): The directory path where the generated videos will be saved. Default is "temp".
+        num_key_frames (int, optional): The number of key frames to select for each video. Default is 30.
+
+    Returns:
+        None
+        """
+
     for video in video_list:
         video_path = os.path.join(
             "/root/PyTorchVideoCompression/original_videos/", video
