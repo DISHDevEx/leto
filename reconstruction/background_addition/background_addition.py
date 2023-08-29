@@ -67,8 +67,9 @@ def background_addition(video_path, image_path, output_path):
     # ffmpeg encoding to contain file size
     vname = output_path.split("/")[1]
     name = Path(str(vname)).stem
+    name = name.strip("_bg")
     output_folder = output_path.split("/")[0]
-    encoded_video_name = os.path.join(output_folder, name + "_background.mp4")
+    encoded_video_name = os.path.join(output_folder, name + ".mp4")
 
     cmd = f"static_ffmpeg -y -i {output_path} -c:v libx264 -crf 34 -preset veryfast {encoded_video_name}"
     subprocess.run(cmd, shell=True)
@@ -118,7 +119,9 @@ def main():
             matched_files.append((video_path, image_path))
 
     for files in matched_files:
-        name = files[0].split("/")[1]
+        fname = files[0].split("/")[1]
+        name = Path(str(fname)).stem
+        name = name + "_bg.mp4"
         background_addition(files[0], files[1], f"reconstructed_videos/{name}")
 
     cloud_functionality.postprocess_reconstruction(s3_args, method_args)
