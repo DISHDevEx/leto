@@ -5,7 +5,17 @@ import tensorflow as tf
 import numpy as np
 import cv2
 from pathlib import Path
+import time
 
+root_path = subprocess.run(
+    ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=False
+).stdout.rstrip("\n")
+
+# add git repo path to use all libraries
+sys.path.append(root_path)
+
+from utilities import ConfigHandler
+from utilities import CloudFunctionality
 
 def load_graph(frozen_graph_filename):
     """
@@ -29,21 +39,22 @@ def load_graph(frozen_graph_filename):
         tf.import_graph_def(graph_def)
     return graph
 
-def encoder(image1, image2):
+def encoder(image1, image2, features_folder):
     """
     Function to encode video frames into features and save these features into pickle files.
 
     Parameters
     ----------
         image1: numpy.ndarray
-            Image in the form of numpy array.
+            image in the form of numpy array
         image2: numpy.ndarray
-            Image in the form of numpy array.
+            image in the form of numpy array
+        features_folder: string
+            folder path to save encoded features in the form of pickle files
     """
     graph = load_graph('./model/L256/frozen_model_E.pb')
-    outputfolder = './testpkl/'
-    prefix = 'import/build_towers/tower_0/train_net_inference_one_pass/train_net/'
 
+    prefix = 'import/build_towers/tower_0/train_net_inference_one_pass/train_net/'
     Res = graph.get_tensor_by_name(prefix + 'Residual_Feature:0')
     inputImage = graph.get_tensor_by_name('import/input_image:0')
     previousImage = graph.get_tensor_by_name('import/input_image_ref:0')
@@ -68,19 +79,19 @@ def encoder(image1, image2):
                 previousImage: image2
             })
 
-    if not os.path.exists(outputfolder):
-        os.mkdir(outputfolder)
+    if not os.path.exists(features_folder):
+        os.mkdir(features_folder)
 
-    with open(outputfolder + 'quantized_res_feature.pkl', 'wb') as f:
+    with open(features_folder + 'quantized_res_feature.pkl', 'wb') as f:
         joblib.dump(Res_q, f)
 
-    with open(outputfolder + 'quantized_res_prior_feature.pkl', 'wb') as f:
+    with open(features_folder + 'quantized_res_prior_feature.pkl', 'wb') as f:
         joblib.dump(Res_prior_q, f)
 
-    with open(outputfolder + 'quantized_motion_feature.pkl', 'wb') as f:
+    with open(features_folder + 'quantized_motion_feature.pkl', 'wb') as f:
         joblib.dump(motion_q, f)
 
-def decoder(image2):
+def decoder(image2, features_folder):
     """
     Function to decode encoded features into video frame.
 
@@ -88,6 +99,8 @@ def decoder(image2):
     ----------
         image2: numpy.ndarray
             image in the form of numpy array
+        features_folder: string
+            folder from which encoded features are read
 
     Returns
     ----------
@@ -95,7 +108,7 @@ def decoder(image2):
             reconstructed image in the form of numpy array
     """
     graph = load_graph('./model/L256/frozen_model_D.pb')
-    outputfolder = './testpkl/'
+
     reconframe = graph.get_tensor_by_name('import/build_towers/tower_0/train_net_inference_one_pass/train_net/ReconFrame:0')
     res_input = graph.get_tensor_by_name('import/quant_feature:0')
     res_prior_input = graph.get_tensor_by_name('import/quant_z:0')
@@ -104,13 +117,13 @@ def decoder(image2):
 
     with tf.compat.v1.Session(graph=graph) as sess:
 
-        with open(outputfolder + 'quantized_res_feature.pkl', 'rb') as f:
+        with open(features_folder + 'quantized_res_feature.pkl', 'rb') as f:
             residual_feature = joblib.load(f)
 
-        with open(outputfolder + 'quantized_res_prior_feature.pkl', 'rb') as f:
+        with open(features_folder + 'quantized_res_prior_feature.pkl', 'rb') as f:
             residual_prior_feature = joblib.load(f)
 
-        with open(outputfolder + 'quantized_motion_feature.pkl', 'rb') as f:
+        with open(features_folder + 'quantized_motion_feature.pkl', 'rb') as f:
             motion_feature = joblib.load(f)
 
         dim = (1664, 896)
@@ -132,7 +145,7 @@ def decoder(image2):
         recon_frame = recon_frame * 255.0
         return recon_frame
 
-def codec(video_path):
+def codec(video_list):
     """
     Neural network codec that combines encoder and decoder.
 
@@ -146,42 +159,73 @@ def codec(video_path):
         recon_frame: numpy.ndarray
             reconstructed image in the form of numpy array
     """
-    cap = cv2.VideoCapture(video_path)
+    features_folder = './features/'
 
-    # Keep the aspect ratio 13:7
-    frame_width = 1664
-    frame_height = 896
-    fps = int(cap.get(5))
+    for video in video_list:
+        cap = cv2.VideoCapture(video)
 
-    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-    output_path = video_path.replace('.mp4', '_output.mp4')
-    out = cv2.VideoWriter(output_path, fourcc, fps, (frame_width, frame_height))
-    i = 0
-    image2 = np.empty([frame_width, frame_height])
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if not ret:
-            break
+        # Keep the aspect ratio 13:7
+        frame_width = 1664
+        frame_height = 896
+        fps = int(cap.get(5))
 
-        if i != 0:
-            encoder(image1 = frame, image2 = image2)
-            reconstructed_frame = decoder(image2)
-            cv2.imwrite('temp.jpg', reconstructed_frame)
-            print("reconstructed frame type", type(reconstructed_frame))
-            out.write(cv2.imread('temp.jpg', cv2.IMREAD_UNCHANGED))
+        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+        output_path = video.replace('.mp4', '_output.mp4')
+        out = cv2.VideoWriter(output_path, fourcc, fps, (frame_width, frame_height))
+        i = 0
+        image2 = np.empty([frame_width, frame_height])
+        while cap.isOpened():
+            ret, frame = cap.read()
+            if not ret:
+                break
 
-        image2 = frame
-        i += 1
+            if i != 0:
+                encoder(image1 = frame, image2 = image2, features_folder = features_folder)
+                reconstructed_frame = decoder(image2, features_folder = features_folder)
+                cv2.imwrite('temp.jpg', reconstructed_frame)
+                print("reconstructed frame type", type(reconstructed_frame))
+                out.write(cv2.imread('temp.jpg', cv2.IMREAD_UNCHANGED))
 
-    cap.release()
-    out.release()
+            image2 = frame
+            i += 1
 
-    # ffmpeg encoding to contain file size
-    name = Path(str(output_path)).stem
-    output_folder = output_path.split("/")[0]
-    encoded_video_name = os.path.join(output_folder, name + "_ffmpeg.mp4")
-    cmd = f"static_ffmpeg -y -i {output_path} -c:v libx264 -crf 34 -preset veryfast {encoded_video_name}"
-    subprocess.run(cmd, shell=True)
+        cap.release()
+        out.release()
 
-if __name__ == '__main__':
-    codec('./licenseplate04.mp4')
+        # ffmpeg encoding to contain file size
+        name = Path(str(output_path)).stem
+        output_folder = output_path.split("/")[0]
+        encoded_video_name = os.path.join(output_folder, name + "_ffmpeg.mp4")
+        cmd = f"static_ffmpeg -y -i {output_path} -c:v libx264 -crf 34 -preset veryfast {encoded_video_name}"
+        subprocess.run(cmd, shell=True)
+
+def main():
+    """
+    Runner method for neural network based codec. This method abstracts some of the interaction with S3 and AWS away from nn_codec.
+
+    Parameters
+    ----------
+        None: runner method
+
+
+    Returns
+    ----------
+        None: however, results in a list of processed videos being stored to the
+                output video S3 path
+    """
+    config = ConfigHandler("reduction.background_subtractor")
+    s3_args = config.s3
+    method_args = config.method
+
+    cloud_functionality = CloudFunctionality()
+
+    video_list = cloud_functionality.preprocess_reduction(s3_args, method_args)
+
+    codec(video_list)
+
+    cloud_functionality.postprocess_reduction(s3_args, method_args)
+
+if __name__ == "__main__":
+    start_time = time.time()
+    main()
+    print("--- %s seconds ---" % (time.time() - start_time))
