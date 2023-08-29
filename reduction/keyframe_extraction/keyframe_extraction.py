@@ -8,6 +8,8 @@ import numpy as np
 from sklearn.cluster import KMeans
 import time
 import boto3
+from pathlib import Path
+import subprocess
 
 root_path = subprocess.run(
     ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=False
@@ -43,11 +45,13 @@ def extract_frame_features(frame):
 
     return features.flatten().numpy()
 
-def extract_key_frames(video_list, num_key_frames=30):
+def extract_key_frames_indices(video_list, num_key_frames=30 , path = 'temp'):
      for video in video_list:
+        video_path = video.get_file().strip("'")
         stream = cv2.VideoCapture(video.get_file().strip("'"))
         if not stream.isOpened():
             exit()
+        video_name = Path(str(video)).stem
         frame_count = int(stream.get(cv2.CAP_PROP_FRAME_COUNT))
         frames = []
 
@@ -76,13 +80,17 @@ def extract_key_frames(video_list, num_key_frames=30):
             cluster_frames = np.where(closest_clusters == cluster_idx)[0]
             representative_frame_idx = cluster_frames[np.argmax(distances[cluster_frames, cluster_idx])]
             key_frames.append(representative_frame_idx)
+        # save keyframes
+        output_keyframe_path = os.path.join(path,video_name+ "_")
+        save_key_frames(video_path,key_frames, output_keyframe_path )
 
-        return key_frames
+
+        return print("keyframes extract at {}".path)
 
 
-def save_key_frames(video_path, key_frames_indices, output_folder):
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
+def save_key_frames(video_path, key_frames_indices, output_keyframe_path):
+    if not os.path.exists(path):
+        os.makedirs(path)
 
     cap = cv2.VideoCapture(video_path)
     frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -94,11 +102,31 @@ def save_key_frames(video_path, key_frames_indices, output_folder):
             break
 
         if i in key_frames_indices:
-            key_frame_path = os.path.join(output_folder, f"key_frame_{key_frame_counter}.jpg")
+            key_frame_path = os.path.join(output_keyframe_path, f"key_frame_{key_frame_counter}.jpg")
             cv2.imwrite(key_frame_path, frame)
             key_frame_counter += 1
 
     cap.release()
+
+def generate_keyframe_video(input_image_list,fps, frame_size, output_video_path):
+    # Define the codec and create a VideoWriter object
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Change the codec as needed
+    
+    output_video = cv2.VideoWriter(output_video_path, fourcc, fps, frame_size)
+    for image in input_image_list:
+        image_path = os.path.join(output_video_path, image)
+        frame = cv2.imread(image_path)
+        output_video.write(frame)
+    
+# Release the VideoWriter and close all windows
+    output_video.release()
+    cv2.destroyAllWindows()
+    encoded_video_name = os.path.join(output_video_path, "_encoded.mp4")
+    cmd = f"static_ffmpeg -y -i {output_video_path} -c:v libx264  -crf 34 -preset veryfast {encoded_video_name}"
+    subprocess.run(cmd, shell=True)
+
+
+
 
 def upload_keyframes_to_S3(bucket_name,s3_folder_prefix,local_folder_path):
     s3 = boto3.resource('s3')
@@ -125,13 +153,7 @@ def main():
     cloud_functionality = CloudFunctionality()
 
     video_list = cloud_functionality.preprocess_reduction(s3_args, method_args)
-    key_frames_indices = extract_key_frames(video_list , )
-
-    output_folder = "keyframe_cnn_collission"
-
-    save_key_frames(video_path, key_frames_indices,method_args["temp_path"], output_folder)
-
-    return print(f"{len(key_frames_indices)} key frames saved to {output_folder}.")
+    extract_key_frames_indices(video_list ,num_key_frames=30 , path = 'temp')
 
 
 if __name__ == "__main__":
