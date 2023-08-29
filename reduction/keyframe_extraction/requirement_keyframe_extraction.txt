@@ -1,0 +1,7 @@
+opencv-python
+aEye
+torch
+torchvision
+numpy
+scikit-learn
+boto3
