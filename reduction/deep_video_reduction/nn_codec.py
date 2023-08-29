@@ -21,7 +21,7 @@ from utilities import CloudFunctionality
 
 def download_model(s3_args, method_args):
         """
-        Downloads any model file from s3 to a local path.
+        Downloads two model files from s3 to a local path.
 
         Parameters
         ----------
@@ -31,11 +31,16 @@ def download_model(s3_args, method_args):
             Defines reduction technique specific args.
         """
         s3 = boto3.client("s3")
+        # print(s3)
         with open(method_args['encoder_model_path'], "wb") as file:
+            # print(type(method_args['encoder_model_path']))
+            # print(type(s3_args['model_bucket_s3']))
+            # print(type(method_args['encoder_model_prefix_s3']))
+            # print(file)
             s3.download_fileobj(s3_args['model_bucket_s3'], method_args['encoder_model_prefix_s3'], file)
 
         with open(method_args['decoder_model_path'], "wb") as file:
-            s3.download_fileobj(s3_args['model_bucket_s3'], method_args['decoder_model_prefix_s3', file])
+            s3.download_fileobj(s3_args['model_bucket_s3'], method_args['decoder_model_prefix_s3'], file)
 
 def load_graph(frozen_graph_filename):
     """
@@ -51,9 +56,9 @@ def load_graph(frozen_graph_filename):
         graph: TensorFlow graph
             pre-trained TensorFlow mdoel graph
     """
-    with tf.io.gfile.GFile(frozen_graph_filename, "rb") as f:
+    with tf.io.gfile.GFile(frozen_graph_filename, "rb") as file:
         graph_def = tf.compat.v1.GraphDef()
-        graph_def.ParseFromString(f.read())
+        graph_def.ParseFromString(file.read())
 
     with tf.Graph().as_default() as graph:
         tf.import_graph_def(graph_def)
@@ -102,14 +107,14 @@ def encoder(image1, image2, features_folder, encoder_model_path):
     if not os.path.exists(features_folder):
         os.mkdir(features_folder)
 
-    with open(features_folder + 'quantized_res_feature.pkl', 'wb') as f:
-        joblib.dump(Res_q, f)
+    with open(features_folder + 'quantized_res_feature.pkl', 'wb') as file:
+        joblib.dump(Res_q, file)
 
-    with open(features_folder + 'quantized_res_prior_feature.pkl', 'wb') as f:
-        joblib.dump(Res_prior_q, f)
+    with open(features_folder + 'quantized_res_prior_feature.pkl', 'wb') as file:
+        joblib.dump(Res_prior_q, file)
 
-    with open(features_folder + 'quantized_motion_feature.pkl', 'wb') as f:
-        joblib.dump(motion_q, f)
+    with open(features_folder + 'quantized_motion_feature.pkl', 'wb') as file:
+        joblib.dump(motion_q, file)
 
 def decoder(image2, features_folder, decoder_model_path):
     """
@@ -137,14 +142,14 @@ def decoder(image2, features_folder, decoder_model_path):
 
     with tf.compat.v1.Session(graph=graph) as sess:
 
-        with open(features_folder + 'quantized_res_feature.pkl', 'rb') as f:
-            residual_feature = joblib.load(f)
+        with open(features_folder + 'quantized_res_feature.pkl', 'rb') as file:
+            residual_feature = joblib.load(file)
 
-        with open(features_folder + 'quantized_res_prior_feature.pkl', 'rb') as f:
-            residual_prior_feature = joblib.load(f)
+        with open(features_folder + 'quantized_res_prior_feature.pkl', 'rb') as file:
+            residual_prior_feature = joblib.load(file)
 
-        with open(features_folder + 'quantized_motion_feature.pkl', 'rb') as f:
-            motion_feature = joblib.load(f)
+        with open(features_folder + 'quantized_motion_feature.pkl', 'rb') as file:
+            motion_feature = joblib.load(file)
 
         dim = (1664, 896)
         image2 = cv2.resize(image2, dim, interpolation = cv2.INTER_LANCZOS4)
@@ -186,7 +191,11 @@ def codec(video_list, encoder_model_path, decoder_model_path):
 
 
     for video in video_list:
-        cap = cv2.VideoCapture(video)
+        print(type(video))
+        print(video)
+        cap = cv2.VideoCapture(video.get_file().strip("'"))
+        if not cap.isOpened():
+            exit()
 
         # Keep the aspect ratio 13:7
         frame_width = 1664
@@ -194,7 +203,10 @@ def codec(video_list, encoder_model_path, decoder_model_path):
         fps = int(cap.get(5))
 
         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-        output_path = video.replace('.mp4', '_output.mp4')
+        print(video.get_title())
+        print(type(video.get_title()))
+        output_path = video.get_title().replace('.mp4', '_output.mp4')
+        print("output_path", output_path)
         out = cv2.VideoWriter(output_path, fourcc, fps, (frame_width, frame_height))
         i = 0
         image2 = np.empty([frame_width, frame_height])
