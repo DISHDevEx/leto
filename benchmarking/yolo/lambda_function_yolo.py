@@ -78,4 +78,5 @@ def list_object_keys(bucket_name, folder_path):
     if 'Contents' in response:
         for obj in response['Contents']:
             keys.append(obj['Key'])
-    return keys[1:]
+    file_locations = [file for file in keys if file.endswith("mp4")]
+    return file_locations
