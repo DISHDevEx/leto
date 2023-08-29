@@ -45,7 +45,7 @@ def handler(event, context):
 
             mAC = object_detection(mp_model, local_filename, "")
             if len(mAC):
-                mean_average_confidence = sum(mAC) / len(mAC)
+                mean_average_confidence = sum(mAC.values()) / len(mAC)
 
             # Optionally, you can delete the local file to save space
             os.remove(local_filename)
@@ -81,5 +81,5 @@ def list_object_keys(bucket_name, folder_path):
     if "Contents" in response:
         for obj in response["Contents"]:
             keys.append(obj["Key"])
-    file_locations = [file for file in keys if file.endswith("mp4")]
+        file_locations = [file for file in keys if file.endswith("mp4")]
     return file_locations
