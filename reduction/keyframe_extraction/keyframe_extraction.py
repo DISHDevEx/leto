@@ -161,7 +161,7 @@ def main():
                 output video S3 path.'''
     
     """
-    config = ConfigHandler("reduction.background_subtractor")
+    config = ConfigHandler("reduction.keyframe_extraction")
     s3_args = config.s3
     method_args = config.method
 
