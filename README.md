@@ -18,7 +18,8 @@
 
 For existing Reduction and Reconstruction Methods, use the following guide to modify the [***config.ini***](config.ini) file prior to method execution.  If you have a new method you would like to get working with the ***config.ini***, then follow the instructions outlined in the [next section](#using-configini-with-new-reduction-and-reconstruction-methods) to do so.
 
-For existing methods, perform the following prior to method execution:
+### Reduction Method Execution
+For existing Reduction methods, perform the following prior to method execution:
 
 1. Open the [***config.ini***](config.ini) and identify the appropriate section for the method you would like to execute.
     - sections are denoted by the following pattern ```[<METHOD_CLASS>.<METHOD_NAME>]```; so, if you want to use a ***reduction*** method called ***fps_bitrate***, the ***config.ini*** file section should be titled something like ```[reduction.fps_bitrate]```.
@@ -42,6 +43,50 @@ output_prefix_s3 = reduced-videos/%(method_name)s-fps_%(fps)s-bitrate_%(bitrate)
 ```console
 python path/to/method/fps_bitrate.py
 ```
+### Reconstruction Method Execution
+Reconstruction method execution is similar to Reduction method execution, with one key difference; Reconstruction method execution is dependant upon a previously executed Reduction method.  Follow these steps to execute a Reconstruction method:
+
+1. Within the [***config.ini***](config.ini) file, identify the appropriate Reconstruction section for the method you wish to execute.  
+    - sections are denoted by the following pattern ```[<METHOD_CLASS>.<METHOD_NAME>]```; so, if you want to use a ***reconstruction*** method called ***smooth_fps***, the ***config.ini*** file section should be titled something like ```[reconstruction.smooth_fps]```.
+
+2. Modify the ***reduction_method_ref*** value to reflect the Reduction method you will be pulling from for the input videos.  This variable, ***reduction_method_ref***, is located at the top of each Reconstruction method section in the config.ini.  As an example, if you would like to change the referenced Reduction method from ***fps_bitrate*** to ***fastsrgan***, then the ***reduction_method_ref*** for the Reconstruction section would need to change from:
+
+```ini
+reduction_method_ref = ${reduction.fps_bitrate:method_directory}
+```
+to the following reference:
+```ini
+reduction_method_ref = ${reduction.fastsrgan:method_directory}
+```
+***Note***: the input video path and output video path for all Reconstruction methods are dependant on the values in the referenced Reduction section; so ensure that the variables listed in the referenced Reduction section are accurate for your use case.  This can be ensured by executing you desired [Reduction Method](#reduction-method-execution), and then immediately executing your desired [Reconstruction Method](#reconstruction-method-execution) without making any changes to the Reduction method section.
+
+3. Modify the values for the keys you would like to change.  For example, if you would like to execute ***smooth_fps*** with a ***codec*** value of *mp4v* and a ***factor*** value of 2, then the ***config.ini*** file should be modified to resemble:
+
+```ini
+[reconstruction.smooth_fps]
+
+#########################
+; change reduction_method_ref to reflect desired reduction method
+; i.e. FROM/ ${reduction.fps_bitrate:method_directory}  TO/  ${reduction.fastsrgan:method_directory}
+#########################
+reduction_method_ref = ${reduction.fps_bitrate:method_directory}
+
+; method specific parameters:
+codec = mp4v ; desired video codec
+factor = 2
+
+; cloud_functionality parameters:
+download_model = True ; boolean to indicate if a model needs to be downloaded
+local_model_path = smooth.pkl ; local path to save pre-trained model
+clean_model = True ; boolean to indicate to clean video or not
+
+; s3 prefixs for input/output paths and models:
+method_name = smooth_fps
+input_prefix_s3 = reduced-videos/${reduction_method_ref}
+output_prefix_s3 = reconstructed-videos/${method_name}-factor${factor}-reduction_${reduction_method_ref}
+model_prefix_s3 = pretrained-models/smooth.pkl ; s3 prefix of the pre-trained model
+```
+4. Execute the method at the console just like any other .py file:
 
 ## Using ***config.ini*** with New Reduction and Reconstruction Methods:
 
