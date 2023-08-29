@@ -105,7 +105,8 @@ class FileSizeUploader:
             response = self.s3.list_objects_v2(Bucket=self.bucket_name, Prefix=directory_key)
             full_file_locations = [f"s3://{self.bucket_name}/{obj['Key']}" for obj in response.get('Contents', [])]
             file_locations = [obj['Key'] for obj in response.get('Contents', [])]
-            return file_locations[1:]
+            file_locations = [file for file in file_locations if file.endswith("mp4")]
+            return file_locations
         except Exception as e:
             print(f"Error getting S3 file locations: {e}")
             return []
