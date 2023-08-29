@@ -10,7 +10,8 @@ import os
 import urllib.parse
 
 s3_client = boto3.client("s3")
-dynamodb = boto3.resource('dynamodb')
+dynamodb = boto3.resource("dynamodb")
+
 
 def handler(event, context):
     """
@@ -37,15 +38,14 @@ def handler(event, context):
 
         for key in s3_keys:
             # Download the video from S3 to Lambda's /tmp directory
-            local_filename = '/tmp/' + os.path.basename(key)
+            local_filename = "/tmp/" + os.path.basename(key)
             s3_client.download_file(bucket_name, key, local_filename)
 
             # Process the downloaded video
 
-            mAC = object_detection(mp_model,local_filename, "")
+            mAC = object_detection(mp_model, local_filename, "")
             if len(mAC):
-                mean_average_confidence = sum(mAC) / len(
-                    mAC)
+                mean_average_confidence = sum(mAC) / len(mAC)
 
             # Optionally, you can delete the local file to save space
             os.remove(local_filename)
@@ -55,14 +55,15 @@ def handler(event, context):
 
             table = dynamodb.Table(table_name)
             try:
-                response = table.put_item(Item={'video_location':  key, 'score': str(mean_average_confidence)})
-                print('Uploaded location:', key)
+                response = table.put_item(
+                    Item={"video_location": key, "score": str(mean_average_confidence)}
+                )
+                print("Uploaded location:", key)
             except Exception as e:
-                print('Error uploading metric:', mean_average_confidence, e)
+                print("Error uploading metric:", mean_average_confidence, e)
 
             print({key: mean_average_confidence})
         return score
-
 
     except Exception as e:
         print(e)
@@ -73,10 +74,12 @@ def handler(event, context):
         )
         raise e
 
+
 def list_object_keys(bucket_name, folder_path):
     keys = []
-    response = s3_client.list_objects_v2(Bucket=bucket_name,Prefix=folder_path)
-    if 'Contents' in response:
-        for obj in response['Contents']:
-            keys.append(obj['Key'])
-    return keys[1:]
+    response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=folder_path)
+    if "Contents" in response:
+        for obj in response["Contents"]:
+            keys.append(obj["Key"])
+    file_locations = [file for file in keys if file.endswith("mp4")]
+    return file_locations
