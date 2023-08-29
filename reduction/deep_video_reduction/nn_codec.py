@@ -1,4 +1,5 @@
 import os
+import sys
 import subprocess
 import joblib
 import tensorflow as tf
@@ -6,6 +7,7 @@ import numpy as np
 import cv2
 from pathlib import Path
 import time
+import boto3
 
 root_path = subprocess.run(
     ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=False
@@ -16,6 +18,24 @@ sys.path.append(root_path)
 
 from utilities import ConfigHandler
 from utilities import CloudFunctionality
+
+def download_model(s3_args, method_args):
+        """
+        Downloads any model file from s3 to a local path.
+
+        Parameters
+        ----------
+        s3_args: dict
+            Defines the s3 bucket params.
+        method_args: dict
+            Defines reduction technique specific args.
+        """
+        s3 = boto3.client("s3")
+        with open(method_args['encoder_model_path'], "wb") as file:
+            s3.download_fileobj(s3_args['model_bucket_s3'], method_args['encoder_model_prefix_s3'], file)
+
+        with open(method_args['decoder_model_path'], "wb") as file:
+            s3.download_fileobj(s3_args['model_bucket_s3'], method_args['decoder_model_prefix_s3', file])
 
 def load_graph(frozen_graph_filename):
     """
@@ -39,7 +59,7 @@ def load_graph(frozen_graph_filename):
         tf.import_graph_def(graph_def)
     return graph
 
-def encoder(image1, image2, features_folder):
+def encoder(image1, image2, features_folder, encoder_model_path):
     """
     Function to encode video frames into features and save these features into pickle files.
 
@@ -52,7 +72,7 @@ def encoder(image1, image2, features_folder):
         features_folder: string
             folder path to save encoded features in the form of pickle files
     """
-    graph = load_graph('./model/L256/frozen_model_E.pb')
+    graph = load_graph(encoder_model_path)
 
     prefix = 'import/build_towers/tower_0/train_net_inference_one_pass/train_net/'
     Res = graph.get_tensor_by_name(prefix + 'Residual_Feature:0')
@@ -91,7 +111,7 @@ def encoder(image1, image2, features_folder):
     with open(features_folder + 'quantized_motion_feature.pkl', 'wb') as f:
         joblib.dump(motion_q, f)
 
-def decoder(image2, features_folder):
+def decoder(image2, features_folder, decoder_model_path):
     """
     Function to decode encoded features into video frame.
 
@@ -107,7 +127,7 @@ def decoder(image2, features_folder):
         recon_frame: numpy.ndarray
             reconstructed image in the form of numpy array
     """
-    graph = load_graph('./model/L256/frozen_model_D.pb')
+    graph = load_graph(decoder_model_path)
 
     reconframe = graph.get_tensor_by_name('import/build_towers/tower_0/train_net_inference_one_pass/train_net/ReconFrame:0')
     res_input = graph.get_tensor_by_name('import/quant_feature:0')
@@ -145,7 +165,7 @@ def decoder(image2, features_folder):
         recon_frame = recon_frame * 255.0
         return recon_frame
 
-def codec(video_list):
+def codec(video_list, encoder_model_path, decoder_model_path):
     """
     Neural network codec that combines encoder and decoder.
 
@@ -160,6 +180,10 @@ def codec(video_list):
             reconstructed image in the form of numpy array
     """
     features_folder = './features/'
+    print("video_list", video_list)
+    print(len(video_list))
+    print(type(video_list[0]))
+
 
     for video in video_list:
         cap = cv2.VideoCapture(video)
@@ -180,8 +204,8 @@ def codec(video_list):
                 break
 
             if i != 0:
-                encoder(image1 = frame, image2 = image2, features_folder = features_folder)
-                reconstructed_frame = decoder(image2, features_folder = features_folder)
+                encoder(image1 = frame, image2 = image2, features_folder = features_folder, encoder_model_path = encoder_model_path)
+                reconstructed_frame = decoder(image2, features_folder = features_folder, decoder_model_path = decoder_model_path)
                 cv2.imwrite('temp.jpg', reconstructed_frame)
                 print("reconstructed frame type", type(reconstructed_frame))
                 out.write(cv2.imread('temp.jpg', cv2.IMREAD_UNCHANGED))
@@ -213,15 +237,15 @@ def main():
         None: however, results in a list of processed videos being stored to the
                 output video S3 path
     """
-    config = ConfigHandler("reduction.background_subtractor")
+    config = ConfigHandler("reduction.nn_codec")
     s3_args = config.s3
     method_args = config.method
-
+    download_model(s3_args, method_args)
     cloud_functionality = CloudFunctionality()
 
     video_list = cloud_functionality.preprocess_reduction(s3_args, method_args)
 
-    codec(video_list)
+    codec(video_list, method_args['encoder_model_path'], method_args['decoder_model_path'])
 
     cloud_functionality.postprocess_reduction(s3_args, method_args)
 
