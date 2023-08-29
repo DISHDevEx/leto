@@ -79,9 +79,7 @@ def extract_key_frames(video_list, path="temp", num_key_frames=30):
         """
 
     for video in video_list:
-        video_path = os.path.join(
-            "/root/PyTorchVideoCompression/original_videos/", video
-        )
+        video_path = os.path.join(video.get_file().strip("'"))
         cap = cv2.VideoCapture(video_path)
         video_name = Path(video_path).stem
         frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
