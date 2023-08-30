@@ -1,7 +1,7 @@
-opencv - python
-aEye
+
+aEye>=1.2.2
 torch
 torchvision
 numpy
 scikit - learn
-boto3
+
