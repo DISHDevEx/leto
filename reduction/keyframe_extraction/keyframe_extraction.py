@@ -86,8 +86,8 @@ def extract_key_frames(video_list, path="temp", num_key_frames=30):
         frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         frame_rate = cap.get(cv2.CAP_PROP_FPS)
-        duration_seconds = frame_count / frame_rate
-        target_fps = int(num_key_frames/duration_seconds)
+        #duration_seconds = frame_count / frame_rate
+        target_fps = int(num_key_frames/10)
         frames = []
 
         # Extract features from each frame
