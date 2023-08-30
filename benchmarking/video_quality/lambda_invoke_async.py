@@ -37,13 +37,11 @@ file_locations = [file for file in subfolders if file.startswith("reduced")]
 # Loop to send multiple asynchronous invocations
 for folder in file_locations:
 
-# print(folder)
-
     # Payload data
     payload = {"bucket_name": 'leto-dish',"folder_path": folder ,"dynamodb_table": 'leto_mediapipe'}
 
+    # convert payload to JSON and then convert to utf-8 byte format
     json_data = json.dumps(payload)
-
     payload_bytes= json_data.encode('utf-8')
 
     lambda_client.invoke_async(FunctionName='leto-mediapipie',InvokeArgs=payload_bytes)
