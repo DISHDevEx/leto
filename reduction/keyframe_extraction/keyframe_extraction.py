@@ -85,11 +85,13 @@ def extract_key_frames(video_list, path="temp", num_key_frames=30):
         frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        fps = int(frame_count / num_key_frames)
+        frame_rate = cap.get(cv2.CAP_PROP_FPS)
+        duration_seconds = frame_count / frame_rate
+        target_fps = int(num_key_frames/duration_seconds)
         frames = []
 
         # Extract features from each frame
-        for _ in range(frame_count):
+        while True:
             ret, frame = cap.read()
             if not ret:
                 break
@@ -122,7 +124,7 @@ def extract_key_frames(video_list, path="temp", num_key_frames=30):
         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
         output_path = os.path.join(path, video_name + "_keyframes.mp4")
         out = cv2.VideoWriter(
-            output_path, fourcc, fps, (frame_width, frame_height), isColor=True
+            output_path, fourcc, target_fps, (frame_width, frame_height), isColor=True
         )
         video_stream = cv2.VideoCapture(video_path)
         key_frames.sort()
