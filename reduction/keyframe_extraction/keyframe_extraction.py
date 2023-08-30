@@ -121,15 +121,12 @@ def extract_key_frames(video_list, path="temp", num_key_frames=30):
         # make video from frames
         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
         output_path = os.path.join(path, video_name + "_keyframes.mp4")
-        print(output_path)
         out = cv2.VideoWriter(
             output_path, fourcc, fps, (frame_width, frame_height), isColor=True
         )
         video_stream = cv2.VideoCapture(video_path)
         key_frames.sort()
-        # print(key_frames)
         for i in key_frames:
-            # print(i)
             video_stream.set(cv2.CAP_PROP_POS_FRAMES, i)
 
             ret, frame = video_stream.read()
