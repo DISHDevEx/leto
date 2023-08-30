@@ -170,7 +170,7 @@ def decoder(image2, features_folder, decoder_model_path):
         recon_frame = recon_frame * 255.0
         return recon_frame
 
-def codec(video_list, encoder_model_path, decoder_model_path):
+def codec(video_list, encoder_model_path, decoder_model_path, path = "temp"):
     """
     Neural network codec that combines encoder and decoder.
 
@@ -194,6 +194,7 @@ def codec(video_list, encoder_model_path, decoder_model_path):
         print(type(video))
         print(video)
         cap = cv2.VideoCapture(video.get_file().strip("'"))
+        video_name = Path(str(video)).stem
         if not cap.isOpened():
             exit()
 
@@ -205,9 +206,10 @@ def codec(video_list, encoder_model_path, decoder_model_path):
         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
         print(video.get_title())
         print(type(video.get_title()))
-        output_path = video.get_title().replace('.mp4', '_output.mp4')
-        print("output_path", output_path)
-        out = cv2.VideoWriter(output_path, fourcc, fps, (frame_width, frame_height))
+        # output_path = video.get_title().replace('.mp4', '_output.mp4')
+        output_filename = os.path.join(path, video_name + "_output.mp4")
+        print("output filename", output_filename)
+        out = cv2.VideoWriter(output_filename, fourcc, fps, (frame_width, frame_height))
         i = 0
         image2 = np.empty([frame_width, frame_height])
         while cap.isOpened():
@@ -229,10 +231,10 @@ def codec(video_list, encoder_model_path, decoder_model_path):
         out.release()
 
         # ffmpeg encoding to contain file size
-        name = Path(str(output_path)).stem
-        output_folder = output_path.split("/")[0]
-        encoded_video_name = os.path.join(output_folder, name + "_ffmpeg.mp4")
-        cmd = f"static_ffmpeg -y -i {output_path} -c:v libx264 -crf 34 -preset veryfast {encoded_video_name}"
+        # name = Path(str(output_path)).stem
+        # output_folder = output_path.split("/")[0]
+        encoded_video_name = os.path.join(path, video_name)
+        cmd = f"static_ffmpeg -y -i {output_filename} -c:v libx264 -crf 34 -preset veryfast {encoded_video_name}.mp4"
         subprocess.run(cmd, shell=True)
 
 def main():
@@ -257,7 +259,7 @@ def main():
 
     video_list = cloud_functionality.preprocess_reduction(s3_args, method_args)
 
-    codec(video_list, method_args['encoder_model_path'], method_args['decoder_model_path'])
+    codec(video_list, method_args['encoder_model_path'], method_args['decoder_model_path'], method_args["temp_path"])
 
     cloud_functionality.postprocess_reduction(s3_args, method_args)
 
