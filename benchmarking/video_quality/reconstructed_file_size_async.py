@@ -127,7 +127,7 @@ class FileSizeUploader:
 
 if __name__ == "__main__":
     # Initialize configuration and perform the file size upload
-    config = ConfigHandler('benchmarking.reconstructed_file_size')
+    config = ConfigHandler('benchmarking.reconstructed_file_size_async')
     s3_args = config.s3
     method_args = config.method
 
@@ -136,12 +136,15 @@ if __name__ == "__main__":
     s3 = boto3.client('s3')
 
     # List all objects in the bucket
-    objects = s3.list_objects_v2(Bucket='leto-dish', Prefix='reconstructed-videos/', Delimiter='/')
+    objects = s3.list_objects_v2(Bucket=s3_args['input_bucket_s3'],
+                                 Prefix=method_args['directory_for_evaluation'], 
+                                 Delimiter='/')
 
-    # # Extract subfolder names
-    subfolders = [prefix['Prefix'] for prefix in objects.get('CommonPrefixes', [])]
+    # Extract subfolder names
+    subfolder = [prefix['Prefix'] for prefix in objects.get('CommonPrefixes', [])]
 
-    file_locations = [file for file in subfolders if file.startswith("reconstructed")]
+    # and sanity check
+    file_locations = [file for file in subfolder if file.startswith("reconstructed")]
 
     # Initialize and use the FileSizeUploader on all folders in file_locations
     for  folder in file_locations:       
