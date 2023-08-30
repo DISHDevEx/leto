@@ -133,7 +133,6 @@ def extract_key_frames(video_list, path="temp", num_key_frames=30):
 
             ret, frame = video_stream.read()
             if not ret:
-                print("Failed to read target frame.")
                 return
             out.write(frame)
         video_stream.release()
