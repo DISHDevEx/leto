@@ -19,10 +19,10 @@ import time
 def linear_interpolation(frame_a, frame_b, alpha):
     return cv2.addWeighted(frame_a, 1 - alpha, frame_b, alpha, 0)
 
-def reconstruct_video_with_keyframe_images(video_list, target_frame_rate= 30):
+def reconstruct_video_with_keyframe_images(target_frame_rate= 30):
         path = "./reconstructed_videos"
-        for video in video_list:
-            video_path = video.get_file().strip("'")
+        for video in os.listdir("./reduced_videos"):
+            video_path = os.path.join("./reduced_videos", video)
             cap = cv2.VideoCapture(video_path)
             video_name = Path(str(video)).stem
 
@@ -87,9 +87,9 @@ def main():
     s3_args = config.s3
     method_args = config.method
 
-    video_list = cloud_functionality.preprocess_reconstruction(s3_args, method_args)
+    cloud_functionality.preprocess_reconstruction(s3_args, method_args)
 
-    reconstruct_video_with_keyframe_images(video_list, method_args.getint("target_frame_rate"))
+    reconstruct_video_with_keyframe_images (method_args.getint("target_frame_rate"))
 
     cloud_functionality.postprocess_reconstruction(s3_args, method_args)
 
