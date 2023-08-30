@@ -59,7 +59,7 @@ def reconstruct_video_with_keyframe_images(target_frame_rate= 30):
             # Release VideoCapture and VideoWriter
             cap.release()
             out.release()
-            encoded_video_name = os.path.join(path,video)
+            encoded_video_name = os.path.join(path,video_name)
             cmd = f"static_ffmpeg -y -i {output_filename} -c:v libx264  -crf 34 -preset veryfast {encoded_video_name}.mp4"
             subprocess.run(cmd, shell=True)
             os.remove(output_filename)
