@@ -137,7 +137,7 @@ if __name__ == "__main__":
 
     file_locations = [file for file in subfolders if file.startswith("reconstructed")]
 
-    # Initialize and use the FileSizeUploader
+    # Initialize and use the FileSizeUploader on all folders in file_locations
     for  folder in file_locations:       
         table_name = method_args['table_name']
         uploader = FileSizeUploader(s3_args['input_bucket_s3'], table_name)
