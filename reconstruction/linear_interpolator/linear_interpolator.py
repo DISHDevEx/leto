@@ -31,7 +31,7 @@ def reconstruct_video_with_keyframe_images(target_frame_rate= 30):
             frame_rate = int(cap.get(cv2.CAP_PROP_FPS))
             frame_size = (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
             input_frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-            num_interpolated_frames = (target_frame_rate /frame_rate) -1
+            num_interpolated_frames = int((target_frame_rate /frame_rate) -1)
 
 
             # Create VideoWriter to save interpolated video
