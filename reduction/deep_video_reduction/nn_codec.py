@@ -236,6 +236,7 @@ def codec(video_list, encoder_model_path, decoder_model_path, path = "temp"):
         encoded_video_name = os.path.join(path, video_name)
         cmd = f"static_ffmpeg -y -i {output_filename} -c:v libx264 -crf 34 -preset veryfast {encoded_video_name}.mp4"
         subprocess.run(cmd, shell=True)
+        os.remove(output_filename)
 
 def main():
     """
