@@ -19,7 +19,8 @@ import time
 def linear_interpolation(frame_a, frame_b, alpha):
     return cv2.addWeighted(frame_a, 1 - alpha, frame_b, alpha, 0)
 
-def reconstruct_video_with_keyframe_images(video_list,path="temp", target_frame_rate= 30):
+def reconstruct_video_with_keyframe_images(video_list, target_frame_rate= 30):
+        path = "./recontructed_videos"
         for video in video_list:
             video_path = video.get_file().strip("'")
             cap = cv2.VideoCapture(video_path)
@@ -34,7 +35,7 @@ def reconstruct_video_with_keyframe_images(video_list,path="temp", target_frame_
 
 
             # Create VideoWriter to save interpolated video
-            output_filename = os.path.join(path,video + "_interpolated.mp4")
+            output_filename = os.path.join(path,video_name + "_interpolated.mp4")
             fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Codec for MP4 video
             out = cv2.VideoWriter(output_filename, fourcc, target_frame_rate, frame_size)
 
@@ -88,7 +89,7 @@ def main():
 
     video_list = cloud_functionality.preprocess_reconstruction(s3_args, method_args)
 
-    reconstruct_video_with_keyframe_images(video_list,30, method_args["temp_path"], method_args.getint("target_frame_rate"))
+    reconstruct_video_with_keyframe_images(video_list, method_args.getint("target_frame_rate"))
 
     cloud_functionality.postprocess_reconstruction(s3_args, method_args)
 
