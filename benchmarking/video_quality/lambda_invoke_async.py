@@ -1,3 +1,24 @@
+"""
+invoke_lambda_async.py
+
+This script invokes an AWS Lambda function asynchronously for each subfolder within a specified S3 bucket.
+It extracts subfolder names from the specified bucket's directory, prepares payload data for each subfolder,
+and invokes the Lambda function asynchronously with the payload. The script uses configurations loaded from
+the 'benchmarking.lambda_invoke_async' section of the configuration file.
+
+Dependencies:
+- boto3: Amazon Web Services (AWS) SDK for Python
+- subprocess: For executing shell commands
+- sys: System-specific parameters and functions
+- json: JSON (JavaScript Object Notation) encoding and decoding
+
+Usage:
+- Run this script to invoke the specified Lambda function asynchronously for each subfolder in the specified S3 bucket.
+
+Note:
+- This script assumes that the AWS credentials and region have been configured using the AWS CLI or environment variables.
+
+"""
 
 import subprocess
 import sys
@@ -5,6 +26,26 @@ import boto3
 import json
 
 def invoke_lambda_async(s3_args, method_args):
+
+    """
+    Invoke an AWS Lambda function asynchronously for each subfolder in the specified S3 bucket's directory.
+
+    Parameters:
+    - s3_args (dict): A dictionary containing S3-related configuration settings.
+    - method_args (dict): A dictionary containing method-specific configuration settings.
+
+    Configuration Details:
+    - s3_args:
+        - region (str): The AWS region where the S3 bucket and Lambda function are located.
+        - input_bucket_s3 (str): The name of the input S3 bucket.
+    - method_args:
+        - directory_for_evaluation (str): The directory within the input S3 bucket to evaluate.
+        - dynamodb_table (str): The name of the DynamoDB table to use for data storage.
+        - lambda_function_name (str): The name of the AWS Lambda function to invoke.
+
+    Note:
+    - This function uses the provided configuration settings to perform the asynchronous invocations.
+    """
 
     # Initialize the S3 client
     s3 = boto3.client('s3')
