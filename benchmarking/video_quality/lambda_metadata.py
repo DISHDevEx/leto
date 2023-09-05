@@ -1,3 +1,4 @@
+"""This file is intended to run in AWS lambda to use ffprobe to extract video metadata."""
 import subprocess
 import boto3
 import os
@@ -12,10 +13,12 @@ def lambda_handler(event, context):
     Lambda function to process video files, extract metadata, and upload to DynamoDB.
 
     Args:
+    ------------------
         event (dict): The event input to the Lambda function.
         context (object): The Lambda runtime information.
 
     Returns:
+    -----------------
         None
     """
 
@@ -67,10 +70,12 @@ def list_object_keys(bucket_name, folder_path):
     List object keys within a specified S3 bucket and folder path.
 
     Args:
+    -----------------
         bucket_name (str): The name of the S3 bucket.
         folder_path (str): The path within the bucket to list objects from.
 
     Returns:
+    -----------------
         list: A list of object keys in the specified bucket and folder path.
     """
         
