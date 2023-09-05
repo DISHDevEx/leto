@@ -26,11 +26,13 @@ def linear_interpolation(frame_a, frame_b, alpha):
     the result will be identical to 'frame_b'.
 
     Parameters:
+     -----------
     - frame_a: The first input image frame (numpy.ndarray).
     - frame_b: The second input image frame (numpy.ndarray).
     - alpha: The interpolation parameter (float), where 0 <= alpha <= 1.
     
     Returns:
+    ----------
     - interpolated_frame: The linearly interpolated image frame (numpy.ndarray).
     return cv2.addWeighted(frame_a, 1 - alpha, frame_b, alpha, 0)
 
@@ -46,9 +48,11 @@ def reconstruct_video_with_keyframe_images(target_frame_rate=30):
     in the 'reconstructed_videos' directory.
 
     Parameters:
+    ------------
     - target_frame_rate: The desired frame rate for the reconstructed video (default is 30).
 
     Returns:
+    ----------
     - None
     """
     path = "./reconstructed_videos"
@@ -63,6 +67,7 @@ def reconstruct_video_with_keyframe_images(target_frame_rate=30):
             int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),
             int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)),
         )
+        # generated interpolated frames between two keyframes
         num_interpolated_frames = int((target_frame_rate / frame_rate) - 1)
 
         # Create VideoWriter to save interpolated video
@@ -101,7 +106,7 @@ def main():
     Runner method for linear interpolation().  This method abstracts some of the
     interaction with S3 and AWS away from fps_bitrate.
 
-    Args:
+    Parameters:
     ----------
         None: runner method
 
