@@ -17,10 +17,40 @@ import time
 
 
 def linear_interpolation(frame_a, frame_b, alpha):
+    """
+    Perform linear interpolation between two image frames.
+
+    This function blends two input frames together using linear interpolation.
+    The interpolation is controlled by the parameter 'alpha', where 0 <= alpha <= 1.
+    When alpha is 0, the result will be identical to 'frame_a', and when alpha is 1,
+    the result will be identical to 'frame_b'.
+
+    Parameters:
+    - frame_a: The first input image frame (numpy.ndarray).
+    - frame_b: The second input image frame (numpy.ndarray).
+    - alpha: The interpolation parameter (float), where 0 <= alpha <= 1.
+    
+    Returns:
+    - interpolated_frame: The linearly interpolated image frame (numpy.ndarray).
     return cv2.addWeighted(frame_a, 1 - alpha, frame_b, alpha, 0)
+
+    """
 
 
 def reconstruct_video_with_keyframe_images(target_frame_rate=30):
+    """
+    Reconstruct a video with keyframe images.
+
+    This function takes a set of video files from a directory of reduced videos and reconstructs
+    them by interpolating frames to achieve a target frame rate. It saves the reconstructed video
+    in the 'reconstructed_videos' directory.
+
+    Parameters:
+    - target_frame_rate: The desired frame rate for the reconstructed video (default is 30).
+
+    Returns:
+    - None
+    """
     path = "./reconstructed_videos"
     for video in os.listdir("./reduced_videos"):
         video_path = os.path.join("./reduced_videos", video)
@@ -33,7 +63,6 @@ def reconstruct_video_with_keyframe_images(target_frame_rate=30):
             int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),
             int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)),
         )
-        input_frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         num_interpolated_frames = int((target_frame_rate / frame_rate) - 1)
 
         # Create VideoWriter to save interpolated video
