@@ -37,7 +37,7 @@ def linear_interpolation(frame_a, frame_b, alpha):
     return cv2.addWeighted(frame_a, 1 - alpha, frame_b, alpha, 0)
 
     """
-
+    return cv2.addWeighted(frame_a, 1 - alpha, frame_b, alpha, 0)
 
 def reconstruct_video_with_keyframe_images(target_frame_rate=30):
     """
@@ -67,8 +67,8 @@ def reconstruct_video_with_keyframe_images(target_frame_rate=30):
             int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),
             int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)),
         )
-        # generated interpolated frames between two keyframes
-        num_interpolated_frames = int((target_frame_rate / frame_rate) - 1)
+        # calculate interpolated frames between two keyframes
+        num_interpolated_frames_per_keyframe = int((target_frame_rate / frame_rate) - 1)
 
         # Create VideoWriter to save interpolated video
         output_filename = os.path.join(path, video_name + "_interpolated.mp4")
@@ -90,6 +90,7 @@ def reconstruct_video_with_keyframe_images(target_frame_rate=30):
                 out.write(interpolated_frame)
 
             frame_a = frame_b
+        # writing last frame
         out.write(frame_b)
 
         # Release VideoCapture and VideoWriter
