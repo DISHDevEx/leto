@@ -1,15 +1,17 @@
+"""Module to reduce video using neural network codec."""
 import os
 import sys
-import subprocess
-import joblib
-import tensorflow as tf
-import numpy as np
 import cv2
+import numpy as np
+import tensorflow as tf
+from joblib import dump, load
+from boto3 import client
+from time import time
+from subprocess import run
 from pathlib import Path
-import time
-import boto3
+from aEye import Aux
 
-root_path = subprocess.run(
+root_path = run(
     ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=False
 ).stdout.rstrip("\n")
 
@@ -19,32 +21,41 @@ sys.path.append(root_path)
 from utilities import ConfigHandler
 from utilities import CloudFunctionality
 
-def download_model(s3_args, method_args):
-        """
-        Downloads two model files from s3 to a local path.
+def download_models(s3_args, method_args):
+    """
+    Downloads encoder and decoder model files from s3 to a local path.
 
-        Parameters
-        ----------
-        s3_args: dict
-            Defines the s3 bucket params.
-        method_args: dict
-            Defines reduction technique specific args.
-        """
-        s3 = boto3.client("s3")
-        # print(s3)
-        with open(method_args['encoder_model_path'], "wb") as file:
-            # print(type(method_args['encoder_model_path']))
-            # print(type(s3_args['model_bucket_s3']))
-            # print(type(method_args['encoder_model_prefix_s3']))
-            # print(file)
-            s3.download_fileobj(s3_args['model_bucket_s3'], method_args['encoder_model_prefix_s3'], file)
+    Parameters
+    ----------
+    s3_args: dict
+        Defines the s3 bucket params
+    method_args: dict
+        Defines reduction technique specific args
+    """
+    s3 = client("s3")
+    with open(method_args['encoder_model_path'], "wb") as file:
+        s3.download_fileobj(s3_args['model_bucket_s3'],method_args['encoder_model_prefix_s3'],file)
 
-        with open(method_args['decoder_model_path'], "wb") as file:
-            s3.download_fileobj(s3_args['model_bucket_s3'], method_args['decoder_model_prefix_s3'], file)
+    with open(method_args['decoder_model_path'], "wb") as file:
+        s3.download_fileobj(s3_args['model_bucket_s3'],method_args['decoder_model_prefix_s3'],file)
+
+def delete_models(method_args):
+    """
+    Deletes encoder and decoder model files from local.
+
+    Parameters
+    ----------
+    s3_args: dict
+        Defines the s3 bucket params
+    method_args: dict
+        Defines reduction technique specific args
+    """
+    os.remove(method_args['encoder_model_path'])
+    os.remove(method_args['decoder_model_path'])
 
 def load_graph(frozen_graph_filename):
     """
-    Function to load tensorflow model graph from a file.
+    Loads tensorflow model graph from a file.
 
     Parameters
     ----------
@@ -66,7 +77,7 @@ def load_graph(frozen_graph_filename):
 
 def encoder(image1, image2, features_folder, encoder_model_path):
     """
-    Function to encode video frames into features and save these features into pickle files.
+    Encodes video frames into features and saves these features into pickle files.
 
     Parameters
     ----------
@@ -80,16 +91,17 @@ def encoder(image1, image2, features_folder, encoder_model_path):
     graph = load_graph(encoder_model_path)
 
     prefix = 'import/build_towers/tower_0/train_net_inference_one_pass/train_net/'
-    Res = graph.get_tensor_by_name(prefix + 'Residual_Feature:0')
-    inputImage = graph.get_tensor_by_name('import/input_image:0')
-    previousImage = graph.get_tensor_by_name('import/input_image_ref:0')
-    Res_prior = graph.get_tensor_by_name(prefix + 'Residual_Prior_Feature:0')
+    res = graph.get_tensor_by_name(prefix + 'Residual_Feature:0')
+    input_image = graph.get_tensor_by_name('import/input_image:0')
+    previous_image = graph.get_tensor_by_name('import/input_image_ref:0')
+    res_prior = graph.get_tensor_by_name(prefix + 'Residual_Prior_Feature:0')
     motion = graph.get_tensor_by_name(prefix + 'Motion_Feature:0')
     bpp = graph.get_tensor_by_name(prefix + 'rate/Estimated_Bpp:0')
     psnr = graph.get_tensor_by_name(prefix + 'distortion/PSNR:0')
     reconframe = graph.get_tensor_by_name(prefix + 'ReconFrame:0')
 
     with tf.compat.v1.Session(graph=graph) as sess:
+        # keep aspect ratio 13:7
         dim = (1664, 896)
         image1 = cv2.resize(image1, dim, interpolation = cv2.INTER_LANCZOS4)
         image2 = cv2.resize(image2, dim, interpolation = cv2.INTER_LANCZOS4)
@@ -98,27 +110,27 @@ def encoder(image1, image2, features_folder, encoder_model_path):
         image1 = np.expand_dims(image1, axis=0)
         image2 = np.expand_dims(image2, axis=0)
 
-        bpp_est, Res_q, Res_prior_q, motion_q, psnr_val, recon_val = sess.run(
-            [bpp, Res, Res_prior, motion, psnr, reconframe], feed_dict={
-                inputImage: image1,
-                previousImage: image2
+        bpp_est, res_q, res_prior_q, motion_q, psnr_val, recon_val = sess.run(
+            [bpp, res, res_prior, motion, psnr, reconframe], feed_dict={
+                input_image: image1,
+                previous_image: image2
             })
 
     if not os.path.exists(features_folder):
         os.mkdir(features_folder)
 
     with open(features_folder + 'quantized_res_feature.pkl', 'wb') as file:
-        joblib.dump(Res_q, file)
+        dump(res_q, file)
 
     with open(features_folder + 'quantized_res_prior_feature.pkl', 'wb') as file:
-        joblib.dump(Res_prior_q, file)
+        dump(res_prior_q, file)
 
     with open(features_folder + 'quantized_motion_feature.pkl', 'wb') as file:
-        joblib.dump(motion_q, file)
+        dump(motion_q, file)
 
 def decoder(image2, features_folder, decoder_model_path):
     """
-    Function to decode encoded features into video frame.
+    Decodes encoded features from pickle files into video frame.
 
     Parameters
     ----------
@@ -134,23 +146,25 @@ def decoder(image2, features_folder, decoder_model_path):
     """
     graph = load_graph(decoder_model_path)
 
-    reconframe = graph.get_tensor_by_name('import/build_towers/tower_0/train_net_inference_one_pass/train_net/ReconFrame:0')
+    reconframe = graph.get_tensor_by_name\
+        ('import/build_towers/tower_0/train_net_inference_one_pass/train_net/ReconFrame:0')
     res_input = graph.get_tensor_by_name('import/quant_feature:0')
     res_prior_input = graph.get_tensor_by_name('import/quant_z:0')
     motion_input = graph.get_tensor_by_name('import/quant_mv:0')
-    previousImage = graph.get_tensor_by_name('import/input_image_ref:0')
+    previous_image = graph.get_tensor_by_name('import/input_image_ref:0')
 
     with tf.compat.v1.Session(graph=graph) as sess:
 
         with open(features_folder + 'quantized_res_feature.pkl', 'rb') as file:
-            residual_feature = joblib.load(file)
+            residual_feature = load(file)
 
         with open(features_folder + 'quantized_res_prior_feature.pkl', 'rb') as file:
-            residual_prior_feature = joblib.load(file)
+            residual_prior_feature = load(file)
 
         with open(features_folder + 'quantized_motion_feature.pkl', 'rb') as file:
-            motion_feature = joblib.load(file)
+            motion_feature = load(file)
 
+        # keep aspect ratio 13:7
         dim = (1664, 896)
         image2 = cv2.resize(image2, dim, interpolation = cv2.INTER_LANCZOS4)
         image2 = image2 / 255.0
@@ -163,7 +177,7 @@ def decoder(image2, features_folder, decoder_model_path):
                 res_input: residual_feature,
                 res_prior_input: residual_prior_feature,
                 motion_input: motion_feature,
-                previousImage: image2
+                previous_image: image2
             })
 
         recon_frame = np.squeeze(recon_d[0], axis=0)
@@ -185,14 +199,8 @@ def codec(video_list, encoder_model_path, decoder_model_path, path = "temp"):
             reconstructed image in the form of numpy array
     """
     features_folder = './features/'
-    print("video_list", video_list)
-    print(len(video_list))
-    print(type(video_list[0]))
-
 
     for video in video_list:
-        print(type(video))
-        print(video)
         cap = cv2.VideoCapture(video.get_file().strip("'"))
         video_name = Path(str(video)).stem
         if not cap.isOpened():
@@ -204,11 +212,7 @@ def codec(video_list, encoder_model_path, decoder_model_path, path = "temp"):
         fps = int(cap.get(5))
 
         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-        print(video.get_title())
-        print(type(video.get_title()))
-        # output_path = video.get_title().replace('.mp4', '_output.mp4')
         output_filename = os.path.join(path, video_name + "_output.mp4")
-        print("output filename", output_filename)
         out = cv2.VideoWriter(output_filename, fourcc, fps, (frame_width, frame_height))
         i = 0
         image2 = np.empty([frame_width, frame_height])
@@ -218,10 +222,11 @@ def codec(video_list, encoder_model_path, decoder_model_path, path = "temp"):
                 break
 
             if i != 0:
-                encoder(image1 = frame, image2 = image2, features_folder = features_folder, encoder_model_path = encoder_model_path)
-                reconstructed_frame = decoder(image2, features_folder = features_folder, decoder_model_path = decoder_model_path)
+                encoder(image1 = frame, image2 = image2, features_folder = features_folder,
+                        encoder_model_path = encoder_model_path)
+                reconstructed_frame = decoder(image2, features_folder = features_folder,
+                                              decoder_model_path = decoder_model_path)
                 cv2.imwrite('temp.jpg', reconstructed_frame)
-                print("reconstructed frame type", type(reconstructed_frame))
                 out.write(cv2.imread('temp.jpg', cv2.IMREAD_UNCHANGED))
 
             image2 = frame
@@ -230,22 +235,21 @@ def codec(video_list, encoder_model_path, decoder_model_path, path = "temp"):
         cap.release()
         out.release()
 
-        # ffmpeg encoding to contain file size
-        # name = Path(str(output_path)).stem
-        # output_folder = output_path.split("/")[0]
         encoded_video_name = os.path.join(path, video_name)
-        cmd = f"static_ffmpeg -y -i {output_filename} -c:v libx264 -crf 34 -preset veryfast {encoded_video_name}.mp4"
-        subprocess.run(cmd, shell=True)
+        cmd = f"static_ffmpeg -y -i {output_filename} -c:v libx264 -crf 34 " + \
+                f"-preset veryfast {encoded_video_name}.mp4"
+        run(cmd, shell=True)
         os.remove(output_filename)
+        os.remove("temp.jpg")
 
 def main():
     """
-    Runner method for neural network based codec. This method abstracts some of the interaction with S3 and AWS away from nn_codec.
+    Runner method for neural network based codec. This method abstracts
+    some of the interaction with S3 and AWS away from nn_codec.
 
     Parameters
     ----------
         None: runner method
-
 
     Returns
     ----------
@@ -255,16 +259,23 @@ def main():
     config = ConfigHandler("reduction.nn_codec")
     s3_args = config.s3
     method_args = config.method
-    download_model(s3_args, method_args)
+    download_models(s3_args, method_args)
     cloud_functionality = CloudFunctionality()
+    aux = Aux()
 
     video_list = cloud_functionality.preprocess_reduction(s3_args, method_args)
 
-    codec(video_list, method_args['encoder_model_path'], method_args['decoder_model_path'], method_args["temp_path"])
+    codec(video_list, method_args['encoder_model_path'], method_args['decoder_model_path'],
+          method_args["temp_path"])
 
     cloud_functionality.postprocess_reduction(s3_args, method_args)
 
+    delete_models(method_args)
+
+    aux.set_local_path("./features")
+    aux.clean()
+
 if __name__ == "__main__":
-    start_time = time.time()
+    start_time = time()
     main()
-    print("--- %s seconds ---" % (time.time() - start_time))
+    print(f"--- {(time() - start_time)} seconds ---")
