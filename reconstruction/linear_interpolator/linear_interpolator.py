@@ -33,11 +33,10 @@ def linear_interpolation(frame_a, frame_b, alpha):
     
     Returns:
     ----------
-    - interpolated_frame: The linearly interpolated image frame (numpy.ndarray).
-    return cv2.addWeighted(frame_a, 1 - alpha, frame_b, alpha, 0)
-
+    - interpolated_frame: The linearly interpolated image frame (numpy.ndarray)
     """
     return cv2.addWeighted(frame_a, 1 - alpha, frame_b, alpha, 0)
+    
 
 def reconstruct_video_with_keyframe_images(target_frame_rate=30):
     """
