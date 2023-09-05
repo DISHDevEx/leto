@@ -43,7 +43,9 @@ def extract_frame_features(frame):
         Returns:
         ----------
             numpy.ndarray: A 1-dimensional NumPy array containing the flattened deep features
-                extracted from the input image frame."""
+                extracted from the input image frame.
+    """
+
     transform = transforms.Compose(
         [
             transforms.ToPILImage(),
@@ -80,7 +82,7 @@ def extract_key_frames(video_list, path="temp", num_key_frames=30):
     Returns:
     ----------
         None
-        """
+    """
 
     for video in video_list:
         video_path = os.path.join(video.get_file().strip("'"))
