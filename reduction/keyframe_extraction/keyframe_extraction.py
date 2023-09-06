@@ -7,7 +7,6 @@ from torchvision.models import resnet50
 import numpy as np
 from sklearn.cluster import KMeans
 import time
-import boto3
 from pathlib import Path
 import subprocess
 
@@ -88,11 +87,8 @@ def extract_key_frames(video_list, path="temp", num_key_frames=30):
         video_path = os.path.join(video.get_file().strip("'"))
         cap = cv2.VideoCapture(video_path)
         video_name = Path(video_path).stem
-        frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        frame_rate = cap.get(cv2.CAP_PROP_FPS)
-        # duration_seconds = frame_count / frame_rate
         target_fps = int(num_key_frames / 10)
         frames = []
 
