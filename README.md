@@ -7,7 +7,7 @@
 | Reduction Method         | Applicable Reconstruction Method(s)    |
 |--------------|-----------|
 | [ffmpeg_resolution_downsampler](./reduction/ffmpeg_resolution_downsampler/) (360p,420p,640p,720p) | [opencv_resolution_upscaler](./reconstruction/opencv_resolution_upscaler/) <br> [superres](./reconstruction/superres/) (4 different configurations) <br> [fastsrgan](./reconstruction/fastsrgan/) <br> [realbasicvsr](./reconstruction/realbasicvsr/) (small sample size, takes a long time)     |
-| [fps_bitrate](./reduction/fps_bitrate/)      | Linear Frame interpolation <br> NN based frame interpolation   |
+| [fps_bitrate](./reduction/fps_bitrate/) <br> key frame extraction    | Linear Frame interpolation <br> NN based frame interpolation   |
 | NN Codec                   |  NN Codec |
 | [cv2_jpg_reduction](./reduction/cv2_jpg_reduction/)                   |  N/A  |
 |Background Subtraction  |  Background Addition  |
