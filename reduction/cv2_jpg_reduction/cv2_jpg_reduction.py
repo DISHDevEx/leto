@@ -18,7 +18,7 @@ root_path = subprocess.run(
 sys.path.append(root_path)
 
 from utilities import ConfigHandler
-from utilities import CloudFunctionality
+from utilities import CloudFunctionalityReduction
 
 
 def cv2_jpg_reduction(video_list, path="temp", quality=15, crf=28):
@@ -101,18 +101,15 @@ def main():
     s3_args = config.s3
     method_args = config.method
 
-    cloud_functionality = CloudFunctionality()
+    with CloudFunctionalityReduction(s3_args, method_args) as cloud_functionality:
 
-
-    video_list = cloud_functionality.preprocess_reduction(s3_args, method_args )
+        video_list = cloud_functionality.preprocess_reduction(s3_args, method_args )
+        
+        # reduce each and store in temp_path
+        cv2_jpg_reduction(video_list, method_args['temp_path'], method_args.getint('quality'), method_args.getint('crf'))
+        
+        cloud_functionality.upload_reduction(s3_args, method_args)
     
-    # reduce each and store in temp_path
-    cv2_jpg_reduction(video_list, method_args['temp_path'], method_args.getint('quality'), method_args.getint('crf'))
-    
-    cloud_functionality.postprocess_reduction(s3_args, method_args)
-    
-
-
 
 if __name__ == "__main__":
     main()

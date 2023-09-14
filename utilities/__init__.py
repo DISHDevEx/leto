@@ -1,2 +1,2 @@
-from .cloud_functionality import CloudFunctionality
+from .cloud_functionality_reduction import CloudFunctionalityReduction
 from .config_handler import ConfigHandler

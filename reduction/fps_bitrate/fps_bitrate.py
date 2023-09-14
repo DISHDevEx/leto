@@ -19,7 +19,7 @@ root_path = subprocess.run(
 sys.path.append(root_path)
 
 from utilities import ConfigHandler
-from utilities import CloudFunctionality
+from utilities import CloudFunctionalityReduction
 
 
 def fps_bitrate(video_list, fps_factor=2, bitrate_factor=2):
@@ -92,18 +92,20 @@ def main():
     s3_args = config.s3
     method_args = config.method
     aux = Aux()
-    cloud_functionality = CloudFunctionality()
+    
+    
+    with CloudFunctionalityReduction(s3_args, method_args) as cloud_functionality:
+        video_list = cloud_functionality.preprocess_reduction(s3_args, method_args)
+        fps_bitrate(
+            video_list,
+            method_args.getint("fps_factor"),
+            method_args.getint("bitrate_factor"),
+        )
+        aux.execute_label_and_write_local(video_list, path=method_args["temp_path"])
 
-    video_list = cloud_functionality.preprocess_reduction(s3_args, method_args)
-    fps_bitrate(
-        video_list,
-        method_args.getint("fps_factor"),
-        method_args.getint("bitrate_factor"),
-    )
-    aux.execute_label_and_write_local(video_list, path=method_args["temp_path"])
-    cloud_functionality.postprocess_reduction(s3_args, method_args)
-
-    return logging.info("video reduction completed on " + sys.version + ".")
+        cloud_functionality.upload_reduction(s3_args, method_args)
+        
+        return logging.info("video reduction completed on " + sys.version + ".")
 
 
 if __name__ == "__main__":
