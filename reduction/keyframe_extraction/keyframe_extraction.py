@@ -9,6 +9,7 @@ from sklearn.cluster import KMeans
 import time
 from pathlib import Path
 import subprocess
+import sys
 
 root_path = subprocess.run(
     ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=False
