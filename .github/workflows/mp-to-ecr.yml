@@ -44,10 +44,10 @@ jobs:
         # Build a docker container and push it to ECR
         echo "building version ${{ github.event.inputs.version }} ..."
         ls
+        pwd
         cd benchmarking
         cd mediapipe_model
         ls
-        pwd
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.event.inputs.version }} .
         echo "pushing image to ECR ..."
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.event.inputs.version }}
