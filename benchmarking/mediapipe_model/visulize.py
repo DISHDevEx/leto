@@ -39,10 +39,7 @@ def visualize(image, detection_result):
         category = detection.categories[0]
         category_name = category.category_name
         probability = round(category.score, 2)
-        #print('score', category.score)
-        #print('probability',probability)
         sum_confidence += probability
-    #print(sum_confidence)
         # Calculate the average confidence of all labels in the frame
     if len(detection_result.detections):
         average_confidence = sum_confidence / len(detection_result.detections)
