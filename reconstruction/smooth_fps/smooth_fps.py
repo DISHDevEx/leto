@@ -5,14 +5,11 @@ Based on the research paper available at: https://arxiv.org/pdf/2204.03513.pdf
 """
 
 import subprocess
-import argparse
 import ffmpeg
 import numpy
 import torch
 import sys
 import model.m2m as m2m
-import configparser
-import logging
 import os
 
 # get git repo root level
@@ -23,7 +20,7 @@ root_path = subprocess.run(
 # add git repo path to use all libraries
 sys.path.append(root_path)
 
-from utilities import CloudFunctionality
+from utilities import CloudFunctionalityReconstruction
 from utilities import ConfigHandler
 
 
@@ -235,49 +232,49 @@ def run(in_filename, out_filename, factor):
 if __name__ == "__main__":
     ####################### Preprocessing ###################################
 
-    cloud_functionality = CloudFunctionality()
-
     # load and allocate config file
     config = ConfigHandler("reconstruction.smooth_fps")
     s3_args = config.s3
     method_args = config.method
 
-    cloud_functionality.preprocess_reconstruction(s3_args, method_args)
+    with CloudFunctionalityReconstruction(s3_args, method_args) as cloud_functionality:
+        
+        cloud_functionality.preprocess_reconstruction(s3_args, method_args)
 
-    ####################### Check for errors in the args ###################################
+        ####################### Check for errors in the args ###################################
 
-    """Options/Args"""
-    if int(method_args["factor"]) < 2:
-        raise ValueError("Factor must be an integer more than or equal to 2.")
+        """Options/Args"""
+        if int(method_args["factor"]) < 2:
+            raise ValueError("Factor must be an integer more than or equal to 2.")
 
-    ###################### Load the model ####################################
-    """Load M2M Model"""
+        ###################### Load the model ####################################
+        """Load M2M Model"""
 
-    if not torch.cuda.is_available():
-        raise Exception("CUDA GPU not detected. CUDA is required.")
+        if not torch.cuda.is_available():
+            raise Exception("CUDA GPU not detected. CUDA is required.")
 
-    torch.set_grad_enabled(False)
+        torch.set_grad_enabled(False)
 
-    torch.backends.cudnn.enabled = True
-    torch.backends.cudnn.benchmark = True
+        torch.backends.cudnn.enabled = True
+        torch.backends.cudnn.benchmark = True
 
-    netNetwork = m2m.M2M_PWC().cuda().eval()
+        netNetwork = m2m.M2M_PWC().cuda().eval()
 
-    netNetwork.load_state_dict(torch.load("./smooth.pkl"))
+        netNetwork.load_state_dict(torch.load("./smooth.pkl"))
 
-    ###################### Run the frame interpolation ####################################
+        ###################### Run the frame interpolation ####################################
 
-    # Loop through all videos that need to be reduced.
-    for i in range(len(os.listdir("reduced_videos"))):
-        input_video_path = os.path.join(
-            "./reduced_videos/", os.listdir("reduced_videos")[i]
-        )
+        # Loop through all videos that need to be reduced.
+        for i in range(len(os.listdir("reduced_videos"))):
+            input_video_path = os.path.join(
+                "./reduced_videos/", os.listdir("reduced_videos")[i]
+            )
 
-        output_video_path = os.path.join(
-            "./reconstructed_videos/", os.listdir("reduced_videos")[i]
-        )
+            output_video_path = os.path.join(
+                "./reconstructed_videos/", os.listdir("reduced_videos")[i]
+            )
 
-        run(input_video_path, output_video_path, int(method_args["factor"]))
+            run(input_video_path, output_video_path, int(method_args["factor"]))
 
-    ##################### Postprocessing #####################################
-    cloud_functionality.postprocess_reconstruction(s3_args, method_args)
+        ##################### Upload #####################################
+        cloud_functionality.upload_reconstruction(s3_args, method_args)

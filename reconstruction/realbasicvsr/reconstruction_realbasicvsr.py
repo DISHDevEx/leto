@@ -22,7 +22,7 @@ root_path = subprocess.run(
 # add git repo path to use all libraries
 sys.path.append(root_path)
 
-from utilities import CloudFunctionality
+from utilities import CloudFunctionalityReconstruction
 from utilities import ConfigHandler
 
 VIDEO_EXTENSIONS = (".mp4", ".mov")
@@ -149,14 +149,13 @@ def absolute_path_getter(file_name):
 
 
 if __name__ == "__main__":
-    cloud_functionality = CloudFunctionality()
-
     config = ConfigHandler('reconstruction.realbasicvsr')
     s3_args = config.s3
     method_args = config.method
 
-    cloud_functionality.preprocess_reconstruction(s3_args, method_args)
+    with CloudFunctionalityReconstruction(s3_args, method_args) as cloud_functionality:
+        cloud_functionality.preprocess_reconstruction(s3_args, method_args)
 
-    realbasicvsr_runner(method_args)
+        realbasicvsr_runner(method_args)
 
-    cloud_functionality.postprocess_reconstruction(s3_args, method_args)
+        cloud_functionality.upload_reconstruction(s3_args, method_args)
