@@ -2,7 +2,6 @@
 Module that upscales video using openCV.
 """
 import subprocess
-import argparse
 import cv2
 import os
 import sys
@@ -16,7 +15,7 @@ root_path = subprocess.run(
 # add git repo path to use all libraries
 sys.path.append(root_path)
 
-from utilities import CloudFunctionality
+from utilities import CloudFunctionalityReconstruction
 from utilities import ConfigHandler
 
 
@@ -100,14 +99,14 @@ def upscale_video(method_args):
 
 
 if __name__ == "__main__":
-    cloud_functionality = CloudFunctionality()
 
     config = ConfigHandler('reconstruction.opencv_ru')
     s3_args = config.s3
     method_args = config.method
 
-    cloud_functionality.preprocess_reconstruction(s3_args, method_args)
+    with CloudFunctionalityReconstruction(s3_args, method_args) as cloud_functionality:
+        cloud_functionality.preprocess_reconstruction(s3_args, method_args)
 
-    upscale_video(method_args)
+        upscale_video(method_args)
 
-    cloud_functionality.postprocess_reconstruction(s3_args, method_args)
+        cloud_functionality.upload_reconstruction(s3_args, method_args)
