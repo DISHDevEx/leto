@@ -5,9 +5,6 @@ import os
 import traceback
 from aEye import Aux
 import boto3
-import cv2
-import shutil
-import tempfile
 import os
 import logging
 

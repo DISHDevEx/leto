@@ -13,7 +13,7 @@ import cv2
 import logging
 import os
 from utilities import ConfigHandler
-from utilities import CloudFunctionality
+from utilities import CloudFunctionalityReconstruction
 import time
 from pathlib import Path
 
@@ -93,38 +93,38 @@ def main():
         output video S3 path.
     """
 
-    cloud_functionality = CloudFunctionality()
-
     # load and allocate config file
     config = ConfigHandler("reconstruction.background_addition")
     s3_args = config.s3
     method_args = config.method
 
-    cloud_functionality.preprocess_reconstruction(s3_args, method_args)
+    with CloudFunctionalityReconstruction(s3_args, method_args) as cloud_functionality:
 
-    folder_path = "reduced_videos"
+        cloud_functionality.preprocess_reconstruction(s3_args, method_args)
 
-    videos = [f for f in os.listdir(folder_path) if f.endswith(".mp4")]
-    images = [f for f in os.listdir(folder_path) if f.endswith(".jpg")]
+        folder_path = "reduced_videos"
 
-    matched_files = []
+        videos = [f for f in os.listdir(folder_path) if f.endswith(".mp4")]
+        images = [f for f in os.listdir(folder_path) if f.endswith(".jpg")]
 
-    for video in videos:
-        video_filename = os.path.splitext(video)[0]
-        matching_img = f"{video_filename}.jpg"
+        matched_files = []
 
-        if matching_img in images:
-            video_path = os.path.join(folder_path, video)
-            image_path = os.path.join(folder_path, matching_img)
-            matched_files.append((video_path, image_path))
+        for video in videos:
+            video_filename = os.path.splitext(video)[0]
+            matching_img = f"{video_filename}.jpg"
 
-    for files in matched_files:
-        fname = files[0].split("/")[1]
-        name = Path(str(fname)).stem
-        name = name + "_bg.mp4"
-        background_addition(files[0], files[1], f"reconstructed_videos/{name}")
+            if matching_img in images:
+                video_path = os.path.join(folder_path, video)
+                image_path = os.path.join(folder_path, matching_img)
+                matched_files.append((video_path, image_path))
 
-    cloud_functionality.postprocess_reconstruction(s3_args, method_args)
+        for files in matched_files:
+            fname = files[0].split("/")[1]
+            name = Path(str(fname)).stem
+            name = name + "_bg.mp4"
+            background_addition(files[0], files[1], f"reconstructed_videos/{name}")
+
+        cloud_functionality.upload_reconstruction(s3_args, method_args)
 
 
 if __name__ == "__main__":

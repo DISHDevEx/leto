@@ -2,26 +2,30 @@
 Module to support periphery cloud functionality for any video reduction or reconstruction modules.
 """
 import os
+import traceback
 from aEye import Aux
 import boto3
 import cv2
-import shutil
-import tempfile
-import os
 import logging
 
-class CloudFunctionality:
-    def __init__(self):
+
+class CloudFunctionalityReconstruction:
+    def __init__(self, s3_args, method_args):
         self.aux = Aux()
         self.s3 = boto3.client("s3")
+        self.s3_args = s3_args
+        self.method_args = method_args
 
-    def __enter__():
-        logging.info('CloudFunctionalityReconstruction instantiated')
+    def __enter__(self):
+        logging.info('CloudFunctionalityReconstruction class instantiated')
+        return self
+    
+    def __exit__(self, exc_type, exc_value, tb):
+        if exc_type is not None:
+            traceback.print_exception(exc_type, exc_value, tb)
+        self.postprocess_reconstruction(self.method_args)
 
-    def __exit__():
-
-
-
+        return True
 
     def preprocess_reconstruction(self, s3_args, method_args):
         """
@@ -49,19 +53,8 @@ class CloudFunctionality:
         if method_args.getboolean('download_model'):
             self.download_model(s3_args, method_args)
 
-    def postprocess_reconstruction(self, s3_args, method_args ):
-        """
-        Method that moves local video to s3 and deletes
-        temporary video folders and model file.
 
-        Parameters
-        ----------
-        s3_args: dict
-            Defines the s3 bucket params.
-        method_args: dict
-            Defines reduction technique specific args.
-        """
-
+    def upload_reconstruction(self, s3_args, method_args):
         # Load reconstructed video files
         reconstructed_video_list = self.aux.load_local("./reconstructed_videos")
 
@@ -72,16 +65,14 @@ class CloudFunctionality:
             prefix=method_args['output_prefix_s3'],
         )
 
+    def postprocess_reconstruction(self, method_args):
 
-    def delete_temps():
-        
         # Delete reconstructed_videos folder from local
         self.aux.set_local_path("./reconstructed_videos")
         self.aux.clean()
 
-        self.aux.set_local_path("./reduced_videos")
-
         # Delete reduced_videos folder from local
+        self.aux.set_local_path("./reduced_videos")
         self.aux.clean()
 
         # Close all OpenCV windows
@@ -91,17 +82,18 @@ class CloudFunctionality:
         if method_args.getboolean('clean_model'):
             os.remove(method_args['local_model_path'])
 
-    def download_model(self, s3_args, method_args ):
-            """
-            Downloads any model file from s3 to a local path.
 
-            Parameters
-            ----------
-            s3_args: dict
-                Defines the s3 bucket params.
-            method_args: dict
-                Defines reduction technique specific args.
-            """
-            
-            with open(method_args['local_model_path'], "wb") as file:
-                self.s3.download_fileobj(s3_args['model_bucket_s3'], method_args['model_prefix_s3'], file)
+    def download_model(self, s3_args, method_args ):
+        """
+        Downloads any model file from s3 to a local path.
+
+        Parameters
+        ----------
+        s3_args: dict
+            Defines the s3 bucket params.
+        method_args: dict
+            Defines reduction technique specific args.
+        """
+        
+        with open(method_args['local_model_path'], "wb") as file:
+            self.s3.download_fileobj(s3_args['model_bucket_s3'], method_args['model_prefix_s3'], file)
