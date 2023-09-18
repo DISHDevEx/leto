@@ -32,15 +32,15 @@ def init_model(config, checkpoint=None):
     """
     Initialize a model from config file.
 
-    Inputs
-    -------
+    Parameters
+    ----------
         config: str
             Config file path or the config object.
         checkpoint: str
             Pretrained model path.
 
     Returns
-    -------
+    ---------
         model : nn.Module
             The constructed model.
     """
@@ -70,8 +70,8 @@ def realbasicvsr_runner(method_args):
 
     Parameters
     ----------
-        method_args:
-            configparser object.  Parameters defined in ~/config.ini
+        method_args: configparser object 
+            Parameters defined in ~/config.ini
     """
 
     # Initialize the model.
@@ -135,11 +135,13 @@ def absolute_path_getter(file_name):
     """
     Takes in file name, in the same working directory as the 'running' python file (__file__)
 
-    Arguments:
-        String: file_name
+    Parameters
+    ----------
+        file_name: str 
             name of subject file
-    Returns:
-        PosixPath: py_path
+    Returns
+    ---------
+        py_path: PosixPath 
              Absolute path of file_name
     """
     method_path = Path(__file__)

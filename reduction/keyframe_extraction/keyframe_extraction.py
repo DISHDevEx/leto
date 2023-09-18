@@ -36,13 +36,15 @@ def extract_frame_features(frame):
         a pre-trained Convolutional Neural Network (CNN) model. The extracted features are flattened
         and returned as a NumPy array.
 
-        Parameters:
+        Parameters
         ----------
-            frame (PIL.Image or Tensor): The input image frame to extract features from.
+            frame: PIL.Image or Tensor
+                The input image frame to extract features from.
 
-        Returns:
+        Returns
         ----------
-            numpy.ndarray: A 1-dimensional NumPy array containing the flattened deep features
+            numpy.ndarray 
+                A 1-dimensional NumPy array containing the flattened deep features
                 extracted from the input image frame.
     """
 
@@ -73,13 +75,16 @@ def extract_key_frames(video_list, path="temp", num_key_frames=30):
     performs K-Means clustering to select representative key frames, and then generates a new video
     containing the selected key frames. The generated video is further compressed using FFmpeg.
 
-    Parameters:
+    Parameters
     ----------
-        video_list (list): A list of video filenames to process and generate key frames from.
-        path (str, optional): The directory path where the generated videos will be saved. Default is "temp".
-        num_key_frames (int, optional): The number of key frames to select for each video. Default is 30.
+        video_list: list
+            A list of video filenames to process and generate key frames from.
+        path: str
+            The directory path where the generated videos will be saved. Default is "temp".
+        num_key_frames: int
+            The number of key frames to select for each video. Default is 30.
 
-    Returns:
+    Returns
     ----------
         None
     """
