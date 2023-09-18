@@ -48,7 +48,7 @@ def reconstruct_video_with_keyframe_images(target_frame_rate=30):
 
     Parameters:
     ------------
-    - target_frame_rate: The desired frame rate for the reconstructed video (default is 30).
+    target_frame_rate: The desired frame rate for the reconstructed video (default is 30).
 
     Returns:
     ----------
