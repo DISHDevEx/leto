@@ -27,16 +27,16 @@ def background_subtractor(video_list, path="temp"):
     variables : fps(frame per second), num_frames(number of frames), width(frame width), 
     height(frame height) are used for frame manipulation
     
-    Parameters:
+    Parameters
     -------------
     video_list : list
-    list of input videos 
-    path: string
-    path to local folder where reduced videos need to be stored
+        list of input videos 
+    path: str
+        path to local folder where reduced videos need to be stored
 
-    Returns:
+    Returns
     ---------
-    videos with background masked in S3 location
+        videos with background masked in S3 location
     
      """
 
