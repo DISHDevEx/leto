@@ -32,15 +32,15 @@ def init_model(config, checkpoint=None):
     """
     Initialize a model from config file.
 
-    Inputs
-    -------
+    Parameters
+    ----------
         config: str
             Config file path or the config object.
         checkpoint: str
             Pretrained model path.
 
     Returns
-    -------
+    ---------
         model : nn.Module
             The constructed model.
     """
@@ -135,10 +135,12 @@ def absolute_path_getter(file_name):
     """
     Takes in file name, in the same working directory as the 'running' python file (__file__)
 
-    Arguments:
+    Parameters
+    ----------
         file_name: str 
             name of subject file
-    Returns:
+    Returns
+    ---------
         py_path: PosixPath 
              Absolute path of file_name
     """
