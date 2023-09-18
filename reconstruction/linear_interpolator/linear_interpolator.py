@@ -27,9 +27,12 @@ def linear_interpolation(frame_a, frame_b, alpha):
 
     Parameters:
     ------------
-    frame_a(numpy.ndarray): The first input image frame.
-    frame_b(numpy.ndarray): The second input image frame.
-    alpha(float): The interpolation parameter , where 0 <= alpha <= 1.
+    frame_a : numpy.ndarray
+        The first input image frame.
+    frame_b : numpy.ndarray 
+        The second input image frame.
+    alpha : float
+        The interpolation parameter , where 0 <= alpha <= 1.
     
     Returns:
     ----------
@@ -48,7 +51,8 @@ def reconstruct_video_with_keyframe_images(target_frame_rate=30):
 
     Parameters:
     ------------
-    target_frame_rate(int): The desired frame rate for the reconstructed video (default is 30).
+    target_frame_rate : int
+        The desired frame rate for the reconstructed video (default is 30).
 
     Returns:
     ----------
