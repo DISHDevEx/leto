@@ -27,13 +27,13 @@ def linear_interpolation(frame_a, frame_b, alpha):
 
     Parameters:
     ------------
-    frame_a: The first input image frame (numpy.ndarray).
-    frame_b: The second input image frame (numpy.ndarray).
-    alpha: The interpolation parameter (float), where 0 <= alpha <= 1.
+    frame_a(numpy.ndarray): The first input image frame.
+    frame_b(numpy.ndarray): The second input image frame.
+    alpha(float): The interpolation parameter , where 0 <= alpha <= 1.
     
     Returns:
     ----------
-    interpolated_frame: The linearly interpolated image frame (numpy.ndarray)
+    (numpy.ndarray): The linearly interpolated image frame between frame a and fram b.
     """
     return cv2.addWeighted(frame_a, 1 - alpha, frame_b, alpha, 0)
 
@@ -48,7 +48,7 @@ def reconstruct_video_with_keyframe_images(target_frame_rate=30):
 
     Parameters:
     ------------
-    target_frame_rate: The desired frame rate for the reconstructed video (default is 30).
+    target_frame_rate(int): The desired frame rate for the reconstructed video (default is 30).
 
     Returns:
     ----------
@@ -104,7 +104,7 @@ def reconstruct_video_with_keyframe_images(target_frame_rate=30):
 def main():
     """
     Runner method for linear interpolation().  This method abstracts some of the
-    interaction with S3 and AWS away from fps_bitrate.
+    interaction with S3
 
     Parameters:
     ----------
