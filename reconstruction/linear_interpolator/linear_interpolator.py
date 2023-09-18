@@ -36,7 +36,8 @@ def linear_interpolation(frame_a, frame_b, alpha):
     
     Returns:
     ----------
-    (numpy.ndarray): The linearly interpolated image frame between frame a and fram b.
+    numpy.ndarray: 
+        The linearly interpolated image frame between frame a and fram b.
     """
     return cv2.addWeighted(frame_a, 1 - alpha, frame_b, alpha, 0)
 
