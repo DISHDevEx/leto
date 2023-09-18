@@ -38,7 +38,7 @@ def interpolate_frame(frame1, frame2):
         frame2: numpy.ndarray 
             The second frame.
 
-    Returns:
+    Returns
     ----------
         numpy.ndarray
             The interpolated frame(s) between frame1 and frame2.
@@ -129,7 +129,7 @@ def start_ffmpeg_process_input(in_filename):
         in_filename: 
             str The input video file name.
 
-    Returns:
+    Returns
     ----------
         subprocess.Popen
             A subprocess representing the FFmpeg process for input.
@@ -157,7 +157,7 @@ def start_ffmpeg_process_output(out_filename, width, height, new_fps):
         new_fps: int 
             The new frames per second (fps) for the output video.
 
-    Returns:
+    Returns
     ----------
         subprocess.Popen
             A subprocess representing the FFmpeg process for output.
@@ -187,7 +187,7 @@ def read_frame(process1, width, height):
         height: int 
             The height of the video frame.
 
-    Returns:
+    Returns
     ----------
         numpy.ndarray or None
             The frame as a NumPy array or None if no more frames are available.
