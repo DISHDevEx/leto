@@ -27,13 +27,13 @@ def linear_interpolation(frame_a, frame_b, alpha):
 
     Parameters:
      -----------
-    - frame_a: The first input image frame (numpy.ndarray).
-    - frame_b: The second input image frame (numpy.ndarray).
-    - alpha: The interpolation parameter (float), where 0 <= alpha <= 1.
+    frame_a: The first input image frame (numpy.ndarray).
+    frame_b: The second input image frame (numpy.ndarray).
+    alpha: The interpolation parameter (float), where 0 <= alpha <= 1.
     
     Returns:
     ----------
-    - interpolated_frame: The linearly interpolated image frame (numpy.ndarray)
+    interpolated_frame: The linearly interpolated image frame (numpy.ndarray)
     """
     return cv2.addWeighted(frame_a, 1 - alpha, frame_b, alpha, 0)
 
@@ -52,7 +52,7 @@ def reconstruct_video_with_keyframe_images(target_frame_rate=30):
 
     Returns:
     ----------
-    - None
+    None
     """
     path = "./reconstructed_videos"
     for video in os.listdir("./reduced_videos"):
