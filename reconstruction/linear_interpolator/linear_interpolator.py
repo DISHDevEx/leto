@@ -28,9 +28,9 @@ def linear_interpolation(frame_a, frame_b, alpha):
     Parameters:
     ------------
     frame_a : numpy.ndarray
-        The first input image frame.
+        The first input image keyframe.
     frame_b : numpy.ndarray 
-        The second input image frame.
+        The second input image keyframe.
     alpha : float
         The interpolation parameter , where 0 <= alpha <= 1.
     
