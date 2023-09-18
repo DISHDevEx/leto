@@ -24,9 +24,12 @@ def background_addition(video_path, image_path, output_path):
 
     Args:
     ----------
-        video_path: path to image
-        image_path: static background
-        output_path: local path to save the new video
+        video_path: str
+            path to image
+        image_path: str
+            static background
+        output_path: str
+            local path to save the new video
 
     Returns:
     ----------

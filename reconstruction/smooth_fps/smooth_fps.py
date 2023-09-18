@@ -31,7 +31,7 @@ def interpolate_frame(frame1, frame2):
     """
     Interpolate frames between frame1 and frame2 using the M2M model.
 
-    Inputs:
+    Parameters
     ----------
         frame1: numpy.ndarray
             The first frame.
@@ -102,12 +102,12 @@ def get_video_size(filename):
     """
     Get the width, height, and frames per second (fps) of a video file.
 
-    Inputs:
+    Parameters
     ----------
         filename: str 
             The path to the video file.
 
-    Returns:
+    Returns
     ----------
         tuple
             A tuple containing the width, height, and fps of the video.
@@ -124,11 +124,13 @@ def start_ffmpeg_process_input(in_filename):
     """
     Start an FFmpeg process for input video.
 
-    Inputs:
+    Parameters
+    ----------
         in_filename: 
             str The input video file name.
 
     Returns:
+    ----------
         subprocess.Popen
             A subprocess representing the FFmpeg process for input.
     """
@@ -144,7 +146,7 @@ def start_ffmpeg_process_output(out_filename, width, height, new_fps):
     """
     Start an FFmpeg process for output video.
 
-    Inputs:
+    Parameters
     ----------
         out_filename: str 
             The output video file name.
@@ -176,7 +178,7 @@ def read_frame(process1, width, height):
     """
     Read a frame from an FFmpeg process.
 
-    Inputs:
+    Parameters
     ----------
         process1: subprocess.Popen
             The FFmpeg process.
@@ -205,7 +207,7 @@ def write_frame(process2, frame):
     """
     Write a frame to an FFmpeg process.
 
-    Inputs:
+    Parameters
     ----------
         process2: subprocess.Popen 
             The FFmpeg process for output.
@@ -218,8 +220,8 @@ def write_frame(process2, frame):
 def run(in_filename, out_filename, factor):
     """
     Perform frame interpolation on an input video and save the result to an output video.
-
-    Inputs:
+    
+    Parameters
     ----------
         in_filename: str
             The input video file name.
