@@ -25,7 +25,7 @@ def linear_interpolation(frame_a, frame_b, alpha):
     When alpha is 0, the result will be identical to 'frame_a', and when alpha is 1,
     the result will be identical to 'frame_b'.
 
-    Parameters:
+    Parameters
     ------------
     frame_a : numpy.ndarray
         The first input image keyframe.
@@ -34,7 +34,7 @@ def linear_interpolation(frame_a, frame_b, alpha):
     alpha : float
         The interpolation parameter , where 0 <= alpha <= 1.
     
-    Returns:
+    Returns
     ----------
     numpy.ndarray: 
         The linearly interpolated image frame between frame a and fram b.
@@ -50,12 +50,12 @@ def reconstruct_video_with_keyframe_images(target_frame_rate=30):
     them by interpolating frames to achieve a target frame rate. It saves the reconstructed video
     in the 'reconstructed_videos' directory.
 
-    Parameters:
+    Parameters
     ------------
     target_frame_rate : int
         The desired frame rate for the reconstructed video (default is 30).
 
-    Returns:
+    Returns
     ----------
     None
     """
@@ -111,7 +111,7 @@ def main():
     Runner method for linear interpolation().  This method abstracts some of the
     interaction with S3
 
-    Parameters:
+    Parameters
     ----------
         None: runner method
 
