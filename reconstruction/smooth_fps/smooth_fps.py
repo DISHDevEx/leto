@@ -33,12 +33,15 @@ def interpolate_frame(frame1, frame2):
 
     Inputs:
     ----------
-        frame1 (numpy.ndarray): The first frame.
-        frame2 (numpy.ndarray): The second frame.
+        frame1: numpy.ndarray
+            The first frame.
+        frame2: numpy.ndarray 
+            The second frame.
 
     Returns:
     ----------
-        numpy.ndarray: The interpolated frame(s) between frame1 and frame2.
+        numpy.ndarray
+            The interpolated frame(s) between frame1 and frame2.
     """
     frame1_np = frame1[:, :, ::-1].astype(numpy.float32) * (1.0 / 255.0)
     frame2_np = frame2[:, :, ::-1].astype(numpy.float32) * (1.0 / 255.0)
@@ -101,11 +104,13 @@ def get_video_size(filename):
 
     Inputs:
     ----------
-        filename (str): The path to the video file.
+        filename: str 
+            The path to the video file.
 
     Returns:
     ----------
-        tuple: A tuple containing the width, height, and fps of the video.
+        tuple
+            A tuple containing the width, height, and fps of the video.
     """
     probe = ffmpeg.probe(filename)
     video_info = next(s for s in probe["streams"] if s["codec_type"] == "video")
@@ -120,10 +125,12 @@ def start_ffmpeg_process_input(in_filename):
     Start an FFmpeg process for input video.
 
     Inputs:
-        in_filename (str): The input video file name.
+        in_filename: 
+            str The input video file name.
 
     Returns:
-        subprocess.Popen: A subprocess representing the FFmpeg process for input.
+        subprocess.Popen
+            A subprocess representing the FFmpeg process for input.
     """
     process_args = (
         ffmpeg.input(in_filename)
@@ -139,14 +146,19 @@ def start_ffmpeg_process_output(out_filename, width, height, new_fps):
 
     Inputs:
     ----------
-        out_filename (str): The output video file name.
-        width (int): The width of the video.
-        height (int): The height of the video.
-        new_fps (int): The new frames per second (fps) for the output video.
+        out_filename: str 
+            The output video file name.
+        width: int 
+            The width of the video.
+        height: int 
+            The height of the video.
+        new_fps: int 
+            The new frames per second (fps) for the output video.
 
     Returns:
     ----------
-        subprocess.Popen: A subprocess representing the FFmpeg process for output.
+        subprocess.Popen
+            A subprocess representing the FFmpeg process for output.
     """
     process_args = (
         ffmpeg.input(
@@ -166,13 +178,17 @@ def read_frame(process1, width, height):
 
     Inputs:
     ----------
-        process1 (subprocess.Popen): The FFmpeg process.
-        width (int): The width of the video frame.
-        height (int): The height of the video frame.
+        process1: subprocess.Popen
+            The FFmpeg process.
+        width: int
+            The width of the video frame.
+        height: int 
+            The height of the video frame.
 
     Returns:
     ----------
-        numpy.ndarray or None: The frame as a NumPy array or None if no more frames are available.
+        numpy.ndarray or None
+            The frame as a NumPy array or None if no more frames are available.
     """
     # Note: RGB24 == 3 bytes per pixel.
     frame_size = width * height * 3
@@ -191,8 +207,10 @@ def write_frame(process2, frame):
 
     Inputs:
     ----------
-        process2 (subprocess.Popen): The FFmpeg process for output.
-        frame (numpy.ndarray): The frame to be written.
+        process2: subprocess.Popen 
+            The FFmpeg process for output.
+        frame: numpy.ndarray
+            The frame to be written.
     """
     process2.stdin.write(frame.astype(numpy.uint8).tobytes())
 
@@ -203,9 +221,12 @@ def run(in_filename, out_filename, factor):
 
     Inputs:
     ----------
-        in_filename (str): The input video file name.
-        out_filename (str): The output video file name.
-        factor (int): The interpolation factor (an integer >= 2).
+        in_filename: str
+            The input video file name.
+        out_filename : str
+            The output video file name.
+        factor: int 
+            The interpolation factor (an integer >= 2).
     """
     width, height, fps = get_video_size(in_filename)
     new_fps = fps * factor
