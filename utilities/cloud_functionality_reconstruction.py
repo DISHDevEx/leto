@@ -1,5 +1,7 @@
 """
 Module to support periphery cloud functionality for any video reduction or reconstruction modules.
+
+This Class is intended to be used only in a With block for context management.
 """
 import os
 import traceback
@@ -49,7 +51,7 @@ class CloudFunctionalityReconstruction:
         """
         if exc_type is not None:
             traceback.print_exception(exc_type, exc_value, tb)
-        self.postprocess_reconstruction(self.method_args)
+        self.__postprocess_reconstruction(self.method_args)
 
         return True
 
@@ -108,7 +110,7 @@ class CloudFunctionalityReconstruction:
             prefix=method_args['output_prefix_s3'],
         )
 
-    def postprocess_reconstruction(self, method_args):
+    def __postprocess_reconstruction(self, method_args):
         """
         Perform post-processing tasks after video reconstruction.
 
