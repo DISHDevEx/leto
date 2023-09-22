@@ -13,7 +13,7 @@ import cv2
 import logging
 import os
 from utilities import ConfigHandler
-from utilities import CloudFunctionalityReconstruction
+from utilities import CloudFunctionality
 import time
 from pathlib import Path
 
@@ -98,7 +98,7 @@ def main():
     s3_args = config.s3
     method_args = config.method
 
-    with CloudFunctionalityReconstruction(s3_args, method_args) as cloud_functionality:
+    with CloudFunctionality(s3_args, method_args, config.method_section) as cloud_functionality:
 
         cloud_functionality.preprocess_reconstruction(s3_args, method_args)
 

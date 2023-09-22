@@ -18,7 +18,7 @@ root_path = subprocess.run(
 # add git repo path to use all libraries
 sys.path.append(root_path)
 
-from utilities import CloudFunctionalityReconstruction
+from utilities import CloudFunctionality
 from utilities import ConfigHandler
 
 
@@ -88,7 +88,7 @@ if __name__ == "__main__":
     s3_args = config.s3
     method_args = config.method
 
-    with CloudFunctionalityReconstruction(s3_args, method_args) as cloud_functionality:
+    with CloudFunctionality(s3_args, method_args, config.method_section) as cloud_functionality:
 
         cloud_functionality.preprocess_reconstruction(s3_args,method_args)
 
