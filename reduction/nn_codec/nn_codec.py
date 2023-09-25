@@ -199,6 +199,8 @@ def codec(video_list, encoder_model_path, decoder_model_path, width, height, pat
             reconstructed image in the form of numpy array
     """
     features_folder = './features/'
+    print("width", type(width))
+    print("height", type(height))
 
     for video in video_list:
         cap = cv2.VideoCapture(video.get_file().strip("'"))
@@ -263,7 +265,7 @@ def main():
     video_list = cloud_functionality.preprocess_reduction(s3_args, method_args)
 
     codec(video_list, method_args['encoder_model_path'], method_args['decoder_model_path'],
-          method_args['width'], method_args['height'], method_args["temp_path"])
+          int(method_args['width']), int(method_args['height']), method_args["temp_path"])
 
     cloud_functionality.postprocess_reduction(s3_args, method_args)
 
