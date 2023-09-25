@@ -184,7 +184,7 @@ def decoder(image2, features_folder, decoder_model_path):
         recon_frame = recon_frame * 255.0
         return recon_frame
 
-def codec(video_list, encoder_model_path, decoder_model_path, path = "temp"):
+def codec(video_list, encoder_model_path, decoder_model_path, method_args, path = "temp"):
     """
     Neural network codec that combines encoder and decoder.
 
@@ -206,16 +206,13 @@ def codec(video_list, encoder_model_path, decoder_model_path, path = "temp"):
         if not cap.isOpened():
             exit()
 
-        # Keep the aspect ratio 13:7
-        frame_width = 1664
-        frame_height = 896
         fps = int(cap.get(5))
 
         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
         output_filename = os.path.join(path, video_name + "_output.mp4")
-        out = cv2.VideoWriter(output_filename, fourcc, fps, (frame_width, frame_height))
+        out = cv2.VideoWriter(output_filename, fourcc, fps, (method_args['width'], method_args['height']))
         i = 0
-        image2 = np.empty([frame_width, frame_height])
+        image2 = np.empty([method_args['width'], method_args['height']])
         while cap.isOpened():
             ret, frame = cap.read()
             if not ret:
