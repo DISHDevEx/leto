@@ -121,19 +121,18 @@ def main():
         None: however, results in a list of processed videos being stored to the
         output video S3 path.
     """
-
-    cloud_functionality = CloudFunctionality()
-
     # load and allocate config file
     config = ConfigHandler("reconstruction.linear_interpolator")
     s3_args = config.s3
     method_args = config.method
 
-    cloud_functionality.preprocess_reconstruction(s3_args, method_args)
+    with CloudFunctionality(s3_args, method_args, config.method_section) as cloud_functionality:
 
-    reconstruct_video_with_keyframe_images(method_args.getint("target_frame_rate"))
+        cloud_functionality.preprocess_reconstruction(s3_args, method_args)
 
-    cloud_functionality.postprocess_reconstruction(s3_args, method_args)
+        reconstruct_video_with_keyframe_images(method_args.getint("target_frame_rate"))
+
+        cloud_functionality.upload_reconstruction(s3_args, method_args)
 
 
 if __name__ == "__main__":

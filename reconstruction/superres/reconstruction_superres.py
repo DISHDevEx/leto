@@ -6,7 +6,6 @@ import sys
 import cv2
 import subprocess
 from cv2 import dnn_superres
-from aEye import Aux
 
 # get git repo root level
 root_path = subprocess.run(
@@ -97,15 +96,15 @@ def superres_video(method_args, s3_args):
 
 
 if __name__ == "__main__":
-    cloud_functionality = CloudFunctionality()
 
     config = ConfigHandler('reconstruction.superres')
     s3_args = config.s3
     method_args = config.method
     
+    with CloudFunctionality(s3_args, method_args, config.method_section) as cloud_functionality:
     
-    cloud_functionality.preprocess_reconstruction(s3_args, method_args)
+        cloud_functionality.preprocess_reconstruction(s3_args, method_args)
 
-    superres_video(method_args, s3_args)
+        superres_video(method_args, s3_args)
 
-    cloud_functionality.postprocess_reconstruction(s3_args, method_args)
+        cloud_functionality.upload_reconstruction(s3_args, method_args)

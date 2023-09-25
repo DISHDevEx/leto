@@ -120,15 +120,14 @@ def main():
     config = ConfigHandler("reduction.background_subtractor")
     s3_args = config.s3
     method_args = config.method
-    aux = Aux()
 
-    cloud_functionality = CloudFunctionality()
+    with CloudFunctionality(s3_args, method_args, config.method_section) as cloud_functionality:
 
-    video_list = cloud_functionality.preprocess_reduction(s3_args, method_args)
+        video_list = cloud_functionality.preprocess_reduction(s3_args, method_args)
 
-    background_subtractor(video_list, method_args["temp_path"])
+        background_subtractor(video_list, method_args["temp_path"])
 
-    cloud_functionality.postprocess_reduction(s3_args, method_args)
+        cloud_functionality.upload_reduction(s3_args, method_args)
 
 
 if __name__ == "__main__":

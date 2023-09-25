@@ -171,13 +171,12 @@ def main():
     s3_args = config.s3
     method_args = config.method
 
-    cloud_functionality = CloudFunctionality()
-
-    video_list = cloud_functionality.preprocess_reduction(s3_args, method_args)
-    extract_key_frames(
-        video_list, method_args["temp_path"], method_args.getint("num_key_frames")
-    )
-    cloud_functionality.postprocess_reduction(s3_args, method_args)
+    with CloudFunctionality(s3_args, method_args, config.method_section) as cloud_functionality:
+        video_list = cloud_functionality.preprocess_reduction(s3_args, method_args)
+        extract_key_frames(
+            video_list, method_args["temp_path"], method_args.getint("num_key_frames")
+        )
+        cloud_functionality.upload_reduction(s3_args, method_args)
 
 
 if __name__ == "__main__":
