@@ -25,8 +25,8 @@ def upscale_video(method_args):
 
     Parameters
     ----------
-        method_args:
-            configparser object.  Parameters defined in ~/config.ini
+        method_args: configparser object.  
+            Parameters defined in ~/config.ini
        
     """
 
