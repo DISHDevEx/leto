@@ -75,7 +75,7 @@ def load_graph(frozen_graph_filename):
         tf.import_graph_def(graph_def)
     return graph
 
-def encoder(image1, image2, features_folder, encoder_model_path):
+def encoder(image1, image2, features_folder, encoder_model_path, width, height):
     """
     Encodes video frames into features and saves these features into pickle files.
 
@@ -101,10 +101,8 @@ def encoder(image1, image2, features_folder, encoder_model_path):
     reconframe = graph.get_tensor_by_name(prefix + 'ReconFrame:0')
 
     with tf.compat.v1.Session(graph=graph) as sess:
-        # keep aspect ratio 13:7
-        dim = (1664, 896)
-        image1 = cv2.resize(image1, dim, interpolation = cv2.INTER_LANCZOS4)
-        image2 = cv2.resize(image2, dim, interpolation = cv2.INTER_LANCZOS4)
+        image1 = cv2.resize(image1, (width, height), interpolation = cv2.INTER_LANCZOS4)
+        image2 = cv2.resize(image2, (width, height), interpolation = cv2.INTER_LANCZOS4)
         image1 = image1 / 255.0
         image2 = image2 / 255.0
         image1 = np.expand_dims(image1, axis=0)
@@ -128,7 +126,7 @@ def encoder(image1, image2, features_folder, encoder_model_path):
     with open(features_folder + 'quantized_motion_feature.pkl', 'wb') as file:
         dump(motion_q, file)
 
-def decoder(image2, features_folder, decoder_model_path):
+def decoder(image2, features_folder, decoder_model_path, width, height):
     """
     Decodes encoded features from pickle files into video frame.
 
@@ -164,9 +162,7 @@ def decoder(image2, features_folder, decoder_model_path):
         with open(features_folder + 'quantized_motion_feature.pkl', 'rb') as file:
             motion_feature = load(file)
 
-        # keep aspect ratio 13:7
-        dim = (1664, 896)
-        image2 = cv2.resize(image2, dim, interpolation = cv2.INTER_LANCZOS4)
+        image2 = cv2.resize(image2, (width, height), interpolation = cv2.INTER_LANCZOS4)
         image2 = image2 / 255.0
         image2 = np.expand_dims(image2, axis=0)
 
@@ -222,9 +218,10 @@ def codec(video_list, encoder_model_path, decoder_model_path, width, height, pat
 
             if i != 0:
                 encoder(image1 = frame, image2 = image2, features_folder = features_folder,
-                        encoder_model_path = encoder_model_path)
+                        encoder_model_path = encoder_model_path, width = width, height = height)
                 reconstructed_frame = decoder(image2, features_folder = features_folder,
-                                              decoder_model_path = decoder_model_path)
+                                              decoder_model_path = decoder_model_path,
+                                              width = width, height = height)
                 cv2.imwrite('temp.jpg', reconstructed_frame)
                 out.write(cv2.imread('temp.jpg', cv2.IMREAD_UNCHANGED))
 
