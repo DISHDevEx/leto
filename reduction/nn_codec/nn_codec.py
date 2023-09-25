@@ -184,7 +184,7 @@ def decoder(image2, features_folder, decoder_model_path):
         recon_frame = recon_frame * 255.0
         return recon_frame
 
-def codec(video_list, encoder_model_path, decoder_model_path, method_args, path = "temp"):
+def codec(video_list, encoder_model_path, decoder_model_path, width, height, path = "temp"):
     """
     Neural network codec that combines encoder and decoder.
 
@@ -210,9 +210,9 @@ def codec(video_list, encoder_model_path, decoder_model_path, method_args, path 
 
         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
         output_filename = os.path.join(path, video_name + "_output.mp4")
-        out = cv2.VideoWriter(output_filename, fourcc, fps, (method_args['width'], method_args['height']))
+        out = cv2.VideoWriter(output_filename, fourcc, fps, (width, height))
         i = 0
-        image2 = np.empty([method_args['width'], method_args['height']])
+        image2 = np.empty([width, height])
         while cap.isOpened():
             ret, frame = cap.read()
             if not ret:
@@ -263,7 +263,7 @@ def main():
     video_list = cloud_functionality.preprocess_reduction(s3_args, method_args)
 
     codec(video_list, method_args['encoder_model_path'], method_args['decoder_model_path'],
-          method_args["temp_path"])
+          method_args['width'], method_args['height'], method_args["temp_path"])
 
     cloud_functionality.postprocess_reduction(s3_args, method_args)
 
