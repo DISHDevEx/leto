@@ -46,17 +46,17 @@ python path/to/method/fps_bitrate.py
 ### Reconstruction Method Execution
 Reconstruction method execution is similar to Reduction method execution, with one key difference; Reconstruction method execution is dependant upon a previously executed Reduction method.  Follow these steps to execute a Reconstruction method:
 
-1. Within the [***config.ini***](config.ini) file, identify the appropriate Reconstruction section for the method you wish to execute.  
+1. Within the [***config.ini***](config.ini) file, identify the appropriate Reconstruction section for the method you wish to execute.
     - sections are denoted by the following pattern ```[<METHOD_CLASS>.<METHOD_NAME>]```; so, if you want to use a ***reconstruction*** method called ***smooth_fps***, the ***config.ini*** file section should be titled something like ```[reconstruction.smooth_fps]```.
 
-2. Modify the ***reduction_method_ref*** value to reflect the Reduction method you will be pulling from for the input videos.  This variable, ***reduction_method_ref***, is located at the top of each Reconstruction method section in the config.ini.  As an example, if you would like to change the referenced Reduction method from ***fps_bitrate*** to ***fastsrgan***, then the ***reduction_method_ref*** for the Reconstruction section would need to change from:
+2. Modify the ***reduction_method_ref*** value to reflect the Reduction method you will be pulling from for the input videos.  This variable, ***reduction_method_ref***, is located at the top of each Reconstruction method section in the config.ini.  As an example, if you would like to change the referenced Reduction method from ***fps_bitrate*** to ***ffmpeg_resolution_downsampler***, then the ***reduction_method_ref*** for the Reconstruction section would need to change from:
 
 ```ini
 reduction_method_ref = ${reduction.fps_bitrate:method_directory}
 ```
 to the following reference:
 ```ini
-reduction_method_ref = ${reduction.fastsrgan:method_directory}
+reduction_method_ref = ${reduction.ffmpeg_resolution_downsampler:method_directory}
 ```
 ***Note***: the input video path and output video path for all Reconstruction methods are dependant on the values in the referenced Reduction section; so ensure that the variables listed in the referenced Reduction section are accurate for your use case.  This can be ensured by executing you desired [Reduction Method](#reduction-method-execution), and then immediately executing your desired [Reconstruction Method](#reconstruction-method-execution) without making any changes to the Reduction method section.
 
@@ -67,7 +67,7 @@ reduction_method_ref = ${reduction.fastsrgan:method_directory}
 
 #########################
 ; change reduction_method_ref to reflect desired reduction method
-; i.e. FROM/ ${reduction.fps_bitrate:method_directory}  TO/  ${reduction.fastsrgan:method_directory}
+; i.e. FROM/ ${reduction.ffmpeg_resolution_downsampler:method_directory}  TO/  ${reduction.fps_bitrate:method_directory}
 #########################
 reduction_method_ref = ${reduction.fps_bitrate:method_directory}
 
