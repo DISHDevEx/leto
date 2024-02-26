@@ -13,24 +13,24 @@ case $LIBRARY_REQUIRED in
     cd $WORKING_DIRECTORY
     echo "Activating tensorflow"
     source /opt/tensorflow/bin/activate
-    python -c "import tensorflow as tf; print(tf.__version__)"
+    python3 -c "import tensorflow as tf; print(tf.__version__)"
     #Run the python script
-    python $WORKING_DIRECTORY/$FILE_PATH
+    python3 $WORKING_DIRECTORY/$FILE_PATH
     ;;
   "PyTorch")
     cd $WORKING_DIRECTORY
     echo "Activating pytorch"
     conda activate /opt/conda/envs/pytorch
-    python -c "import torch; print(torch.__version__)"
+    python3 -c "import torch; print(torch.__version__)"
     #Run the python script
-    python $WORKING_DIRECTORY/$FILE_PATH
+    python3 $WORKING_DIRECTORY/$FILE_PATH
     ;;
   "None")
     cd $WORKING_DIRECTORY
     conda activate /home/ec2-user/miniconda3/envs/leto
     conda env list
     #Run the python script
-    python $WORKING_DIRECTORY/$FILE_PATH
+    python3 $WORKING_DIRECTORY/$FILE_PATH
     ;;
   *) # Default case if none of the above matches
     echo "Please pass correct input parameter for 'library_required'"
