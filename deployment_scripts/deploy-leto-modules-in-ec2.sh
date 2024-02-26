@@ -106,7 +106,7 @@ install_module_requirements(){
     #Find the requirements file of the module
     cd $WORKING_DIRECTORY/leto/$MODULE_TYPE/$MODULE_NAME && fVar=$(find -type f -name 'requirements*.txt');
     FILE_NAME=${fVar:2}
-    if python -m pip install -r $WORKING_DIRECTORY/leto/$MODULE_TYPE/$MODULE_NAME/$FILE_NAME; then
+    if python3 -m pip install -r $WORKING_DIRECTORY/leto/$MODULE_TYPE/$MODULE_NAME/$FILE_NAME; then
         pip list
         echo "Successfully installed requirements for $MODULE_NAME module."
     else
@@ -117,7 +117,7 @@ deploy_tensorflow_dependent_module(){
 cd $WORKING_DIRECTORY
 echo "Activating tensorflow"
 source /opt/tensorflow/bin/activate
-python -c "import tensorflow as tf; print(tf.__version__)"
+python3 -c "import tensorflow as tf; print(tf.__version__)"
 install_common_packages
 deploy_leto_repository
 install_module_requirements
@@ -128,7 +128,7 @@ echo "Activating pytorch"
 conda init bash
 source ~/.bashrc
 conda activate /opt/conda/envs/pytorch
-python -c "import torch; print(torch.__version__)"
+python3 -c "import torch; print(torch.__version__)"
 install_common_packages
 deploy_leto_repository
 install_module_requirements
